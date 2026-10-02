@@ -2,7 +2,7 @@
  * Single source of truth for CRM pipeline stages: order, labels, and colors.
  */
 
-/** Active happy-path + Retention (Cancel) order. Compliance is hidden — see HIDDEN_PIPELINE_STAGES. */
+/** Active happy-path + Retention (Cancel) order. */
 export const PIPELINE_STAGE_ORDER = [
   "lead",
   "welcome_packet",
@@ -14,10 +14,12 @@ export const PIPELINE_STAGE_ORDER = [
 
 export type PipelineStageKey = (typeof PIPELINE_STAGE_ORDER)[number];
 
-/** Stages kept in DB/labels but hidden from pipeline tabs, funnels, and stage pickers. */
-export const HIDDEN_PIPELINE_STAGES = ["compliance_verification"] as const;
-
-export type HiddenPipelineStage = (typeof HIDDEN_PIPELINE_STAGES)[number];
+/**
+ * Stages kept in DB/labels but hidden from pipeline tabs, funnels, and stage
+ * pickers. Empty today — the hook stays so a stage can be retired without
+ * rewriting every picker.
+ */
+export const HIDDEN_PIPELINE_STAGES: readonly string[] = [];
 
 const HIDDEN_PIPELINE_STAGE_SET = new Set<string>(HIDDEN_PIPELINE_STAGES);
 
@@ -41,13 +43,6 @@ export const STAGE_CONFIG: Record<
     dot: "bg-blue-500",
     border: "border-blue-200",
     hex: "#3B82F6",
-  },
-  compliance_verification: {
-    label: "Compliance Verification",
-    color: "bg-violet-100 text-violet-700",
-    dot: "bg-violet-500",
-    border: "border-violet-200",
-    hex: "#7C3AED",
   },
   welcome_packet: {
     label: "Account Manager",
@@ -129,10 +124,9 @@ const FALLBACK_STAGE = {
   hex: "#9CA3AF",
 };
 
-/** Full CRM order including hidden/legacy Compliance (for audit + stranded clients). */
+/** Full CRM order including terminal stages (for audit + reporting). */
 export const ALL_STAGE_ORDER = [
   "lead",
-  "compliance_verification",
   "welcome_packet",
   "retention",
   "client_services",

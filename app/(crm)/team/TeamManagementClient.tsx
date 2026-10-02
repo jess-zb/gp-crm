@@ -17,15 +17,13 @@ export type TeamMemberRow = {
   full_name: string | null;
   role: string;
   is_active: boolean | null;
-  is_compliance: boolean;
   is_accounts: boolean;
   is_services: boolean;
 };
 
 const DEPARTMENTS: { key: DeptProfileField; label: string }[] = [
-  { key: "is_compliance", label: "Compliance" },
-  { key: "is_accounts", label: "Accounts" },
-  { key: "is_services", label: "Services" },
+  { key: "is_accounts", label: "Account Managers" },
+  { key: "is_services", label: "Client Services" },
 ];
 
 type StaffRole =
@@ -127,7 +125,6 @@ export function TeamManagementClient({
   const [editDepts, setEditDepts] = useState<
     Record<DeptProfileField, boolean>
   >({
-    is_compliance: false,
     is_accounts: false,
     is_services: false,
   });
@@ -167,7 +164,6 @@ export function TeamManagementClient({
     setEditRole(m.role as StaffRole);
     setEditActive(m.is_active !== false);
     setEditDepts({
-      is_compliance: m.is_compliance,
       is_accounts: m.is_accounts,
       is_services: m.is_services,
     });
@@ -191,7 +187,6 @@ export function TeamManagementClient({
         is_active: editActive,
       };
       if (editRole === "acct_manager") {
-        patch.is_compliance = editDepts.is_compliance;
         patch.is_accounts = editDepts.is_accounts;
         patch.is_services = editDepts.is_services;
       }

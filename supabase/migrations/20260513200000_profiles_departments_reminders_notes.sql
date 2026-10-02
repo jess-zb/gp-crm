@@ -1,7 +1,6 @@
 -- Department flags (appointments / pipeline visibility) + reminder notes + checklist label
 
 ALTER TABLE profiles
-  ADD COLUMN IF NOT EXISTS is_compliance BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS is_accounts BOOLEAN NOT NULL DEFAULT false,
   ADD COLUMN IF NOT EXISTS is_services BOOLEAN NOT NULL DEFAULT false;
 

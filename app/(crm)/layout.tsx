@@ -33,7 +33,7 @@ export default async function CrmLayout({
   const { data: chatProfileRow } = await supabase
     .from("profiles")
     .select(
-      "id, full_name, role, email, is_compliance, is_accounts, is_services"
+      "id, full_name, role, email, is_accounts, is_services"
     )
     .eq("id", user.id)
     .single();
@@ -43,7 +43,6 @@ export default async function CrmLayout({
         id: chatProfileRow.id as string,
         full_name: (chatProfileRow.full_name as string | null) ?? null,
         role: chatProfileRow.role as string,
-        is_compliance: !!chatProfileRow.is_compliance,
         is_accounts: !!chatProfileRow.is_accounts,
         is_services: !!chatProfileRow.is_services,
       }

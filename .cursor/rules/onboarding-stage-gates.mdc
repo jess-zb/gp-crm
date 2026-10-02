@@ -1,0 +1,67 @@
+---
+description: Onboarding stage gates — Welcome Packet, CC auth, POA, audio
+globs: lib/workflow/**/*,lib/reminders/workflow-config.ts,app/(crm)/clients/[id]/ClientStageHeader.tsx,app/(crm)/dashboard/**/*
+alwaysApply: false
+---
+
+# Onboarding stage gates
+
+Two gates exist on manual Advance, both in `lib/workflow/stage-blockers.ts`.
+Read this before touching stage buttons, the Advance dropdown, or document
+upload requirements.
+
+## Policy (do not regress)
+
+### Welcome Packet — gate at Account Manager exit
+
+- `blockAdvanceFromAccountManagerWithoutSignedWelcomePacket` blocks
+  **`welcome_packet` → anything forward** until the Welcome Packet is signed.
+- The signed copy lands as a POA document (`poa_document` / `poa_signed`) or
+  sets `clients.poa_signed_at`, whether it arrived through e-signature or a
+  manual upload, so **both satisfy the gate**. Use `hasSignedPoaOnRecord()`.
+- Blocked advance opens an error modal that links to **Packets → E-Sign**. It
+  never silently fails and never offers a bypass.
+- Cancel / disqualify destinations (`retention`, `dnc`, `not_interested`,
+  `dnq`, `mortgage`, `closed`) are **never** gated on paperwork.
+
+### Signed POA — gate at Client Services exit
+
+- `blockAdvanceFromClientServicesWithoutPoa` covers
+  **`client_services` → `awaiting_collection_letter`** only.
+- Same `hasSignedPoaOnRecord()` signal. Do **not** gate on `poa_signed_at`
+  alone.
+- POA upload through Documents must call `markPoaSignedOnClient()` so dashboard
+  widgets stay aligned with Uploads.
+- POA auto-advance (`advanceClientAfterPoaUpload` + `handle_poa_upload`) moves
+  **Account Manager or Client Services → `awaiting_collection_letter`** when a
+  POA lands on Uploads. CC Auth never auto-stages.
+
+### Audio recording — optional, never a gate
+
+- `audio_recording` stays a document type for call snippets.
+- **Do not** block stage advance or Welcome Packet send on audio.
+  `blockAdvanceFromAccountManagerWithoutAudio` was removed; do not reintroduce
+  it without explicit product sign-off.
+
+### CC authorization — informational only
+
+- `cc_authorization` is the bank-required form. **Not** a stage gate.
+- Dev-only dashboard widget lists active funnel clients with no
+  `cc_authorization` document — tracking only.
+
+### Retired appointment type
+
+- `auth_recording` is out of `WORKFLOW_TYPES`. Do not add it back to the modal
+  without a product request.
+
+## Related files
+
+| Concern | Source of truth |
+| --- | --- |
+| Stage gates | `lib/workflow/stage-blockers.ts`, `canAdvanceStage()` in `workflow-config.ts` |
+| Advance UI | `app/(crm)/clients/[id]/ClientStageHeader.tsx` |
+| Dev CC auth widget | `app/(crm)/dashboard/page.tsx` |
+| POA upload advance | `lib/clients/poa-upload-advance.ts` |
+
+Both gates are covered by `pnpm test:stage-poa-gate` and
+`pnpm test:perf-invariants`.

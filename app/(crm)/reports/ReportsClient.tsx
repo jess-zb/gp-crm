@@ -19,7 +19,6 @@ export type ReportsTeamMember = {
   id: string;
   full_name: string | null;
   email: string | null;
-  is_compliance: boolean;
   is_accounts: boolean;
   is_services: boolean;
 };
@@ -35,7 +34,7 @@ export type CompletedAppointmentEvent = {
 };
 
 type DateRangeKey = "7d" | "30d" | "90d";
-type DeptFilterKey = "all" | "compliance" | "accounts" | "services";
+type DeptFilterKey = "all" | "accounts" | "services";
 
 function getSinceIso(range: DateRangeKey): string {
   const now = new Date();
@@ -45,16 +44,14 @@ function getSinceIso(range: DateRangeKey): string {
 
 function getDepartmentLabel(m: ReportsTeamMember): string {
   const parts: string[] = [];
-  if (m.is_compliance) parts.push("Compliance");
-  if (m.is_accounts) parts.push("Accounts");
-  if (m.is_services) parts.push("Services");
+  if (m.is_accounts) parts.push("Account Manager");
+  if (m.is_services) parts.push("Client Services");
   if (parts.length === 0) return "—";
   return parts.join(", ");
 }
 
 function matchesDept(m: ReportsTeamMember, dept: DeptFilterKey): boolean {
   if (dept === "all") return true;
-  if (dept === "compliance") return m.is_compliance;
   if (dept === "accounts") return m.is_accounts;
   return m.is_services;
 }
@@ -356,7 +353,7 @@ export function ReportsClient({
           ) : null}
         </div>
         <div className="mb-4 flex flex-wrap gap-2">
-          {(["all", "compliance", "accounts", "services"] as const).map((d) => (
+          {(["all", "accounts", "services"] as const).map((d) => (
             <button
               key={d}
               type="button"
@@ -367,7 +364,11 @@ export function ReportsClient({
                   : "border-slate-200 bg-white text-slate-600 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300"
               }`}
             >
-              {d === "all" ? "All Departments" : d}
+              {d === "all"
+                ? "All Departments"
+                : d === "accounts"
+                  ? "Account Managers"
+                  : "Client Services"}
             </button>
           ))}
         </div>

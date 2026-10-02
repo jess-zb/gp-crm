@@ -30,13 +30,6 @@ CREATE POLICY "chat_channels_select_accessible"
       AND (
         department IS NULL
         OR (
-          department = 'compliance'
-          AND EXISTS (
-            SELECT 1 FROM profiles p
-            WHERE p.id = auth.uid() AND COALESCE(p.is_compliance, false)
-          )
-        )
-        OR (
           department = 'accounts'
           AND EXISTS (
             SELECT 1 FROM profiles p

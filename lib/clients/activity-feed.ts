@@ -105,7 +105,6 @@ export const ACTION_LABELS: Record<string, string> = {
   case_sent_to_attorneys: "Case Sent to Attorneys",
 
   // Assignments
-  compliance_assigned: "Compliance Assigned",
   accounts_assigned: "Accounts Assigned",
   accounts_reassigned: "Accounts Reassigned",
   services_assigned: "Services Assigned",
@@ -286,17 +285,9 @@ export function formatAuditDescription(
     const newN = typeof o?.new_name === "string" ? o.new_name.trim() : "—";
     return `Accounts reassigned: ${oldN} → ${newN}`;
   }
-  if (
-    action === "accounts_assigned" ||
-    action === "services_assigned" ||
-    action === "compliance_assigned"
-  ) {
+  if (action === "accounts_assigned" || action === "services_assigned") {
     const role =
-      action === "accounts_assigned"
-        ? "Accounts"
-        : action === "services_assigned"
-          ? "Services"
-          : "Compliance";
+      action === "accounts_assigned" ? "Account Manager" : "Client Services";
     const newN = typeof o?.new_name === "string" ? o.new_name.trim() : "";
     const self = !!o?.self_assigned;
     if (self) return `${role} self-assigned${newN ? `: ${newN}` : ""}`;

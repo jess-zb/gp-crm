@@ -79,7 +79,6 @@ AS $$
           AND (
             me.role IN ('dev', 'admin')
             OR c.department IS NULL
-            OR (c.department = 'compliance' AND COALESCE(me.is_compliance, false))
             OR (c.department = 'accounts' AND COALESCE(me.is_accounts, false))
             OR (c.department = 'services' AND COALESCE(me.is_services, false))
           )

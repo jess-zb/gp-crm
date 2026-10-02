@@ -53,7 +53,6 @@ export function totalPipelineNavBadge(counts: Record<PipelinePageStage, number>)
 /** Dashboard / analytics: broader stage set (active rows only). */
 export type DashboardStageCountKey =
   | "lead"
-  | "compliance_verification"
   | "welcome_packet"
   | "client_services"
   | "awaiting_collection_letter"
@@ -67,7 +66,6 @@ export type DashboardStageCountKey =
 export function emptyDashboardStageCounts(): Record<DashboardStageCountKey, number> {
   return {
     lead: 0,
-    compliance_verification: 0,
     welcome_packet: 0,
     client_services: 0,
     awaiting_collection_letter: 0,

@@ -77,8 +77,6 @@ export type ClientsListItem = {
   stage_entered_at: string | null;
   assigned_to: string | null;
   assignee_name: string | null;
-  assigned_compliance_id: string | null;
-  compliance_manager_name: string | null;
   assigned_services_id: string | null;
   services_user_name: string | null;
   dnc_reason: string | null;
@@ -117,9 +115,8 @@ const AVAILABLE_COLUMNS = [
   { id: "stage", label: "Stage" },
   { id: "phone", label: "Phone" },
   { id: "email", label: "Email" },
-  { id: "sales_user", label: "Accounts" },
-  { id: "compliance", label: "Compliance" },
-  { id: "services", label: "Services" },
+  { id: "sales_user", label: "Account Manager" },
+  { id: "services", label: "Client Services" },
   { id: "created_at", label: "Date Added" },
   { id: "days_in_stage", label: "Days in Stage" },
 ] as const;
@@ -130,7 +127,6 @@ const DEFAULT_VISIBLE_COLUMNS: string[] = [
   "stage",
   "phone",
   "sales_user",
-  "compliance",
   "created_at",
 ];
 
@@ -141,7 +137,6 @@ const COLUMN_WIDTHS: Record<string, number> = {
   phone: 140,
   email: 200,
   sales_user: 140,
-  compliance: 140,
   services: 140,
   created_at: 120,
   days_in_stage: 110,
@@ -159,7 +154,6 @@ const COLUMNS_HIDDEN_BELOW_MD = new Set([
   "phone",
   "email",
   "sales_user",
-  "compliance",
   "services",
   "created_at",
   "days_in_stage",
@@ -440,14 +434,6 @@ const ClientCell = memo(({
       return (
         <td className="hidden max-w-[130px] px-4 py-2.5 text-sm text-slate-700 md:table-cell dark:text-slate-300">
           <span className="block truncate">{client.assignee_name?.trim() || "—"}</span>
-        </td>
-      );
-    case "compliance":
-      return (
-        <td className="hidden max-w-[130px] px-4 py-2.5 text-sm text-slate-700 md:table-cell dark:text-slate-300">
-          <span className="block truncate" title={client.compliance_manager_name?.trim() || undefined}>
-            {client.compliance_manager_name?.trim() || "—"}
-          </span>
         </td>
       );
     case "services":
@@ -831,16 +817,6 @@ export function ClientsListClient({
             onSort={onHeaderSort}
             className="hidden w-[130px] md:table-cell"
           />
-        );
-      case "compliance":
-        return (
-          <th
-            key={colId}
-            scope="col"
-            className="hidden w-[130px] px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-600 md:table-cell dark:text-slate-400"
-          >
-            Compliance
-          </th>
         );
       case "services":
         return (

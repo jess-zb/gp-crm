@@ -55,7 +55,6 @@ export type ChatWidgetUserProfile = {
   id: string;
   full_name: string | null;
   role: string;
-  is_compliance: boolean | null;
   is_accounts: boolean | null;
   is_services: boolean | null;
 };
@@ -471,7 +470,6 @@ export function ChatWidget({
 
         if (ch.type === "department") {
           if (!ch.department) return true;
-          if (ch.department === "compliance" && userProfile.is_compliance) return true;
           if (ch.department === "accounts" && userProfile.is_accounts) return true;
           if (ch.department === "services" && userProfile.is_services) return true;
           return false;

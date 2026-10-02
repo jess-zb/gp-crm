@@ -5,7 +5,7 @@ import { Loader2, Shuffle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { ModalOverlay } from "@/app/components/ModalOverlay";
 
-export type AssignmentDepartment = "compliance" | "accounts" | "services";
+export type AssignmentDepartment = "accounts" | "services";
 
 export type AssignmentModalProps = {
   open: boolean;
@@ -35,12 +35,7 @@ export function AssignmentModal({
       setTeamMembers([]);
       return;
     }
-    const col =
-      department === "accounts"
-        ? "is_accounts"
-        : department === "services"
-          ? "is_services"
-          : "is_compliance";
+    const col = department === "accounts" ? "is_accounts" : "is_services";
     const supabase = createClient();
     void supabase
       .from("profiles")

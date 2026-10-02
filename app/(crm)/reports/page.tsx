@@ -57,7 +57,7 @@ export default async function ReportsPage() {
     supabase
       .from("profiles")
       .select(
-        "id, full_name, email, role, is_compliance, is_accounts, is_services"
+        "id, full_name, email, role, is_accounts, is_services"
       )
       .in("role", ["dev", "admin", "acct_manager"])
       .order("full_name", { ascending: true }),
@@ -143,7 +143,6 @@ export default async function ReportsPage() {
     id: p.id as string,
     full_name: p.full_name as string | null,
     email: p.email as string | null,
-    is_compliance: !!(p.is_compliance as boolean | null),
     is_accounts: !!(p.is_accounts as boolean | null),
     is_services: !!(p.is_services as boolean | null),
   }));

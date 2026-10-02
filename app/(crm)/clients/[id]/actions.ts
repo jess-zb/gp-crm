@@ -209,7 +209,6 @@ interface ClientSettingsPayload {
   stage?: PipelineStageKey;
   stage_entered_at?: string;
   assigned_to?: string | null;
-  assigned_compliance_id?: string | null;
   assigned_services_id?: string | null;
   attorney_id?: string | null;
 }
@@ -240,8 +239,6 @@ export async function updateClientSettings(
     if (canReassignClient(profile.role)) {
       const assignedRaw = String(formData.get("assigned_to") ?? "").trim();
       payload.assigned_to = assignedRaw === "" ? null : assignedRaw;
-      const complianceRaw = String(formData.get("assigned_compliance_id") ?? "").trim();
-      payload.assigned_compliance_id = complianceRaw === "" ? null : complianceRaw;
       const servicesRaw = String(formData.get("assigned_services_id") ?? "").trim();
       payload.assigned_services_id = servicesRaw === "" ? null : servicesRaw;
     }
@@ -312,91 +309,6 @@ export async function updateClientSettings(
   }
 }
 
-/**
- * Compliance-department reassignment of the Accounts user (assigned_to).
- * Allowed for: compliance users (is_compliance flag) OR existing canReassignClient roles.
- * Logs old → new to audit_log for the activity feed.
- */
-export async function reassignAccountsUser(
-  clientId: string,
-  newAssignedToId: string | null
-): Promise<ClientActionResult> {
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
-
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("id, full_name, role, is_compliance")
-      .eq("id", user.id)
-      .single();
-
-    if (!profileData) redirect("/login");
-
-    const isCompliance = !!(profileData.is_compliance as boolean | null);
-    if (!isCompliance && !canReassignClient(profileData.role as string)) {
-      return { ok: false, error: "Not authorized to reassign accounts user" };
-    }
-
-    const { data: client } = await supabase
-      .from("clients")
-      .select("assigned_to")
-      .eq("id", clientId)
-      .single();
-    if (!client) return { ok: false, error: "Client not found" };
-
-    const oldId = (client.assigned_to as string | null) ?? null;
-    if (oldId === (newAssignedToId || null)) {
-      revalidatePath(`/clients/${clientId}`);
-      return { ok: true };
-    }
-
-    const lookupIds = [oldId, newAssignedToId].filter((id): id is string => !!id);
-    const nameMap = new Map<string, string>();
-    if (lookupIds.length) {
-      const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, full_name, email")
-        .in("id", lookupIds);
-      for (const p of profiles ?? []) {
-        nameMap.set(
-          p.id as string,
-          (p.full_name as string | null)?.trim() || (p.email as string | null) || (p.id as string)
-        );
-      }
-    }
-
-    const oldName = oldId ? (nameMap.get(oldId) ?? "Unknown") : "Unassigned";
-    const newName = newAssignedToId
-      ? (nameMap.get(newAssignedToId) ?? "Unknown")
-      : "Unassigned";
-
-    const { error: updateErr } = await supabase
-      .from("clients")
-      .update({ assigned_to: newAssignedToId || null })
-      .eq("id", clientId);
-    if (updateErr) return { ok: false, error: toUserFacingError(updateErr.message) };
-
-    const performerName =
-      (profileData.full_name as string | null)?.trim() || user.email || "Staff";
-    await supabase.from("audit_log").insert({
-      client_id: clientId,
-      action: "accounts_reassigned",
-      new_value: { old_name: oldName, new_name: newName, old_id: oldId, new_id: newAssignedToId },
-      performed_by: user.id,
-      performed_by_name: performerName,
-    });
-
-    revalidatePath(`/clients/${clientId}`);
-    return { ok: true };
-  } catch (err) {
-    console.error("[clients/[id]/actions] reassignAccountsUser error:", err);
-    return { ok: false, error: "Something went wrong" };
-  }
-}
 
 interface ClientProfilePayload {
   first_name: string;

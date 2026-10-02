@@ -11,7 +11,6 @@ const SERVICE_PIPELINE_STAGES = new Set([
   "client_services",
   "awaiting_collection_letter",
   "case_sent_to_attorneys",
-  "compliance_verification",
   "mortgage",
 ]);
 
@@ -19,7 +18,6 @@ function clientRecordFromReminderRow(r: unknown): {
   id: string | null;
   stage: string | null;
   assigned_to: string | null;
-  assigned_compliance_id: string | null;
   assigned_services_id: string | null;
 } | null {
   const client = (r as { client?: unknown }).client;
@@ -32,7 +30,6 @@ function clientRecordFromReminderRow(r: unknown): {
     id: (clientObj.id as string | null) ?? null,
     stage: (clientObj.stage as string | null) ?? null,
     assigned_to: (clientObj.assigned_to as string | null) ?? null,
-    assigned_compliance_id: (clientObj.assigned_compliance_id as string | null) ?? null,
     assigned_services_id: (clientObj.assigned_services_id as string | null) ?? null,
   };
 }
@@ -55,7 +52,7 @@ export default async function RemindersPage() {
   const { data: rawReminders, error: remErr } = await supabase
     .from("reminders")
     .select(
-      "id, description, due_date, completed, appointment_type, pipeline_type, assigned_to, notes, client:client_id(id, first_name, last_name, stage, phone_mobile, assigned_to, assigned_compliance_id, assigned_services_id), assigned:assigned_to(full_name)"
+      "id, description, due_date, completed, appointment_type, pipeline_type, assigned_to, notes, client:client_id(id, first_name, last_name, stage, phone_mobile, assigned_to, assigned_services_id), assigned:assigned_to(full_name)"
     )
     .eq("completed", false)
     .eq("cancelled", false)
@@ -91,10 +88,7 @@ export default async function RemindersPage() {
     if (deptProfile?.is_accounts) {
       return c.assigned_to === user.id;
     }
-    if (deptProfile?.is_compliance && !deptProfile.is_accounts) {
-      return c.assigned_compliance_id === user.id;
-    }
-    if (deptProfile?.is_services && !deptProfile.is_accounts && !deptProfile.is_compliance) {
+    if (deptProfile?.is_services && !deptProfile.is_accounts) {
       return (
         c.stage != null &&
         SERVICE_PIPELINE_STAGES.has(c.stage) &&

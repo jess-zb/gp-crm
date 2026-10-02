@@ -16,7 +16,6 @@ CREATE TYPE user_role AS ENUM ('dev', 'admin', 'manager', 'sales', 'service', 'a
 
 CREATE TYPE case_stage AS ENUM (
   'lead',
-  'compliance_verification',
   'client_services',
   'welcome_packet',
   'awaiting_collection_letter',
@@ -751,10 +750,10 @@ CREATE POLICY "Staff can see and manage reminders"
 -- ============================================================
 
 INSERT INTO teams (name) VALUES
-  ('Compliance Verification'),
+  ('Account Managers'),
   ('Client Services'),
   ('Legal / Attorneys'),
-  ('Management');
+  ('Leadership');
 
 -- ============================================================
 -- INDEXES for performance

@@ -74,7 +74,6 @@ function getNextStage(current: string | null): string | null {
   const s = normalizePipelineStage(current);
   if (s === "retention") return "client_services";
   if (s === "dnc") return "closed";
-  if (s === "compliance_verification") return "welcome_packet";
   const idx = (NAVIGATION_STAGE_ORDER as readonly string[]).indexOf(s);
   if (idx === -1 || idx === NAVIGATION_STAGE_ORDER.length - 1) return null;
   return NAVIGATION_STAGE_ORDER[idx + 1]!;
@@ -92,7 +91,6 @@ function getPrevStage(current: string | null): string | null {
   const s = normalizePipelineStage(current);
   if (s === "retention") return "welcome_packet";
   if (s === "dnc") return "case_sent_to_attorneys";
-  if (s === "compliance_verification") return "lead";
   const idx = (NAVIGATION_STAGE_ORDER as readonly string[]).indexOf(s);
   if (idx <= 0) return null;
   return NAVIGATION_STAGE_ORDER[idx - 1]!;
@@ -160,12 +158,9 @@ export function ClientStageHeader({
   userRole,
   assignedTo,
   assignedUserName: _assignedUserName,
-  assignedComplianceId,
   assignedServicesId,
-  complianceUser,
   accountsUser,
   servicesUser,
-  isComplianceUser,
   shouldPromptSelfAssign,
   viewerDept,
   poaSignedAt: poaSignedAtFromServer,
@@ -180,14 +175,11 @@ export function ClientStageHeader({
   userRole: string;
   assignedTo: string | null;
   assignedUserName?: string | null;
-  assignedComplianceId: string | null;
   assignedServicesId: string | null;
-  complianceUser: { full_name: string | null } | null;
   accountsUser: { full_name: string | null } | null;
   servicesUser: { full_name: string | null } | null;
-  isComplianceUser: boolean;
   shouldPromptSelfAssign: boolean;
-  viewerDept: { is_compliance: boolean; is_accounts: boolean; is_services: boolean };
+  viewerDept: { is_accounts: boolean; is_services: boolean };
   /** Used to gate advance client_services → awaiting_collection_letter */
   poaSignedAt?: string | null;
   /** POA document already on file (Uploads tab) */
@@ -233,7 +225,6 @@ export function ClientStageHeader({
   const [movingToRetention, setMovingToRetention] = useState(false);
   const [assignmentFlow, setAssignmentFlow] = useState<AssignmentFlowState | null>(null);
   const [isAssigning, setIsAssigning] = useState(false);
-  const [selfAssigningCompliance, setSelfAssigningCompliance] = useState(false);
   const [showSelfAssignPrompt, setShowSelfAssignPrompt] = useState(shouldPromptSelfAssign);
   const [profileSelfAssigning, setProfileSelfAssigning] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -253,12 +244,11 @@ export function ClientStageHeader({
   const [showRetentionExitModal, setShowRetentionExitModal] = useState(false);
   const pendingRetentionExit = useRef<{ stage: string; label: string; selectEl: HTMLSelectElement } | null>(null);
 
-  const selfAssignSlot = useMemo((): "compliance" | "accounts" | "services" | null => {
-    if (viewerDept.is_compliance && !assignedComplianceId) return "compliance";
+  const selfAssignSlot = useMemo((): "accounts" | "services" | null => {
     if (viewerDept.is_accounts && !assignedTo) return "accounts";
     if (viewerDept.is_services && !assignedServicesId) return "services";
     return null;
-  }, [viewerDept, assignedComplianceId, assignedTo, assignedServicesId]);
+  }, [viewerDept, assignedTo, assignedServicesId]);
 
   useEffect(() => {
     if (!shouldPromptSelfAssign) setShowSelfAssignPrompt(false);
@@ -329,7 +319,7 @@ export function ClientStageHeader({
     opts?: {
         skipAssignmentModal?: boolean;
       reminderAssigneeOverride?: string | null;
-      /** Retention exit modal / legacy Compliance escape may jump non-adjacent stages. */
+      /** Retention exit modal may jump non-adjacent stages. */
       allowStageSkip?: boolean;
     }
   ): Promise<boolean> {
@@ -501,9 +491,7 @@ export function ClientStageHeader({
       const updateField =
         assignmentFlow.department === "accounts"
           ? "assigned_to"
-          : assignmentFlow.department === "services"
-            ? "assigned_services_id"
-            : "assigned_compliance_id";
+          : "assigned_services_id";
       const { error: uErr } = await supabase
         .from("clients")
         .update({ [updateField]: userId })
@@ -548,59 +536,20 @@ export function ClientStageHeader({
     });
   }
 
-  async function handleSelfAssignCompliance() {
-    setSelfAssigningCompliance(true);
-    try {
-      const supabase = createClient();
-      const { error: uErr } = await supabase
-        .from("clients")
-        .update({ assigned_compliance_id: performerId })
-        .eq("id", clientId);
-      if (uErr) throw uErr;
-      const { error: aErr } = await supabase.from("audit_log").insert({
-        client_id: clientId,
-        action: "compliance_assigned",
-        new_value: {
-          new_id: performerId,
-          new_name: performerName,
-          self_assigned: true,
-        },
-        performed_by: performerId,
-        performed_by_name: performerName,
-      });
-      if (aErr) console.warn("[ClientStageHeader] compliance self-assign audit:", aErr.message);
-      toast.success("You are now assigned as Compliance");
-      router.refresh();
-    } catch (e) {
-      toast.error(toUserFacingError(e instanceof Error ? e.message : "Assign failed"));
-    } finally {
-      setSelfAssigningCompliance(false);
-    }
-  }
-
   async function handleProfileSelfAssignConfirm() {
     const slot = selfAssignSlot;
     if (!slot) return;
     setProfileSelfAssigning(true);
     try {
       const supabase = createClient();
-      const field =
-        slot === "compliance"
-          ? "assigned_compliance_id"
-          : slot === "accounts"
-            ? "assigned_to"
-            : "assigned_services_id";
+      const field = slot === "accounts" ? "assigned_to" : "assigned_services_id";
       const { error: uErr } = await supabase
         .from("clients")
         .update({ [field]: performerId })
         .eq("id", clientId);
       if (uErr) throw uErr;
       const auditAction =
-        slot === "compliance"
-          ? "compliance_assigned"
-          : slot === "accounts"
-            ? "accounts_assigned"
-            : "services_assigned";
+        slot === "accounts" ? "accounts_assigned" : "services_assigned";
       const { error: aErr } = await supabase.from("audit_log").insert({
         client_id: clientId,
         action: auditAction,
@@ -927,22 +876,7 @@ export function ClientStageHeader({
         <div className="mt-2 flex items-center gap-0">
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
-              Compliance
-            </span>
-            <span className="truncate text-sm font-medium text-gray-800 dark:text-slate-100">
-              {complianceUser?.full_name?.trim() ? (
-                complianceUser.full_name.trim()
-              ) : (
-                <span className="text-xs italic text-gray-400 dark:text-slate-500">Unassigned</span>
-              )}
-            </span>
-          </div>
-
-          <div className="mx-4 h-8 w-px shrink-0 bg-gray-200 dark:bg-[#1a3550]" />
-
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
-              Accounts
+              Account Manager
             </span>
             <span className="truncate text-sm font-medium text-gray-800 dark:text-slate-100">
               {accountsUser?.full_name?.trim() ? (
@@ -957,7 +891,7 @@ export function ClientStageHeader({
 
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
-              Services
+              Client Services
             </span>
             <span className="truncate text-sm font-medium text-gray-800 dark:text-slate-100">
               {servicesUser?.full_name?.trim() ? (
@@ -969,23 +903,6 @@ export function ClientStageHeader({
           </div>
         </div>
 
-        {isComplianceUser && !assignedComplianceId ? (
-          <div className="mt-3">
-            <button
-              type="button"
-              disabled={selfAssigningCompliance}
-              onClick={() => void handleSelfAssignCompliance()}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 transition-colors hover:bg-blue-100 disabled:opacity-50 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-950/60"
-            >
-              {selfAssigningCompliance ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <UserCheck className="h-3.5 w-3.5 shrink-0" />
-              )}
-              {selfAssigningCompliance ? "Assigning..." : "Assign myself as Compliance"}
-            </button>
-          </div>
-        ) : null}
       </div>
 
       <div className="flex shrink-0 flex-wrap items-center gap-2 self-start">
@@ -1395,11 +1312,9 @@ export function ClientStageHeader({
             </h3>
             <p className="mb-5 text-sm text-gray-500 dark:text-slate-400">
               This client doesn&apos;t have a
-              {selfAssignSlot === "compliance"
-                ? " Compliance"
-                : selfAssignSlot === "accounts"
-                  ? " Accounts"
-                  : " Services"}{" "}
+              {selfAssignSlot === "accounts"
+                ? " Account Manager"
+                : " Client Services"}{" "}
               yet. Would you like to take this client?
             </p>
             <div className="flex gap-3">

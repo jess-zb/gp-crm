@@ -26,7 +26,7 @@ const PIPELINE_COUNT_STAGES = [
 ] as const;
 
 const PIPELINE_SELECT =
-  "id, first_name, last_name, phone_mobile, email, stage, created_at, stage_entered_at, is_active, dnc_reason, assigned_to, assigned_compliance_id, assigned_services_id, assigned_user:profiles!assigned_to(full_name), compliance_manager:profiles!assigned_compliance_id(full_name), services_manager:profiles!assigned_services_id(full_name)";
+  "id, first_name, last_name, phone_mobile, email, stage, created_at, stage_entered_at, is_active, dnc_reason, assigned_to, assigned_services_id, assigned_user:profiles!assigned_to(full_name), services_manager:profiles!assigned_services_id(full_name)";
 
 function parseActiveStage(raw: string | undefined): PipelinePageStage {
   const s = (raw ?? "").trim();
@@ -82,14 +82,7 @@ export default async function PipelinePage({
 
     if (!elevated && deptProfile?.is_accounts) {
       q = q.or(`assigned_to.eq.${user.id},assigned_to.is.null`);
-    } else if (!elevated && deptProfile?.is_compliance && !deptProfile.is_accounts) {
-      q = q.or(`assigned_compliance_id.eq.${user.id},assigned_compliance_id.is.null`);
-    } else if (
-      !elevated &&
-      deptProfile?.is_services &&
-      !deptProfile.is_accounts &&
-      !deptProfile.is_compliance
-    ) {
+    } else if (!elevated && deptProfile?.is_services && !deptProfile.is_accounts) {
       q = q.or(`assigned_services_id.eq.${user.id},assigned_services_id.is.null`);
     }
 
@@ -134,17 +127,6 @@ export default async function PipelinePage({
         : null
       : auRaw ?? null;
 
-    const cmRaw = r.compliance_manager as
-      | { full_name: string | null }
-      | { full_name: string | null }[]
-      | null
-      | undefined;
-    const cm: { full_name: string | null } | null = Array.isArray(cmRaw)
-      ? cmRaw[0]
-        ? { full_name: cmRaw[0].full_name ?? null }
-        : null
-      : cmRaw ?? null;
-
     const smRaw = r.services_manager as
       | { full_name: string | null }
       | { full_name: string | null }[]
@@ -166,7 +148,6 @@ export default async function PipelinePage({
       created_at: (r.created_at as string | null) ?? null,
       stage_entered_at: (r.stage_entered_at as string | null) ?? null,
       assigned_user: au,
-      compliance_manager: cm,
       services_manager: sm,
     };
   });

@@ -32,7 +32,7 @@ export default async function TeamPage() {
   const { data: profiles, error: profErr } = await supabase
     .from("profiles")
     .select(
-      "id, email, full_name, role, is_active, is_compliance, is_accounts, is_services"
+      "id, email, full_name, role, is_active, is_accounts, is_services"
     )
     .in("role", [...roleFilter])
     .order("full_name", { ascending: true, nullsFirst: false });
@@ -57,7 +57,7 @@ export default async function TeamPage() {
     const { data: extra } = await supabase
       .from("profiles")
       .select(
-        "id, email, full_name, role, is_active, is_compliance, is_accounts, is_services"
+        "id, email, full_name, role, is_active, is_accounts, is_services"
       )
       .in("email", missingStarred)
       .eq("is_active", true);
@@ -92,7 +92,6 @@ export default async function TeamPage() {
     full_name: string | null;
     role: string;
     is_active: boolean | null;
-    is_compliance: boolean | null;
     is_accounts: boolean | null;
     is_services: boolean | null;
   }[];
@@ -107,7 +106,6 @@ export default async function TeamPage() {
     full_name: p.full_name as string | null,
     role: p.role as string,
     is_active: p.is_active as boolean | null,
-    is_compliance: !!p.is_compliance,
     is_accounts: !!p.is_accounts,
     is_services: !!p.is_services,
   }));

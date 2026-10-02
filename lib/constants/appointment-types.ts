@@ -18,33 +18,6 @@ export const APPOINTMENT_TYPES_BY_STAGE: Record<string, StageAppointmentTypeDef[
     { value: "appointment_set", label: "Appointment Set", color: "green", pipeline: "sales" },
   ],
 
-  compliance_verification: [
-    {
-      value: "follow_up_appointment_pre_auth",
-      label: "Follow Up Appointment (Pre-Auth)",
-      color: "green",
-      pipeline: "sales",
-    },
-    {
-      value: "follow_up_attempt_pre_auth",
-      label: "Follow Up Attempt (Pre-Auth)",
-      color: "red",
-      pipeline: "sales",
-    },
-    {
-      value: "follow_up_appointment_charge",
-      label: "Follow Up Appointment (Charge)",
-      color: "green",
-      pipeline: "sales",
-    },
-    {
-      value: "follow_up_attempt_charge",
-      label: "Follow Up Attempt (Charge)",
-      color: "red",
-      pipeline: "sales",
-    },
-  ],
-
   welcome_packet: [
     { value: "pre_auth_appointment", label: "Pre-Auth Appointment", color: "green", pipeline: "sales" },
     { value: "charge_appointment", label: "Charge Appointment", color: "green", pipeline: "sales" },

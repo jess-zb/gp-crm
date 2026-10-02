@@ -5,7 +5,6 @@ import { toUserFacingError } from "@/lib/user-facing-error";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { DashboardNotificationPermission } from "./DashboardNotificationPermission";
 import { AdminDashboard } from "./AdminDashboard";
-import { ComplianceDashboard } from "./ComplianceDashboard";
 import { AccountsDashboard } from "./AccountsDashboard";
 import { ServicesDashboard } from "./ServicesDashboard";
 import { DashboardClientTable } from "./DashboardClientTable";
@@ -68,7 +67,7 @@ export default async function DashboardPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, role, full_name, is_compliance, is_accounts, is_services")
+    .select("id, role, full_name, is_accounts, is_services")
     .eq("id", user.id)
     .single();
 
@@ -76,9 +75,7 @@ export default async function DashboardPage() {
 
   const isAdmin = ["dev", "admin"].includes(profile.role || "");
   const isDev = profile.role === "dev";
-  const isCompliance = !isAdmin && !!profile.is_compliance;
-  const isAccounts =
-    !isAdmin && !!profile.is_accounts && !profile.is_compliance;
+  const isAccounts = !isAdmin && !!profile.is_accounts;
   const isServices =
     !isAdmin && !!profile.is_services && !profile.is_accounts;
 
@@ -106,7 +103,6 @@ export default async function DashboardPage() {
   let missingPoa: AlertClientRow[] = [];
   let emailDispatchDisabled = false;
 
-  let myComplianceClients: DashboardClientRow[] = [];
   let missingCcAuth: DashboardClientRow[] = [];
 
   let myAmClients: DashboardClientRow[] = [];
@@ -178,12 +174,7 @@ export default async function DashboardPage() {
       .from("clients")
       .select("id, first_name, last_name, phone_mobile, stage_entered_at, stage")
       .eq("is_active", true)
-      .in("stage", [
-        "lead",
-        "welcome_packet",
-        "client_services",
-        "compliance_verification",
-      ])
+      .in("stage", ["lead", "welcome_packet", "client_services"])
       .order("stage_entered_at", { ascending: true });
 
     const clientIds = funnelClients?.map((c) => c.id as string) ?? [];
@@ -203,38 +194,6 @@ export default async function DashboardPage() {
       (funnelClients?.filter(
         (c) => !ccAuthClientIds.has(c.id as string)
       ) as DashboardClientRow[]) ?? [];
-  }
-
-  if (isCompliance) {
-    const { data: myComplianceClientsData } = await supabase
-      .from("clients")
-      .select(
-        "id, first_name, last_name, phone_mobile, stage_entered_at, stage, shape_contact_id"
-      )
-      .eq("stage", "compliance_verification")
-      .eq("assigned_compliance_id", profile.id)
-      .eq("is_active", true)
-      .order("stage_entered_at", { ascending: true });
-
-    myComplianceClients = (myComplianceClientsData ??
-      []) as DashboardClientRow[];
-
-    const { data: appts } = await supabase
-      .from("reminders")
-      .select(
-        `
-        id, description, due_date,
-        appointment_type,
-        client:client_id(id, first_name, last_name)
-      `
-      )
-      .eq("assigned_to", profile.id)
-      .eq("completed", false)
-      .gte("due_date", todayStartISO)
-      .lte("due_date", todayEndISO)
-      .order("due_date", { ascending: true });
-
-    myApptToday = asTodayAppointments(appts ?? []);
   }
 
   if (isAccounts) {
@@ -317,8 +276,7 @@ export default async function DashboardPage() {
     myApptToday = asTodayAppointments(appts ?? []);
   }
 
-  const showDeptView =
-    isCompliance || isAccounts || isServices;
+  const showDeptView = isAccounts || isServices;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -343,14 +301,6 @@ export default async function DashboardPage() {
             emptyMessage="All active funnel clients have CC authorization on file ✓"
             columns={["name", "phone", "days_in_stage"]}
             alertColor="amber"
-          />
-        ) : null}
-
-        {isCompliance ? (
-          <ComplianceDashboard
-            firstName={firstName}
-            myComplianceClients={myComplianceClients}
-            myApptToday={myApptToday}
           />
         ) : null}
 

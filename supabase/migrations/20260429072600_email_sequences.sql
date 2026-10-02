@@ -7,7 +7,6 @@ DO $$
 BEGIN
   CREATE TYPE client_status AS ENUM (
     'lead',
-    'compliance_verification',
     'active',
     'case_referred',
     'archived'

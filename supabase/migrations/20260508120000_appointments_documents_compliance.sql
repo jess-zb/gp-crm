@@ -1,4 +1,4 @@
--- Appointments (reminders), documents re-tag, compliance assignee, DNC reason
+-- Appointments (reminders), documents re-tag, DNC reason
 
 -- ---------------------------------------------------------------------------
 -- Reminders: appointment metadata
@@ -12,14 +12,10 @@ ALTER TABLE reminders ADD CONSTRAINT reminders_pipeline_type_check
   CHECK (pipeline_type IS NULL OR pipeline_type IN ('sales', 'service'));
 
 -- ---------------------------------------------------------------------------
--- Clients: DNC reason + compliance manager
+-- Clients: DNC reason
 -- ---------------------------------------------------------------------------
 ALTER TABLE clients
-  ADD COLUMN IF NOT EXISTS dnc_reason TEXT,
-  ADD COLUMN IF NOT EXISTS assigned_compliance_id UUID REFERENCES profiles (id) ON DELETE SET NULL;
-
-CREATE INDEX IF NOT EXISTS idx_clients_assigned_compliance
-  ON clients (assigned_compliance_id);
+  ADD COLUMN IF NOT EXISTS dnc_reason TEXT;
 
 -- ---------------------------------------------------------------------------
 -- Document type: CC Authorization

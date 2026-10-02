@@ -1,12 +1,11 @@
 /** Profile department flags used for assignment dropdowns. */
-export type DeptProfileFlag = "is_accounts" | "is_compliance" | "is_services";
+export type DeptProfileFlag = "is_accounts" | "is_services";
 
 export type DepartmentMemberOption = {
   id: string;
   full_name: string | null;
   email?: string | null;
   is_accounts?: boolean | null;
-  is_compliance?: boolean | null;
   is_services?: boolean | null;
 };
 

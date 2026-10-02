@@ -244,7 +244,7 @@ export default async function ClientsPage({
     const assigneeIds = Array.from(
       new Set(
         rawRows.flatMap((c) =>
-          [c.assigned_to, c.assigned_compliance_id, c.assigned_services_id].filter(
+          [c.assigned_to, c.assigned_services_id].filter(
             (id): id is string => Boolean(id)
           )
         )
@@ -279,10 +279,6 @@ export default async function ClientsPage({
       created_at: (c.created_at as string | null) ?? null,
       assigned_to: (c.assigned_to as string | null) ?? null,
       assignee_name: c.assigned_to ? nameByAssignee[c.assigned_to as string] ?? null : null,
-      assigned_compliance_id: (c.assigned_compliance_id as string | null) ?? null,
-      compliance_manager_name: c.assigned_compliance_id
-        ? nameByAssignee[c.assigned_compliance_id as string] ?? null
-        : null,
       assigned_services_id: (c.assigned_services_id as string | null) ?? null,
       services_user_name: c.assigned_services_id
         ? nameByAssignee[c.assigned_services_id as string] ?? null

@@ -18,7 +18,6 @@ type TeamOption = {
   full_name: string | null;
   email: string | null;
   is_accounts?: boolean | null;
-  is_compliance?: boolean | null;
 };
 
 type FieldErrors = Partial<Record<string, string>>;
@@ -56,7 +55,6 @@ export default function NewClientPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [team, setTeam] = useState<TeamOption[]>([]);
-  const [complianceTeam, setComplianceTeam] = useState<TeamOption[]>([]);
   const [loadingTeam, setLoadingTeam] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -88,9 +86,9 @@ export default function NewClientPage() {
       }
       const { data, error: qErr } = await supabase
         .from("profiles")
-        .select("id, full_name, email, is_accounts, is_compliance")
+        .select("id, full_name, email, is_accounts")
         .eq("is_active", true)
-        .or("is_accounts.eq.true,is_compliance.eq.true")
+        .eq("is_accounts", true)
         .order("full_name", { ascending: true });
 
       if (!cancelled) {
@@ -99,7 +97,6 @@ export default function NewClientPage() {
             (t) => !isHiddenFromRole(t.email, viewerRole)
           );
           setTeam(rows.filter((t) => !!t.is_accounts));
-          setComplianceTeam(rows.filter((t) => !!t.is_compliance));
         }
         setLoadingTeam(false);
       }
@@ -149,7 +146,7 @@ export default function NewClientPage() {
     if (!city.trim()) errors.city = "City is required.";
     if (!state.trim()) errors.state = "State is required.";
     if (!zip.trim()) errors.zip_code = "ZIP code is required.";
-    if (!assigned_to) errors.assigned_to = "Assigned sales user is required.";
+    if (!assigned_to) errors.assigned_to = "An Account Manager is required.";
 
     const verbal = formData.verbal_password.trim();
     if (!verbal) errors.verbal_password = "Verbal Password is required";
@@ -202,8 +199,6 @@ export default function NewClientPage() {
         state: state.trim() || null,
         zip_code: zip.trim() || null,
         assigned_to: String(fd.get("assigned_to") ?? "").trim(),
-        assigned_compliance_id:
-          String(fd.get("assigned_compliance_id") ?? "").trim() || null,
         stage: "lead" as const,
         is_active: true,
       };
@@ -502,7 +497,7 @@ export default function NewClientPage() {
           </h2>
           <label className="block text-sm" data-field="assigned_to">
             <span className={labelStrong}>
-              Assigned sales user <span className="text-red-600">*</span>
+              Account Manager <span className="text-red-600">*</span>
             </span>
             <select
               name="assigned_to"
@@ -522,24 +517,9 @@ export default function NewClientPage() {
             ) : null}
             {team.length === 0 && !loadingTeam ? (
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                No active Accounts department members found.
+                No active Account Managers found.
               </p>
             ) : null}
-          </label>
-          <label className="block text-sm">
-            <span className={labelStrong}>Assigned compliance manager (optional)</span>
-            <select
-              name="assigned_compliance_id"
-              disabled={loadingTeam}
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
-            >
-              <option value="">Unassigned</option>
-              {complianceTeam.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.full_name?.trim() || "Compliance"}
-                </option>
-              ))}
-            </select>
           </label>
         </section>
 

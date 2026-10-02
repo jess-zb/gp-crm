@@ -5,7 +5,6 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/app/components/Toast";
 
 export type DeptProfileField =
-  | "is_compliance"
   | "is_accounts"
   | "is_services";
 

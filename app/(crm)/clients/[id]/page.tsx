@@ -116,7 +116,6 @@ const CLIENT_SELECT = [
   "zip_code",
   "stage",
   "assigned_to",
-  "assigned_compliance_id",
   "assigned_services_id",
   "dnc_reason",
   "is_active",
@@ -175,7 +174,7 @@ export default async function ClientProfilePage({
   const { data: client, error: clientErr } = await supabase
     .from("clients")
     .select(
-      `${CLIENT_SELECT}, attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role), compliance_manager:profiles!assigned_compliance_id(full_name, email), services_manager:profiles!assigned_services_id(full_name, email)`
+      `${CLIENT_SELECT}, attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role), services_manager:profiles!assigned_services_id(full_name, email)`
     )
     .eq("id", clientId)
     .maybeSingle();
@@ -216,22 +215,14 @@ export default async function ClientProfilePage({
 
   const [
     { data: viewerDept },
-    { data: complianceProfileRow },
     { data: accountsProfileRow },
     { data: servicesProfileRow },
   ] = await Promise.all([
     supabase
       .from("profiles")
-      .select("is_compliance, is_accounts, is_services, full_name")
+      .select("is_accounts, is_services, full_name")
       .eq("id", user.id)
       .maybeSingle(),
-    c.assigned_compliance_id
-      ? supabase
-          .from("profiles")
-          .select("id, full_name")
-          .eq("id", String(c.assigned_compliance_id))
-          .maybeSingle()
-      : Promise.resolve({ data: null }),
     c.assigned_to
       ? supabase
           .from("profiles")
@@ -249,22 +240,14 @@ export default async function ClientProfilePage({
   ]);
 
   const viewerDeptFlags = viewerDept as {
-    is_compliance?: boolean | null;
     is_accounts?: boolean | null;
     is_services?: boolean | null;
   } | null;
 
   const shouldPromptSelfAssign =
-    (!!(viewerDeptFlags?.is_compliance) && !c.assigned_compliance_id) ||
     (!!(viewerDeptFlags?.is_accounts) && !c.assigned_to) ||
     (!!(viewerDeptFlags?.is_services) && !c.assigned_services_id);
 
-  const isComplianceUser = !!viewerDeptFlags?.is_compliance;
-
-  const complianceUserForHeader = complianceProfileRow as {
-    id: string;
-    full_name: string | null;
-  } | null;
   const accountsUserForHeader = accountsProfileRow as {
     id: string;
     full_name: string | null;
@@ -453,16 +436,14 @@ export default async function ClientProfilePage({
     );
 
   const [{ data: staff }, { data: attys }, { data: sidebarStaff }] = await Promise.all([
-    canReassign || isComplianceUser
+    canReassign
       ? supabase
           .from("profiles")
           .select(
-            "id, full_name, email, is_accounts, is_compliance, is_services"
+            "id, full_name, email, is_accounts, is_services"
           )
           .eq("is_active", true)
-          .or(
-            "is_accounts.eq.true,is_compliance.eq.true,is_services.eq.true"
-          )
+          .or("is_accounts.eq.true,is_services.eq.true")
           .not(
             "email",
             "in",
@@ -476,7 +457,6 @@ export default async function ClientProfilePage({
                 full_name: string | null;
                 email: string | null;
                 is_accounts: boolean | null;
-                is_compliance: boolean | null;
                 is_services: boolean | null;
               }[]
             | null,
@@ -505,10 +485,9 @@ export default async function ClientProfilePage({
       .order("full_name", { ascending: true }),
   ]);
   let staffOptions = staff ?? [];
-  if (canReassign || isComplianceUser) {
+  if (canReassign) {
     const assigneeIds = [
       c.assigned_to,
-      c.assigned_compliance_id,
       c.assigned_services_id,
     ].filter((id): id is string => typeof id === "string" && id.length > 0);
     const missingIds = assigneeIds.filter(
@@ -518,7 +497,7 @@ export default async function ClientProfilePage({
       const { data: missingStaff } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, email, is_accounts, is_compliance, is_services"
+          "id, full_name, email, is_accounts, is_services"
         )
         .in("id", missingIds);
       if (missingStaff?.length) {
@@ -541,7 +520,6 @@ export default async function ClientProfilePage({
   const assigneeName = assignedUser?.full_name?.trim() || null;
   const assigneeRole = (assignedUser?.role as string | null) ?? null;
 
-  const complianceName = complianceUserForHeader?.full_name?.trim() || null;
   const servicesAssigneeName = servicesUserForHeader?.full_name?.trim() || null;
 
   const displayName =
@@ -609,7 +587,6 @@ export default async function ClientProfilePage({
   const settingsClient: ClientSettingsTabClient = {
     stage: (c.stage as string | null) ?? null,
     assigned_to: (c.assigned_to as string | null) ?? null,
-    assigned_compliance_id: (c.assigned_compliance_id as string | null) ?? null,
     assigned_services_id: (c.assigned_services_id as string | null) ?? null,
     attorney_id: (c.attorney_id as string | null) ?? null,
     attorney: attorneyRow
@@ -671,15 +648,11 @@ export default async function ClientProfilePage({
         userRole={profile.role}
         assignedTo={(c.assigned_to as string | null) ?? null}
         assignedUserName={assigneeName}
-        assignedComplianceId={(c.assigned_compliance_id as string | null) ?? null}
         assignedServicesId={(c.assigned_services_id as string | null) ?? null}
-        complianceUser={complianceUserForHeader}
         accountsUser={accountsUserForHeader}
         servicesUser={servicesUserForHeader}
-        isComplianceUser={isComplianceUser}
         shouldPromptSelfAssign={shouldPromptSelfAssign}
         viewerDept={{
-          is_compliance: !!viewerDeptFlags?.is_compliance,
           is_accounts: !!viewerDeptFlags?.is_accounts,
           is_services: !!viewerDeptFlags?.is_services,
         }}
@@ -820,10 +793,8 @@ export default async function ClientProfilePage({
                 attorneyOptions={attorneyOptions}
                 assigneeName={assigneeName}
                 assigneeRole={assigneeRole}
-                complianceAssigneeName={complianceName}
                 servicesAssigneeName={servicesAssigneeName}
-                isComplianceUser={isComplianceUser}
-              />
+                      />
             ) : null}
           </ErrorBoundary>
         </div>

@@ -59,7 +59,6 @@ type ClientInboxRow = {
 type DeptDef = { emoji: string; name: string; access: "all" | "admin_dev" };
 
 const ALL_DEPARTMENTS: DeptDef[] = [
-  { emoji: "🟢", name: "Compliance Verification", access: "all" },
   { emoji: "🔵", name: "Client Services", access: "all" },
   { emoji: "🟣", name: "Legal / Attorneys", access: "admin_dev" },
   { emoji: "🟡", name: "Management", access: "admin_dev" },

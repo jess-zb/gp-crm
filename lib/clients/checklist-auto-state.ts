@@ -15,7 +15,6 @@ export const POA_DOCUMENT_TYPES = new Set([
 
 export const COLLECTION_LETTER_AUTO_STAGES = new Set([
   "case_sent_to_attorneys",
-  "compliance_verification",
   "mortgage",
 ]);
 

@@ -15,12 +15,11 @@ import {
   filterByDepartment,
   type DepartmentMemberOption,
 } from "@/lib/team/department-members";
-import { reassignAccountsUser, updateClientSettings } from "./actions";
+import { updateClientSettings } from "./actions";
 
 export type ClientSettingsTabClient = {
   stage: string | null;
   assigned_to: string | null;
-  assigned_compliance_id: string | null;
   assigned_services_id: string | null;
   attorney_id: string | null;
   attorney: { full_name: string | null; email: string | null } | null;
@@ -44,9 +43,7 @@ export function ClientSettingsTab({
   attorneyOptions,
   assigneeName,
   assigneeRole,
-  complianceAssigneeName,
   servicesAssigneeName,
-  isComplianceUser,
 }: {
   clientId: string;
   client: ClientSettingsTabClient;
@@ -59,20 +56,13 @@ export function ClientSettingsTab({
   attorneyOptions: AttorneyOption[];
   assigneeName: string | null;
   assigneeRole?: string | null;
-  complianceAssigneeName?: string | null;
   servicesAssigneeName?: string | null;
-  isComplianceUser?: boolean;
 }) {
   const toast = useToast();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [recordActive, setRecordActive] = useState(client.is_active !== false);
   const toggleBusyRef = useRef(false);
-
-  // Compliance-user accounts reassignment flow
-  const [complianceSelectedId, setComplianceSelectedId] = useState(client.assigned_to ?? "");
-  const [showComplianceConfirm, setShowComplianceConfirm] = useState(false);
-  const [isComplianceAssigning, setIsComplianceAssigning] = useState(false);
 
   const initialStage = normalizePipelineStage(client.stage);
 
@@ -84,13 +74,7 @@ export function ClientSettingsTab({
     (s) =>
       !isHiddenFromRole(s.email, viewerRole) ||
       (client.assigned_to && s.id === client.assigned_to) ||
-      (client.assigned_compliance_id && s.id === client.assigned_compliance_id) ||
       (client.assigned_services_id && s.id === client.assigned_services_id)
-  );
-  const complianceOptions = filterByDepartment(
-    visibleStaff,
-    "is_compliance",
-    client.assigned_compliance_id
   );
   const accountsOptions = filterByDepartment(
     visibleStaff,
@@ -154,23 +138,6 @@ export function ClientSettingsTab({
         <div className="grid gap-4 md:grid-cols-2">
           {canReassignClient ? (
             <label className="block text-sm md:col-span-2">
-              <span className="font-medium text-slate-700 dark:text-slate-300">Compliance</span>
-              <select
-                name="assigned_compliance_id"
-                defaultValue={client.assigned_compliance_id ?? ""}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
-              >
-                <option value="">Unassigned</option>
-                {complianceOptions.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.full_name?.trim() || s.id.slice(0, 8)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-          {canReassignClient ? (
-            <label className="block text-sm md:col-span-2">
               <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
               <select
                 name="assigned_to"
@@ -207,48 +174,16 @@ export function ClientSettingsTab({
           {!canReassignClient ? (
             <>
               <div className="text-sm md:col-span-2">
-                <span className="font-medium text-slate-700 dark:text-slate-300">Compliance</span>
+                <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
                 <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200">
-                  {complianceAssigneeName ?? "—"}
+                  {assigneeName ?? "—"}
+                  {assigneeName && assigneeRole ? (
+                    <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
+                      {getRoleDisplayName(assigneeRole)}
+                    </span>
+                  ) : null}
                 </p>
               </div>
-              {isComplianceUser ? (
-                <div className="text-sm md:col-span-2">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
-                  <select
-                    value={complianceSelectedId}
-                    onChange={(e) => setComplianceSelectedId(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
-                  >
-                    <option value="">Unassigned</option>
-                    {accountsOptions.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.full_name?.trim() || s.id.slice(0, 8)}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    disabled={complianceSelectedId === (client.assigned_to ?? "")}
-                    onClick={() => setShowComplianceConfirm(true)}
-                    className="mt-2 rounded-lg bg-[#8DE3B5] px-4 py-1.5 text-xs font-medium text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Reassign Accounts User
-                  </button>
-                </div>
-              ) : (
-                <div className="text-sm md:col-span-2">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
-                  <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200">
-                    {assigneeName ?? "—"}
-                    {assigneeName && assigneeRole ? (
-                      <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
-                        {getRoleDisplayName(assigneeRole)}
-                      </span>
-                    ) : null}
-                  </p>
-                </div>
-              )}
               <div className="text-sm md:col-span-2">
                 <span className="font-medium text-slate-700 dark:text-slate-300">Services</span>
                 <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200">
@@ -351,69 +286,6 @@ export function ClientSettingsTab({
         </div>
       </form>
 
-      {showComplianceConfirm ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]">
-            <h4 className="mb-1 text-base font-bold text-slate-900 dark:text-white">Reassign Accounts User?</h4>
-            <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-              This change will be logged in the activity feed.
-            </p>
-            <div className="mb-4 space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="w-20 shrink-0 text-slate-500 dark:text-slate-400">Currently:</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">{assigneeName || "Unassigned"}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-20 shrink-0 text-slate-500 dark:text-slate-400">Reassign to:</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">
-                  {accountsOptions.find((s) => s.id === complianceSelectedId)?.full_name?.trim() || "Unassigned"}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowComplianceConfirm(false)}
-                disabled={isComplianceAssigning}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#071929]"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={isComplianceAssigning}
-                onClick={async () => {
-                  setIsComplianceAssigning(true);
-                  try {
-                    const res = await reassignAccountsUser(clientId, complianceSelectedId || null);
-                    if (!res?.ok) {
-                      toast.error(toUserFacingError(res?.error ?? "Reassignment failed"));
-                      return;
-                    }
-                    toast.success("Accounts user reassigned");
-                    setShowComplianceConfirm(false);
-                    router.refresh();
-                  } catch {
-                    toast.error("An unexpected error occurred. Please refresh the page.");
-                  } finally {
-                    setIsComplianceAssigning(false);
-                  }
-                }}
-                className="flex items-center gap-2 rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-medium text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isComplianceAssigning ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Confirm Reassignment"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </section>
   );
 }

@@ -15,7 +15,7 @@ export const STAGE_LABEL = STAGE_LABELS;
 /** Bar colors for reports / velocity (matches dashboard pipeline). */
 export const STAGE_BAR_CLASS: Record<string, string> = { ...DASHBOARD_PIPELINE_COLORS };
 
-/** Stage velocity table order for reports (excludes mortgage; Compliance kept for legacy rows). */
+/** Stage velocity table order for reports (excludes mortgage). */
 export const REPORTS_VELOCITY_ORDER = [
   "lead",
   "welcome_packet",
@@ -23,7 +23,6 @@ export const REPORTS_VELOCITY_ORDER = [
   "client_services",
   "awaiting_collection_letter",
   "case_sent_to_attorneys",
-  "compliance_verification",
   "closed",
   "dnc",
 ] as const;

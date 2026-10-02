@@ -5,7 +5,6 @@ export type CurrentProfileRow = {
   full_name: string | null;
   email: string | null;
   role: string;
-  is_compliance: boolean;
   is_accounts: boolean;
   is_services: boolean;
 };
@@ -20,7 +19,7 @@ export async function getCurrentProfile(
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, full_name, email, role, is_compliance, is_accounts, is_services")
+    .select("id, full_name, email, role, is_accounts, is_services")
     .eq("id", user.id)
     .maybeSingle();
 

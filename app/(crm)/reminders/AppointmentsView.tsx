@@ -56,7 +56,6 @@ const SERVICE_STAGES = [
   "client_services",
   "awaiting_collection_letter",
   "case_sent_to_attorneys",
-  "compliance_verification",
   "mortgage",
 ] as const;
 

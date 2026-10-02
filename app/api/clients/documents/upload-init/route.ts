@@ -10,7 +10,7 @@ import {
 } from "@/lib/clients/document-upload";
 
 const BUCKET = "client-documents";
-const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB — large enough for compliance call recordings
+const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB — large enough for recorded client calls
 
 export async function POST(request: Request) {
   try {

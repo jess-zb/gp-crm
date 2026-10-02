@@ -24,7 +24,6 @@ function addHoursIso(from: Date, hours: number): string {
  */
 export const STAGE_APPOINTMENT_TYPES: Record<string, string[]> = {
   lead: [],
-  compliance_verification: [],
   welcome_packet: [],
   client_services: ["cs_intro_call", "poa_follow_up_call"],
   awaiting_collection_letter: [

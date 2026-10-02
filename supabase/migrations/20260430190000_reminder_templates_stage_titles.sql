@@ -12,10 +12,6 @@ VALUES
   ('lead', '24hr Call', '24 hour follow up call', 24, true),
   ('lead', '48hr Call', '48 hour follow up call', 48, true),
 
-  ('compliance_verification', 'Auth Recording', 'Call auth recording', 2, true),
-  ('compliance_verification', 'Cards Charged', 'Verify all cards charged', 4, true),
-  ('compliance_verification', '24hr Call', '24 hour follow up', 24, true),
-  ('compliance_verification', '48hr Call', '48 hour follow up', 48, true),
 
   ('client_services', 'Welcome Call', 'Welcome call to client', 2, true),
   ('client_services', '24hr Call', '24 hour follow up', 24, true),

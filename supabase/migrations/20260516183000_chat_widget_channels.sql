@@ -46,13 +46,6 @@ CREATE POLICY "chat_channels_select_accessible"
       AND (
         department IS NULL
         OR (
-          department = 'compliance'
-          AND EXISTS (
-            SELECT 1 FROM profiles p
-            WHERE p.id = auth.uid() AND COALESCE(p.is_compliance, false)
-          )
-        )
-        OR (
           department = 'accounts'
           AND EXISTS (
             SELECT 1 FROM profiles p
@@ -89,13 +82,6 @@ CREATE POLICY "chat_messages_select_accessible"
           c.type = 'department'
           AND (
             c.department IS NULL
-            OR (
-              c.department = 'compliance'
-              AND EXISTS (
-                SELECT 1 FROM profiles p
-                WHERE p.id = auth.uid() AND COALESCE(p.is_compliance, false)
-              )
-            )
             OR (
               c.department = 'accounts'
               AND EXISTS (
@@ -145,13 +131,6 @@ CREATE POLICY "chat_messages_insert_own_sender"
               c.type = 'department'
               AND (
                 c.department IS NULL
-                OR (
-                  c.department = 'compliance'
-                  AND EXISTS (
-                    SELECT 1 FROM profiles p
-                    WHERE p.id = auth.uid() AND COALESCE(p.is_compliance, false)
-                  )
-                )
                 OR (
                   c.department = 'accounts'
                   AND EXISTS (
@@ -206,12 +185,8 @@ SELECT 'Announcements', 'announcement', NULL
 WHERE NOT EXISTS (SELECT 1 FROM chat_channels WHERE name = 'Announcements');
 
 INSERT INTO chat_channels (name, type, department)
-SELECT 'Compliance', 'department', 'compliance'
-WHERE NOT EXISTS (SELECT 1 FROM chat_channels WHERE name = 'Compliance');
-
-INSERT INTO chat_channels (name, type, department)
-SELECT 'Accounts', 'department', 'accounts'
-WHERE NOT EXISTS (SELECT 1 FROM chat_channels WHERE name = 'Accounts');
+SELECT 'Account Managers', 'department', 'accounts'
+WHERE NOT EXISTS (SELECT 1 FROM chat_channels WHERE name = 'Account Managers');
 
 INSERT INTO chat_channels (name, type, department)
 SELECT 'Services', 'department', 'services'

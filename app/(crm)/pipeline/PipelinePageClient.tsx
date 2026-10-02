@@ -31,7 +31,6 @@ export type PipelinePageRow = {
   created_at: string | null;
   stage_entered_at: string | null;
   assigned_user: { full_name: string | null } | null;
-  compliance_manager: { full_name: string | null } | null;
   services_manager: { full_name: string | null } | null;
 };
 
@@ -40,9 +39,8 @@ const COLUMN_STORAGE_KEY = "zb-pipeline-visible-columns";
 const AVAILABLE_COLUMNS = [
   { id: "name", label: "Client Name", required: true as const },
   { id: "phone", label: "Phone" },
-  { id: "accounts", label: "Accounts" },
-  { id: "compliance", label: "Compliance" },
-  { id: "services", label: "Services" },
+  { id: "accounts", label: "Account Manager" },
+  { id: "services", label: "Client Services" },
   { id: "created_at", label: "Date Added" },
   { id: "days", label: "Days in Stage" },
 ] as const;
@@ -51,7 +49,6 @@ const DEFAULT_VISIBLE_COLUMNS: string[] = [
   "name",
   "phone",
   "accounts",
-  "compliance",
   "created_at",
   "days",
 ];
@@ -155,15 +152,6 @@ const PipelineRow = memo(({
                 className="crm-table-td hidden max-w-[160px] truncate md:table-cell"
               >
                 {embedName(c.assigned_user)}
-              </td>
-            );
-          case "compliance":
-            return (
-              <td
-                key={colId}
-                className="crm-table-td hidden max-w-[160px] truncate lg:table-cell"
-              >
-                {embedName(c.compliance_manager)}
               </td>
             );
           case "services":
@@ -431,16 +419,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
                         key={colId}
                         className="crm-table-th hidden w-[160px] md:table-cell"
                       >
-                        Accounts
-                      </th>
-                    );
-                  case "compliance":
-                    return (
-                      <th
-                        key={colId}
-                        className="crm-table-th hidden w-[160px] lg:table-cell"
-                      >
-                        Compliance
+                        Account Manager
                       </th>
                     );
                   case "services":

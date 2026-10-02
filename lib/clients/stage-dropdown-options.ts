@@ -15,7 +15,7 @@ const TERMINAL_NO_SELECT = new Set([
   "closed",
 ]);
 
-/** Visible pipeline destinations (Compliance hidden). */
+/** Visible pipeline destinations. */
 const PIPELINE_DROPDOWN_STAGES = [
   "lead",
   "welcome_packet",
@@ -57,17 +57,6 @@ export function getStageDropdownOptions(
     ];
   }
 
-  // Stranded clients on hidden Compliance — show current + allowed forward destinations.
-  if (isPipelineStageHidden(s)) {
-    return [
-      option(s, true),
-      option("welcome_packet"),
-      option("client_services"),
-      option("awaiting_collection_letter"),
-      option("case_sent_to_attorneys"),
-      option("closed"),
-    ];
-  }
 
   // New Lead: only Account Manager is selectable forward (Cancel handles Retention).
   if (s === "lead") {
