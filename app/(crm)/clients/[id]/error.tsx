@@ -1,8 +1,6 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
 import Link from "next/link";
-import { useEffect } from "react";
 
 export default function ClientError({
   error,
@@ -11,10 +9,6 @@ export default function ClientError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
-
   return (
     <main className="mx-auto max-w-2xl px-6 py-16">
       <h1 className="text-lg font-semibold text-red-600 dark:text-red-400">

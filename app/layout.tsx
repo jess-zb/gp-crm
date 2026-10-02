@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next'
 import { Barlow } from 'next/font/google'
 import { SonnerToaster } from '@/app/components/SonnerToaster'
 import { ThemeInit } from '@/app/components/ThemeInit'
-import * as Sentry from '@sentry/nextjs'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
@@ -37,7 +36,6 @@ export function generateMetadata(): Metadata {
     },
     other: {
       'mobile-web-app-capable': 'yes',
-      ...Sentry.getTraceData(),
     },
   }
 }

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import {
@@ -923,7 +922,6 @@ export default async function ClientProfilePage({
   );
   } catch (error) {
     console.error("Client profile error:", error);
-    Sentry.captureException(error);
     return (
       <div className="p-8 max-w-2xl">
         <h1 className="text-lg font-bold text-red-600">Something went wrong</h1>
