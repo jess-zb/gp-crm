@@ -125,15 +125,6 @@ export function canAccessAttorneyQueue(role: string): boolean {
   return isOpsLead(role);
 }
 
-/** Bulk Shape notes importer — dev only. */
-export function canAccessNotesImporter(role: string): boolean {
-  return role === "dev";
-}
-
-export function canAccessDuplicateReview(role: string): boolean {
-  return role === "dev";
-}
-
 /** Activity / audit-style sidebar on client profile: dev and admin only. */
 export function canViewClientActivityLog(role: string): boolean {
   return role === "dev" || role === "admin";
