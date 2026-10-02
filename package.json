@@ -25,7 +25,9 @@
     "check:business-contact": "tsx scripts/check-business-contact.ts",
     "sync:templates": "tsx scripts/sync-templates.ts",
     "sync:opensign-templates": "tsx scripts/sync-opensign-templates.ts",
-    "backfill:refunds": "tsx scripts/backfill-refunds.ts"
+    "backfill:refunds": "tsx scripts/backfill-refunds.ts",
+    "verify:schema": "tsx scripts/verify-schema-contract.ts",
+    "db:reset": "supabase db reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
