@@ -5,8 +5,6 @@ import { BUSINESS_NAME, FROM_EMAIL } from "@/lib/constants/business-contact";
 
 export const dynamic = "force-dynamic";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 function getAppOrigin(): string {
   const raw =
     process.env.NEXT_PUBLIC_APP_URL?.trim() ||
@@ -44,14 +42,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    await resend.emails.send({
+    const apiKey = process.env.RESEND_API_KEY?.trim();
+    if (!apiKey) {
+      console.error("[reset-password] RESEND_API_KEY is not configured");
+      return NextResponse.json({ ok: true });
+    }
+
+    await new Resend(apiKey).emails.send({
       from: FROM_EMAIL,
       to: email.trim().toLowerCase(),
       subject: `Reset your ${BUSINESS_NAME} CRM password`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#f8fafc;">
           <div style="background:#0A2540;border-radius:10px;padding:28px 32px;text-align:center;margin-bottom:24px;">
-            <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:0;">DebtSupportPros CRM</h1>
+            <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:0;">${BUSINESS_NAME} CRM</h1>
           </div>
           <div style="background:#ffffff;border-radius:10px;padding:32px;border:1px solid #e2e8f0;">
             <h2 style="color:#0f172a;font-size:18px;font-weight:600;margin:0 0 12px;">Reset your password</h2>
