@@ -7,10 +7,7 @@ import {
   Briefcase,
   ChevronLeft,
   ChevronRight,
-  FileText,
   GitBranch,
-  GitMerge,
-  GraduationCap,
   LogOut,
   Mail,
   Scale,
@@ -27,8 +24,6 @@ import { UsersIcon } from "@/components/ui/users-icon";
 import { GearIcon } from "@/components/ui/gear-icon";
 import {
   canAccessAttorneyQueue,
-  canAccessDuplicateReview,
-  canAccessNotesImporter,
   canAccessReports,
   canAccessTeamPage,
   isCrmStaffRole,
@@ -151,8 +146,6 @@ export function Sidebar({
 
   const showReports = canAccessReports(role);
   const showTeam = canAccessTeamPage(role);
-  const showNotesImporter = canAccessNotesImporter(role);
-  const showDuplicateReview = canAccessDuplicateReview(role);
   const showDripBackfill = isDev(role);
 
   useEffect(() => {
@@ -328,24 +321,6 @@ export function Sidebar({
         {showTeam
           ? renderLink("/team", "Team", UsersIcon, isNavActive(pathname, "/team"))
           : null}
-        {showNotesImporter
-          ? renderLink(
-              "/admin/import-notes",
-              "Import Notes",
-              FileText,
-              pathname.startsWith("/admin/import-notes"),
-              true
-            )
-          : null}
-        {showDuplicateReview
-          ? renderLink(
-              "/admin/duplicate-review",
-              "Duplicate Review",
-              GitMerge,
-              pathname.startsWith("/admin/duplicate-review"),
-              true
-            )
-          : null}
         {showDripBackfill
           ? renderLink(
               "/admin/drip-backfill",
@@ -361,15 +336,6 @@ export function Sidebar({
           GearIcon,
           isNavActive(pathname, "/settings")
         )}
-        {role !== "attorney"
-          ? renderLink(
-              "/help",
-              "Teach Me",
-              GraduationCap,
-              isNavActive(pathname, "/help"),
-              true
-            )
-          : null}
       </nav>
 
       <div className="mt-auto shrink-0 border-t border-[#0A2540] p-3">

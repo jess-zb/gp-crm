@@ -11,7 +11,7 @@ import type { CookieToSet } from "@/lib/supabase/cookie-types";
 
 const CRM_STAFF = new Set(["dev", "admin", "acct_manager"]);
 const OPS_LEAD = new Set(["dev", "admin"]);
-const COMMS_SETTINGS_HELP = new Set([
+const COMMS_AND_SETTINGS = new Set([
   "dev",
   "admin",
   "acct_manager",
@@ -167,17 +167,6 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    /* Duplicate review — dev only */
-    if (
-      pathname === "/admin/duplicate-review" ||
-      pathname.startsWith("/admin/duplicate-review/")
-    ) {
-      if (role !== "dev") {
-        return redirectTo(request, "/dashboard");
-      }
-      return response;
-    }
-
     /* Admin surface (FedEx batches, etc.) */
     if (pathname.startsWith("/admin")) {
       if (!CRM_STAFF.has(role)) {
@@ -197,7 +186,7 @@ export async function middleware(request: NextRequest) {
 
     /* Communications hub */
     if (matchesPath(pathname, "/communications")) {
-      if (!COMMS_SETTINGS_HELP.has(role)) {
+      if (!COMMS_AND_SETTINGS.has(role)) {
         return redirectTo(request, "/dashboard");
       }
       return response;
@@ -205,15 +194,7 @@ export async function middleware(request: NextRequest) {
 
     /* Settings */
     if (matchesPath(pathname, "/settings")) {
-      if (!COMMS_SETTINGS_HELP.has(role)) {
-        return redirectTo(request, "/dashboard");
-      }
-      return response;
-    }
-
-    /* Help */
-    if (matchesPath(pathname, "/help")) {
-      if (!COMMS_SETTINGS_HELP.has(role)) {
+      if (!COMMS_AND_SETTINGS.has(role)) {
         return redirectTo(request, "/dashboard");
       }
       return response;

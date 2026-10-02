@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "zb-theme";
 const ACTIVE_BG = "#8DE3B5";
 /** Stand out on both light sidebar and dark sidebar. */
-const TEACH_ME_FG = "#D946EF";
 
 function getInitials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -55,21 +54,12 @@ export function PortalSidebar({
     setDark(next === "dark");
   }, []);
 
-  const teachMeHref = process.env.NEXT_PUBLIC_SCRIBE_WORKSPACE_URL?.trim() ?? "";
-
   const initials = useMemo(() => getInitials(displayName), [displayName]);
   const firstNameOnly = useMemo(() => {
     const trimmed = displayName.trim();
     const first = trimmed.split(/\s+/).filter(Boolean)[0];
     return first || trimmed || "User";
   }, [displayName]);
-
-  const teachMeInner = (
-    <>
-      <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={2.5} aria-hidden />
-      <span className="text-sm font-semibold tracking-tight">Teach Me</span>
-    </>
-  );
 
   return (
     <aside
@@ -96,29 +86,6 @@ export function PortalSidebar({
       <div className="min-h-0 flex-1" aria-hidden />
 
       <div className="mt-auto shrink-0 space-y-3 border-t border-slate-200 p-3 dark:border-[#1a3550]">
-        <div className="px-0.5">
-          {teachMeHref ? (
-            <a
-              href={teachMeHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-lg px-1.5 py-2 transition-opacity hover:opacity-85"
-              style={{ color: TEACH_ME_FG }}
-              onClick={() => onMobileClose?.()}
-            >
-              {teachMeInner}
-            </a>
-          ) : (
-            <span
-              className="flex items-center gap-2 px-1.5 py-2 opacity-55"
-              style={{ color: TEACH_ME_FG }}
-              title="Set NEXT_PUBLIC_SCRIBE_WORKSPACE_URL in your environment to enable this link."
-            >
-              {teachMeInner}
-            </span>
-          )}
-        </div>
-
         <div className="flex items-center gap-3 px-1">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
