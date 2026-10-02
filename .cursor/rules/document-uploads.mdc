@@ -1,0 +1,79 @@
+---
+description: Client Uploads tab — storage flow, document_type enum, and INSERT trigger invariants
+globs: lib/clients/document-upload.ts,lib/clients/documents-upload-client.ts,app/(crm)/clients/[id]/DocumentsTab.tsx,app/api/clients/documents/**/*,supabase/migrations/*document*,supabase/migrations/*collection_letter*
+alwaysApply: false
+---
+
+# Client document uploads
+
+Before changing Uploads tab types, upload API routes, or `documents` INSERT triggers:
+
+```bash
+graphify query "upload-init upload-complete documents document_type"
+npm run verify:document-uploads   # requires DATABASE_URL in .env.local
+```
+
+## Upload flow (do not revert to single POST body)
+
+1. `POST /api/clients/documents/upload-init` — auth + MIME check + signed URL
+2. Browser → Supabase Storage (`client-documents` bucket)
+3. `POST /api/clients/documents/upload-complete` — DB row + stage triggers
+
+Bucket limit is **50 MB** (`client-documents.file_size_limit`); keep API max aligned.
+
+## UI ↔ Postgres enum (must stay in sync)
+
+`UI_DOCUMENT_TYPE_VALUES` in `lib/clients/document-upload.ts` is the source of truth for
+dropdown values. Every value **must** exist on Postgres enum `document_type`.
+
+When adding a UI type: `ALTER TYPE document_type ADD VALUE IF NOT EXISTS '…'` in a migration,
+then run `npm run verify:document-uploads`.
+
+## Trigger rules (Jul 2026 outage)
+
+**Never** `COALESCE(NEW.document_type, '')` on enum columns — Postgres casts `''` to the enum
+and raises `invalid input value for enum document_type: ""`, breaking **every** upload.
+
+```sql
+-- ❌ BAD — broke all uploads ~3.5h on 2026-07-30
+COALESCE(NEW.document_type, '') = 'collection_letter'
+
+-- ✅ GOOD
+NEW.document_type::text = 'collection_letter'
+```
+
+After editing `handle_collection_letter_upload()` or `handle_poa_upload()`, smoke-test:
+
+```sql
+-- Roll back after verify; use a real client_id from dev/staging
+BEGIN;
+INSERT INTO documents (client_id, document_type, file_name, storage_path)
+VALUES ('…', 'upload', 'smoke.pdf', 'test/smoke.pdf');
+ROLLBACK;
+```
+
+## Allowed file types
+
+Keep `isAllowedUploadFile`, `DocumentsTab` `accept=`, and upload-init error text in sync.
+Include PDF, TXT, images, audio, video, Word unless product says otherwise.
+
+## PDF / text preview (Jul 2026)
+
+Shape-style exports are often plain text saved with a `.pdf` extension (no `%PDF-` header).
+**Do not reject these at upload** — staff upload them as-is.
+
+Instead:
+
+1. **Accept all uploads** that pass `isAllowedUploadFile` (including fake PDFs and `.txt`).
+2. **Preview** — `sniffDocumentContentKind()` + `DocPreviewModal`: real PDFs use iframe;
+   text (mislabeled PDFs, `.txt`) render in a `<pre>` block.
+   Attorney portal uses the same modal via
+   `getClientDocumentPreviewUrl()` (`download?inline=1`) — not Storage signed URLs.
+3. **Download** — `resolveDownloadFileName()` appends `.txt` for Shape text-as-PDF
+   (e.g. `WALTER WEAVER.pdf` → `WALTER WEAVER.pdf.txt`) so double-click opens in a text editor.
+   Use `downloadClientDocument()` / `GET /api/clients/documents/download` (streams attachment).
+   Legacy public attorney-batch downloads use the same content-kind rename.
+4. **Audit only** — `npm run audit:mislabeled-pdfs` lists PDF-labeled files missing magic bytes.
+
+Helpers: `lib/clients/document-download.ts` (classify, sniff, download),
+`lib/clients/document-upload.ts` (`hasPdfMagicBytes`, `normalizeUploadMimeType`, …).

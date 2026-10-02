@@ -1,0 +1,50 @@
+---
+description: Developer account is hidden system-wide — RLS on profiles, not per-call-site filters
+globs: lib/constants/hidden-accounts.ts,app/(crm)/team/**/*,supabase/migrations/*profiles*,supabase/migrations/*dev*
+alwaysApply: false
+---
+
+# Hidden accounts (locked Aug 2026)
+
+The `dev` account (`dev@debtsupportpros.com`, label "Developer") must not appear
+anywhere in the system for any other user — no pickers, dropdowns, team tables,
+assignee columns, sender names, or activity feeds.
+
+## Enforcement lives in the database
+
+`20260804230000_hide_dev_account.sql` makes the dev profile unreadable to
+everyone except itself:
+
+```sql
+-- profiles_select_visible
+id = auth.uid() OR current_user_role() = 'dev' OR role IS DISTINCT FROM 'dev'
+```
+
+- **Exactly one permissive SELECT policy on `profiles`.** Permissive policies are
+  OR'd, so re-adding a broad "all staff see profiles" policy silently unhides the
+  account. That blanket policy is what let it leak.
+- Admins are **not** exempt. They can manage teammates but cannot read, update,
+  or delete the dev row.
+- The old catch-all `FOR ALL` policy was split into explicit INSERT/UPDATE/DELETE
+  policies, because an `ALL` policy's `USING` clause also grants SELECT.
+
+## Client-side filtering is a convenience, not the boundary
+
+- `isHiddenFromRole(email, viewerRole)` in `lib/constants/hidden-accounts.ts`
+  still belongs in any new staff list, so the dev viewer sees everyone while
+  others do not. Never rely on it alone.
+- Verify by impersonation, not by reading the query:
+
+```sql
+BEGIN;
+SET LOCAL role authenticated;
+SET LOCAL request.jwt.claims = '{"sub":"<non-dev-uuid>","role":"authenticated"}';
+SELECT count(*) FILTER (WHERE role = 'dev') FROM profiles;  -- must be 0
+ROLLBACK;
+```
+
+## Denormalized names need scrubbing
+
+RLS cannot hide strings already copied into other tables. `audit_log.performed_by_name`
+stored "Developer" and was scrubbed to `'System'`. Check any new
+`performed_by_name` / `sender_name` / `author_name` column for the same leak.

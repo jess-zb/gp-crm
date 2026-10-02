@@ -1,0 +1,35 @@
+---
+description: Auto-appointment keep/kill — do not re-enable disabled stage tasks
+globs: lib/reminders/**/*,lib/clients/case-sent-triggers.ts,app/(crm)/clients/[id]/ClientStageHeader.tsx,supabase/migrations/**
+alwaysApply: false
+---
+
+# Auto-appointments (Aug 2026)
+
+Do **not** turn unused auto-creates back on without product sign-off. Types stay
+in the add-appointment UI for **manual** use. Templates stay in
+`reminder_templates` with `is_active = false` — do not delete the rows.
+
+## Auto-create that stays on
+
+- **CS Intro Call** when the client enters Client Services
+- **POA Follow Up** when FedEx marks the packet delivered
+
+## Off (flags / inactive templates, not deleted)
+
+Stage-entry flags in `lib/reminders/stage-entry-appointments.ts` (`AUTO_CREATE`):
+Retention Call, 30/60/90 check-ins.
+
+`CREATE_CASE_SENT_NOTIFY_APPOINTMENT = false` in `lib/clients/case-sent-triggers.ts`.
+Client + attorney already get mail when assigned from Attorney Queue
+(`case_referred` + portal assignment). Do not recreate a “call the client”
+task on stage change.
+
+All `reminder_templates` are inactive, including Cards Charged and the renamed
+AM Enrollment Follow-Up (was “7 Day Call”). Re-enable with `is_active = true`
+or by flipping the matching flag.
+
+## Notes vs Activity
+
+Appointment creates write `appointment_created` to `audit_log`, not a
+communications note. Do not restore “Appointment scheduled:” notes.

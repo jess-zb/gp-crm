@@ -1,0 +1,32 @@
+---
+description: Middleware must fail fast under 25s; timeout is not sign-out
+globs: middleware.ts,lib/middleware/**/*,app/(crm)/layout.tsx,app/attorney/layout.tsx,app/page.tsx
+alwaysApply: false
+---
+
+# Middleware Auth budget (locked Aug 2026)
+
+Vercel kills middleware if it does not send a first byte within **25 seconds**.
+That 504s *every* matched path (`/clients`, `/dashboard`, uploads, etc.).
+
+## Invariants
+
+1. **Budget** — `MIDDLEWARE_AUTH_BUDGET_MS` (~2s) on Auth `getUser` + `profiles`.
+   Abort; do not wait for 25s.
+2. **Timeout ≠ logout** — do not clear cookies (`skipCookieWrites` after abort).
+   Do **not** `redirect` to `/login` because Auth was slow. Pass through; pages
+   re-check the session.
+3. **Public paths first** — `/sign`, `/api/sign`, `/attorney-batch`,
+   `/api/attorney-batch` must return before any Auth call.
+4. **Attorney dual gate** — `app/(crm)/layout.tsx` redirects `role === "attorney"`
+   to `/attorney/cases`. Middleware allowlist for document download is unchanged
+   (see `attorney-portal-middleware.mdc`).
+5. **Transient errors** — timeout/abort/network on `getUser` / profile load must
+   not send a signed-in user to the login form (`isTransientUpstreamFailure`).
+
+## Regression check
+
+```bash
+npm run test:middleware-auth-budget
+npm run test:attorney-portal-allowlist
+```

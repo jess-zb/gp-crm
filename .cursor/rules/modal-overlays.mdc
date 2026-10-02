@@ -1,0 +1,46 @@
+---
+description: Use ModalOverlay for dialogs so tall panels cannot strand their buttons off-screen
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# Modal overlays
+
+Build every dialog backdrop with `ModalOverlay` from
+`@/app/components/ModalOverlay`. Do not hand-roll
+`fixed inset-0 flex items-center justify-center`.
+
+A fixed element does not scroll. When the panel grows taller than the window —
+a modal that reveals fields as you fill it in, a short laptop window, a
+zoomed-in browser — the overflow becomes unreachable and only the page behind
+moves, so the submit button cannot be clicked at all. This shipped once in the
+cancellation modal: choosing "Refund Requested" added an amount and a MID, and
+users on laptops could not reach Confirm.
+
+```tsx
+// ❌ BAD — buttons vanish once the panel outgrows the window
+<div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4">
+  <div className="w-full max-w-md rounded-lg bg-white p-6">{/* … */}</div>
+</div>
+
+// ✅ GOOD
+<ModalOverlay labelledBy="my-title" onBackdropClick={() => setOpen(false)}>
+  <div className="w-full max-w-md rounded-lg bg-white p-6">{/* … */}</div>
+</ModalOverlay>
+```
+
+Notes:
+
+- Omit `onBackdropClick` for a dialog that must be answered, not dismissed.
+- `className` carries only stacking and tint, e.g. `"z-[245] bg-black/40"`.
+- The panel needs no `onClick` stopPropagation; the backdrop check handles it.
+- If the panel's height varies a lot, also cap it and pin its actions so the
+  buttons never need scrolling:
+  `flex max-h-[calc(100vh-2rem)] flex-col` with the body in an
+  `overflow-y-auto` div and the buttons in a sibling below it. See the
+  cancellation modal in `app/(crm)/clients/[id]/ClientStageHeader.tsx`.
+- Older overlays elsewhere still use the raw pattern; convert them when you
+  touch that file.
+
+Verify at a short window (about 620px tall, and 420px for a stress test) that
+the primary action is on screen, not just present in the DOM.

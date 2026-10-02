@@ -1,0 +1,65 @@
+---
+description: Golden Pathway CRM conventions — roles, departments, MIDs, impact analysis
+alwaysApply: true
+---
+
+# Golden Pathway CRM conventions
+
+This CRM was imported from an internal baseline and then stripped. The removals
+below are deliberate; do not reintroduce them.
+
+## Removed on purpose — do not add back
+
+- **No physical mail.** There is no packet manager, no FedEx, no print vendor,
+  no shipping, no tracking numbers, and no `delivery_method`. Welcome packets are
+  delivered by e-signature only.
+- **No third department.** Staff departments are exactly two:
+  `profiles.is_accounts` (Account Managers) and `profiles.is_services`
+  (Client Services). There is no compliance department, no
+  `assigned_compliance_id`, and no `compliance_verification` stage.
+- **No Sentry, RingCentral, Trigger.dev, ElevenLabs, Tenor, DocuSign, OpenSign,
+  or Shape CRM importer.** If error tracking or telephony is wanted later, it is
+  a fresh decision, not a restoration.
+
+## Roles vs. departments
+
+They are different axes and both must be checked.
+
+- **Role** (`profiles.role`, enum `user_role`): `dev`, `admin`, `acct_manager`,
+  `attorney`, `client`. Capability predicates live in `lib/roles.ts` — add one
+  there instead of inlining a role comparison.
+- **Department** (booleans on `profiles`): `is_accounts`, `is_services`. A person
+  may be in both. Filter assignee dropdowns through
+  `lib/team/department-members.ts`.
+
+Any role or permission change must be made in all three layers together:
+`middleware.ts` route gates, the `lib/roles.ts` predicate, and the Postgres RLS
+policy. Row Level Security is the security boundary — never client-side
+filtering.
+
+## MIDs
+
+A MID is a **label**, never a tenancy or visibility boundary. Every staff member
+sees every client regardless of MID; do not add MID-scoped RLS.
+
+- `mids` is the source of truth. There is no hardcoded merchant list.
+- `clients.mid_id` is chosen at creation and follows the client through to
+  attorney hand-off. Read it by join; never re-infer it.
+- Financial and legal records snapshot the MID *name* at the time they are
+  produced (`esign_requests`, `refunds`), so renaming a MID cannot rewrite
+  history.
+
+## E-Sign
+
+Adding a MID and its documents must stay **fully no-code**: an admin enters a MID
+name, uploads PDFs, and places fields with the drag-and-drop editor. Never
+reintroduce a hardcoded document-kind union, a per-kind `switch`, a per-kind
+`CHECK` constraint, or a PDF bundled into the repo. See
+`.cursor/rules/esign-and-uploads.mdc`.
+
+## Before changing shared code
+
+Shared surfaces — sidebars, role checks, `client_notes`, email sequence tables,
+MID pickers, e-sign templates, the Attorney Queue and public batch downloads,
+onboarding stage gates — are used from many places. Grep for every call site
+before editing, and run `pnpm tsc --noEmit`.

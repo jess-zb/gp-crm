@@ -1,0 +1,65 @@
+---
+description: Staff chat privacy — DM isolation via RLS, badge-only unread (no popups)
+globs: app/components/chat/**/*,app/components/AlertNotification.tsx,supabase/migrations/*chat*
+alwaysApply: false
+---
+
+# Staff chat privacy (locked Aug 2026)
+
+Before touching `ChatWidget`, `AlertNotification`, or any `chat_*` table, run:
+
+```bash
+graphify query "chat channel direct message unread badge realtime"
+```
+
+Verify any policy change by impersonating real users, never by reading the SQL:
+
+```sql
+BEGIN;
+SET LOCAL role authenticated;
+SET LOCAL request.jwt.claims = '{"sub":"<user-uuid>","role":"authenticated"}';
+SELECT count(*) FROM chat_messages;  -- must exclude every non-member channel
+ROLLBACK;
+```
+
+## Policy (do not regress)
+
+### DM isolation lives in the database
+
+- `can_access_chat_channel(uuid)` / `can_post_chat_channel(uuid)` are the single
+  source of truth (`20260804190000_chat_private_dm_rls.sql`). Client-side
+  filtering is a UX convenience, never the security boundary.
+- **Exactly one permissive SELECT policy per chat table.** Permissive policies
+  are OR'd, so adding a broad "authenticated can read" policy next to the
+  membership check silently reopens every DM. This is the original bug.
+- Admin/dev get department channels, **not** other people's DMs. Any audit
+  access needs explicit product sign-off, not a policy loophole.
+- Supabase Realtime honors RLS, so a leaky SELECT policy becomes a live
+  notification broadcast on every logged-in browser.
+
+### Unread is a badge, never a popup
+
+- Unread shows **only** as the count on the ChatWidget launcher (bottom right).
+- **Do not** reintroduce a `new_message` alert in `AlertNotification` — that
+  modal is `z-[9999]`, locks page scroll, and previously leaked DM body text.
+  It is reserved for appointments and overdue tasks.
+- **Do not** add `new Notification(...)` for chat. A single soft chime plays
+  for member channels only, and is suppressed for the open conversation.
+- Badge counts seed from `chat_read_receipts` so they survive a reload; keep
+  writing that receipt whenever a channel is opened.
+
+### Channel data invariants
+
+- `General` is `type='department'` with `department IS NULL` (visible to all
+  staff). It is **not** a `direct` channel — that mistyping hid it from everyone.
+- One DM per pair, enforced by `chat_channels_direct_pair_uniq`. Handle the
+  `23505` conflict by adopting the existing channel.
+
+## Related files
+
+| Concern | Source of truth |
+|---------|-----------------|
+| Policies + helpers | `supabase/migrations/20260804190000_chat_private_dm_rls.sql` |
+| Widget, badge, realtime | `app/components/chat/ChatWidget.tsx` |
+| Modal alerts (non-chat) | `app/components/AlertNotification.tsx` |
+| Unrelated bell/toasts | `app/components/NotificationCenter.tsx` (`notifications` table) |

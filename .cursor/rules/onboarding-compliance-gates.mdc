@@ -1,0 +1,66 @@
+---
+description: Onboarding compliance + stage gates — audio, CC auth, POA, packet rules (Jul 2026 policy)
+globs: lib/workflow/**/*,lib/reminders/workflow-config.ts,app/(crm)/clients/[id]/ClientStageHeader.tsx,app/(crm)/dashboard/**/*
+alwaysApply: false
+---
+
+# Onboarding & compliance gates (locked Jul 2026)
+
+Before changing welcome-packet flow, stage Advance buttons, compliance dashboard,
+or document upload requirements, read `docs/onboarding-packet-policy.md` and
+run:
+
+```bash
+graphify query "stage blockers welcome packet audio POA cc_authorization"
+graphify path "ClientStageHeader" "blockAdvanceFromClientServicesWithoutPoa"
+```
+
+## Policy (do not regress)
+
+### Audio recording — optional, never a gate
+
+- **`audio_recording`** remains a document type for compliance snippets.
+- **Do not** block stage advance, FedEx queue, or welcome-packet send on audio.
+- Removed: `blockAdvanceFromAccountManagerWithoutAudio` (was
+  `welcome_packet` → `client_services`). Do not reintroduce without explicit
+  product sign-off.
+
+### CC authorization — informational only
+
+- **`cc_authorization`** is the bank-required form (not audio).
+- **Not** a stage gate. Staff can send packets and advance without it on file.
+- **Dev-only dashboard widget** (`role === "dev"`): "Missing CC Authorization"
+  lists active funnel clients without a `cc_authorization` document — tracking
+  only, visible to dev accounts not admin/compliance/accounts.
+
+### Signed POA — gate at Client Services exit
+
+- Manual Advance gate: **`client_services` → `awaiting_collection_letter`**
+  only (`blockAdvanceFromClientServicesWithoutPoa` in `lib/workflow/stage-blockers.ts`).
+- **Same signal as checklist:** POA document on file (`poa_document` / `poa_signed`)
+  **or** `clients.poa_signed_at` — use `hasSignedPoaOnRecord()` in
+  `lib/clients/poa-upload-advance.ts`. Do **not** gate on `poa_signed_at` alone.
+- POA upload via Documents must call `markPoaSignedOnClient()` so dashboard widgets
+  stay aligned with Uploads.
+- POA upload auto-advance (`advanceClientAfterPoaUpload` + `handle_poa_upload`)
+  moves **Account Manager (`welcome_packet`) or Client Services** →
+  `awaiting_collection_letter` when a POA lands on Uploads (manual or eSign).
+  Manual Advance still gates only `client_services` → awaiting (staff can
+  still move AM without POA). CC Auth never auto-stages.
+
+### Retired appointment type
+
+- **`auth_recording`** removed from `WORKFLOW_TYPES`. Legacy DB rows may still
+  exist; do not add back to the modal without product request.
+
+## Related files
+
+| Concern | Source of truth |
+|--------|-----------------|
+| Stage gates | `lib/workflow/stage-blockers.ts`, `canAdvanceStage()` in `workflow-config.ts` |
+| Advance UI | `ClientStageHeader.tsx` |
+| Dev CC auth widget | `app/(crm)/dashboard/page.tsx` |
+| POA upload advance | `lib/clients/poa-upload-advance.ts` |
+
+Packet Manager / FedEx batch rules (secondary last name, PDF advisor first
+name) live in `.cursor/rules/packet-manager-resend.mdc`.

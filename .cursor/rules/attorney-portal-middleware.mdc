@@ -1,0 +1,37 @@
+---
+description: Locked — attorney middleware must allowlist portal document download API
+globs: middleware.ts,lib/attorney/portal-api-allowlist.ts,app/attorney/**/*,app/api/clients/documents/download/**/*,lib/clients/document-download.ts
+alwaysApply: true
+---
+
+# Attorney portal middleware (locked Aug 2026)
+
+Attorneys are redirected to `/attorney/cases` for **every** path outside
+`/attorney/cases*` and `/attorney/settings*`.
+
+Portal Download / Preview navigate (or fetch) to:
+
+```
+/api/clients/documents/download?documentId=…          # attachment download
+/api/clients/documents/download?documentId=…&inline=1 # DocPreviewModal
+```
+
+## Invariant — do not regress
+
+1. Keep `/api/clients/documents/download` in
+   `ATTORNEY_PORTAL_API_ALLOWLIST`
+   (`lib/attorney/portal-api-allowlist.ts`).
+2. Middleware **must** call `isAttorneyPortalApiPath(pathname)` **before** the
+   blanket attorney → Cases redirect.
+3. Do **not** "simplify" attorney middleware by removing that allowlist check.
+4. Access control stays in the download route (`canAccessClientRecord` + RLS) —
+   the allowlist only stops the redirect bounce.
+
+## Regression check
+
+```bash
+npm run test:attorney-portal-allowlist
+```
+
+If you add another attorney-portal API (upload, etc.), extend the allowlist
+constant — never hardcode a one-off path only in middleware.

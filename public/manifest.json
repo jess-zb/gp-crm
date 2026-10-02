@@ -1,0 +1,37 @@
+{
+  "name": "DebtSupportPros CRM",
+  "short_name": "DSP CRM",
+  "description": "DebtSupportPros Client Management",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0A2540",
+  "theme_color": "#0A2540",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Clients",
+      "url": "/clients",
+      "description": "View all clients"
+    },
+    {
+      "name": "Appointments",
+      "url": "/reminders",
+      "description": "View appointments"
+    }
+  ]
+}

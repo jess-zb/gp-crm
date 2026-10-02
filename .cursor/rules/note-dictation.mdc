@@ -1,0 +1,28 @@
+---
+description: Add Note speech-to-text — browser dictation, no audio storage
+globs: app/components/DictationMicButton.tsx,lib/hooks/use-speech-to-text.ts,lib/speech/**,app/(crm)/clients/[id]/ClientRightSidebar.tsx,app/(crm)/clients/[id]/CommunicationsTab.tsx
+alwaysApply: false
+---
+
+# Note dictation (F-006)
+
+Staff can click **Dictate** on Add Note (sidebar + Communications tab). The
+browser Speech Recognition API transcribes into the existing textarea. They
+edit, then Save. Nothing auto-saves. Audio is not stored in the CRM.
+
+## Invariants — do not regress
+
+1. Reuse `DictationMicButton` + `useSpeechToText`. Do not add a second
+   recognition path or a transcription API unless product asks to replace
+   the browser API (Chrome needs a network connection; that is expected).
+2. Append to existing text. Do not replace the field or save on stop.
+3. Keep the control on **Add Note** first. **Add Call** is the next
+   optional surface — same component, same rules.
+4. Unsupported browsers get a disabled mic with a Chrome/Edge tooltip.
+   Do not hide Add Note or block typing.
+
+## Files
+
+- `app/components/DictationMicButton.tsx`
+- `lib/hooks/use-speech-to-text.ts`
+- `lib/speech/join-utterance.ts`

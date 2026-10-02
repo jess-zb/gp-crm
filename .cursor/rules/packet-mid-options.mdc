@@ -1,0 +1,50 @@
+---
+description: Packet Needed MID dropdown — shared sorted merchant list + Dev extras
+globs: lib/constants/merchants.ts,lib/hooks/use-merchant-options.ts,app/admin/fedex-batches/**/*,app/(crm)/clients/**/BillingTabContent.tsx,app/(crm)/clients/**/ClientStageHeader.tsx,app/api/esign/**/*,app/api/sign/**/*,app/api/packets/**/*,lib/packets/resolve-merchant.ts,supabase/migrations/*packet_mid*,supabase/migrations/*esquire_bridge*
+alwaysApply: false
+---
+
+# Shared MID / merchant options (locked Aug 2026)
+
+All CRM MID pickers share one list:
+
+1. Built-in `MERCHANT_OPTIONS` in `lib/constants/merchants.ts`
+2. Extras from `crm_settings` key `packet_mid_extra_options` (JSON string array)
+
+Merged via `mergeMerchantOptions()` — **A–Z**, case-insensitive, with
+**"Other" last**.
+
+## Surfaces (must stay linked)
+
+- Packet Needed MID picker + Dev **Add MID** button / modal
+  (`ManagePacketMidOptions` / `PacketManagerLayout`)
+- Billing card MIDs (`BillingTabContent` → `useMerchantOptions`)
+- Cancel → Refund processor MID (`ClientStageHeader` → `useMerchantOptions`)
+- eSign staff prefill + public sign context (`loadMerchantExtras` +
+  `mergeMerchantOptions`)
+- eSign layout editor (`useMerchantOptions`)
+
+## Do not keep asking for hardcoded adds
+
+When the user wants a **new MID name**, prefer the **dev-only UI** on Packet
+Manager → Packets Needed (`ManagePacketMidOptions`), not a code change. That
+upserts `packet_mid_extra_options` (RLS: `role = 'dev'` write; all
+authenticated can read). Keep extras management in the **Add MID** modal —
+do not put a dashed editor row on the Needed table.
+
+Hardcode into `MERCHANT_OPTIONS` only when the merchant is a permanent product
+default (still appears everywhere via merge).
+
+Permanent defaults added Sep 2026: **Premier Outlook**, **Juris Route**,
+**Esquire Bridge**. The processor name is two words: `Esquire Bridge`. Never
+store or display `Esquirebridge`. `canonicalizeMerchantName()` maps that
+misspelling (any spacing/case) to `Esquire Bridge`.
+
+## Invariants
+
+- UI gate for managing extras: Packet Manager `isDev` (dev account email).
+- Write gate: existing `crm_settings` "Dev can update settings" policy.
+- Client pickers: `useMerchantOptions()` — do not import static
+  `MERCHANT_OPTIONS` / `PROCESSOR_MID_OPTIONS` alone for dropdowns.
+- Server pickers: `loadMerchantExtras` + `mergeMerchantOptions`.
+- Setting key constant: `PACKET_MID_EXTRAS_SETTING_KEY`.

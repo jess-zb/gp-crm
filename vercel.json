@@ -1,0 +1,44 @@
+{
+  "buildCommand": "npm run vercel-build",
+  "functions": {
+    "app/api/sign/pdf/route.ts": {
+      "includeFiles": "public/esign-templates/**"
+    },
+    "app/api/sign/complete/route.ts": {
+      "includeFiles": "public/esign-templates/**"
+    },
+    "app/api/esign/template-pdf/route.ts": {
+      "includeFiles": "public/esign-templates/**"
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/dispatch-emails",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/missed-appointments",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/holiday-autoresponder",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/postlogic/poll-status",
+      "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/postlogic/send-batch",
+      "schedule": "0 3 * * 1,4"
+    },
+    {
+      "path": "/api/packets/update-tracking",
+      "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/sync-sunset",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+---
+description: Attorney Queue portal assignment + legacy public batch download invariants
+globs: lib/attorney-queue/**/*,lib/attorney/**/*,app/api/attorney-batch/**/*,app/attorney-batch/**/*,app/admin/attorney-queue/**/*,app/attorney/**/*,app/api/clients/documents/download/**/*,middleware.ts,supabase/migrations/*attorney*
+alwaysApply: false
+---
+
+# Attorney Queue / Portal Assignment
+
+Before changing Attorney Queue eligibility, bulk assignment, or attorney portal
+visibility, run impact analysis via graphify:
+
+```bash
+graphify query "attorney queue portal assignment assignClientsToAttorney"
+graphify path "assignClientsToAttorney" "AttorneyCaseDetailPage"
+graphify explain "attorney_portal_assigned_at"
+```
+
+## Access control
+
+- **Attorney Queue UI** (`/admin/attorney-queue`) — **dev + admin only**
+  (`canAccessAttorneyQueue` / `isOpsLead`). Account managers do **not** have
+  queue access.
+
+## Current workflow (Jul 2026)
+
+1. **Queue eligibility** — Client must be in `case_sent_to_attorneys` with
+   `attorney_portal_assigned_at IS NULL`. Stage can be set manually or
+   **auto-advanced** when a collection letter is uploaded (`is_collection_letter`
+   or `document_type = 'collection_letter'`) via DB trigger
+   `handle_collection_letter_upload()` + app-layer fallback in
+   `upload-complete`.
+
+   **Trigger invariant:** never `COALESCE(NEW.document_type, '')` — use
+   `NEW.document_type::text = 'collection_letter'`. See
+   `.cursor/rules/document-uploads.mdc` and `npm run verify:document-uploads`.
+
+2. **Bulk assign** — Staff selects clients + attorney →
+   `assignClientsToAttorney`:
+   - Validates deliverable email on **every client** and the attorney before
+     assign (fail fast).
+   - Sets `attorney_id`, stamps `attorney_portal_assigned_at` /
+     `attorney_portal_assigned_by`.
+   - Enrolls `case_referred` via `ensureCaseReferredOnAssign` (instant send;
+     enrollment stays due for cron if instant fails).
+   - **Attorney email** — sent immediately via Resend when possible; on failure
+     queued in `staff_email_queue` for `runStaffEmailDispatch()` cron backup.
+   - In-app attorney notifications inserted immediately.
+
+3. **Attorney portal** — `/attorney/cases` only shows clients with
+   `attorney_portal_assigned_at` set and matching `attorney_id`. Case detail
+   shows client info, Documents (**all uploads** for that client), Notes
+   (all `communications` rows with `type = 'note'`, excluding legacy system
+   stage/assignment notes — same filter as CRM), and account dates. Nav is
+   **Cases + Settings** only (`/attorney/settings`). Close case has confirm +
+   undo; notifications route to `/attorney/cases/[id]`.
+   **Notes are read-only** on the portal (`AttorneyCaseNotes.tsx`) — do not
+   add create/edit/pin UI for attorneys unless product explicitly asks.
+
+   **Middleware allowlist (LOCKED)** — see
+   `.cursor/rules/attorney-portal-middleware.mdc` and
+   `lib/attorney/portal-api-allowlist.ts`. Attorneys are redirected to
+   `/attorney/cases` for every non-portal path; Download/Preview require
+   `/api/clients/documents/download` on that allowlist. Verify with
+   `npm run test:attorney-portal-allowlist`.
+
+   **Case detail documents** — `AttorneyCaseDocuments.tsx` on
+   `app/attorney/cases/[id]/page.tsx` renders **every** document on the client
+   (not POA/collection-letter only). Type column labels POA / Collection letter
+   / other upload types. Per-file **preview** (eye → `DocPreviewModal` via
+   same-origin `/api/clients/documents/download?inline=1`) and **download**
+   (attachment via same API). Includes real PDFs, `.txt`, and Shape text-as-PDF
+   (preview as text; download as `*.pdf.txt`). **Download All** staggers
+   attachment downloads — no zip API. Do not gate downloads on Storage signed
+   URLs.
+
+4. **RLS** — Attorney SELECT/UPDATE on clients, documents, comms, audit_log,
+   and portal_messages requires `attorney_portal_assigned_at IS NOT NULL` (see
+   `20260728190000_attorney_portal_rls.sql`).
+
+## Legacy public batch links (keep working)
+
+Old `/attorney-batch/[token]` links may still exist. Do not break:
+
+1. **Public links are no-login** — middleware allowlist for
+   `/attorney-batch/*` and `/api/attorney-batch/*`.
+
+2. **Download must stream via service role** — `storage.download()` + attachment
+   response; no `fetch(signedUrl)` proxy; no redirect-as-primary.
+
+3. **No-store on download responses** — all 200/4xx/5xx responses.
+
+4. **service_role table grants** on `attorney_batches*`.
+
+5. **Backfill** — migration stamps `attorney_portal_assigned_at` from active
+   batch rows so legacy sends do not re-enter the queue.
+
+## Branding
+
+Attorney-facing surfaces use DebtSupportPros (`/logo.png`). Never use
+"Zero Balance" copy.

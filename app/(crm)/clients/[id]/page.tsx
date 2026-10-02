@@ -1,0 +1,936 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import * as Sentry from "@sentry/nextjs";
+import { createClient } from "@/lib/supabase/server";
+import { getProfileForUser } from "@/lib/supabase/profile";
+import {
+  canAccessPriorityBoard,
+  canDeleteDocuments,
+  canEditAttorneyAssignment,
+  canReassignClient,
+  canViewAssignedAttorneyField,
+} from "@/lib/roles";
+import { isPoaDocumentTypeForCs } from "@/lib/clients/cs-checklist";
+import {
+  fetchCsChecklistForClient,
+  shouldShowCsChecklistCard,
+} from "@/lib/clients/cs-checklist-query";
+import { CsChecklistCard } from "./CsChecklistCard";
+import { AccountTabForm, type AccountTabClient } from "./AccountTabForm";
+import { BillingTabContent } from "./BillingTabContent";
+import { ClientRightSidebar, type SidebarCommNoteRow } from "./ClientRightSidebar";
+import { listUpcomingEmailsForClient } from "@/lib/email/upcoming-for-client";
+import { ClientSettingsTab, type ClientSettingsTabClient } from "./ClientSettingsTab";
+import { refundPrefillFromCards } from "@/lib/refunds/prefill";
+import { ClientStageHeader } from "./ClientStageHeader";
+import { ClientViewLogger } from "./ClientViewLogger";
+import { CommunicationsTab } from "./CommunicationsTab";
+import { DocumentsTab, type DocumentListItem } from "./DocumentsTab";
+import { EmailActivityTabClient } from "./EmailActivityTabClient";
+import {
+  canPlaceEsignFields,
+  canUseEsignStaffUi,
+  isEsignFeatureEnabled,
+} from "@/lib/esign/config";
+import { toUserFacingError } from "@/lib/user-facing-error";
+import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import { ErrorBoundary } from "@/app/components/ErrorBoundary";
+import { formatDateTime } from "@/lib/utils/date";
+import { ClientBackButton } from "./ClientBackButton";
+import { PacketsHistoryTab } from "./PacketsHistoryTab";
+import { EsignDripSection } from "./EsignDripSection";
+import { canShowEsignActions } from "@/lib/esign/types";
+
+const MAIN_TABS_ALL = [
+  { id: "account", label: "Account" },
+  { id: "billing", label: "Cards" },
+  { id: "documents", label: "Uploads" },
+  { id: "packets", label: "Packets" },
+  { id: "communications", label: "Activity" },
+  { id: "campaigns", label: "Drips" },
+  { id: "portal", label: "Portal Messages" },
+  { id: "settings", label: "Settings" },
+] as const;
+
+// Tabs that resolve to a real render block (portal has no block here).
+// "billing" stays valid so ?tab=billing still works if accessed directly, but it
+// is hidden from the tab bar (see VISIBLE_TABS) per F004.
+const MAIN_TABS = MAIN_TABS_ALL.filter((t) => t.id !== "portal");
+
+// Tabs actually rendered in the tab bar. "billing" (Cards) is hidden from all
+// roles; the underlying feature, data query, and client_cards table remain intact.
+const VISIBLE_TABS = MAIN_TABS.filter((t) => t.id !== "billing");
+
+type MainTab = (typeof MAIN_TABS_ALL)[number]["id"];
+
+type DocRow = {
+  id: string;
+  file_name: string;
+  mime_type: string | null;
+  document_type: string | null;
+  created_at: string | null;
+  uploaded_by: string | null;
+  storage_path: string;
+  file_size_bytes: number | null;
+  notes: string | null;
+  is_collection_letter?: boolean | null;
+  attorney_notified_at?: string | null;
+  attorney_notify_error?: string | null;
+};
+
+function tabHref(clientId: string, tab: MainTab) {
+  return tab === "account" ? `/clients/${clientId}` : `/clients/${clientId}?tab=${tab}`;
+}
+
+function tabClass(active: boolean) {
+  if (active) {
+    return "inline-flex min-h-11 shrink-0 items-center border-b-2 border-[#8DE3B5] px-4 py-3 text-sm font-semibold text-slate-900 transition-colors duration-200 ease-out dark:text-white";
+  }
+  return "inline-flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-4 py-3 text-sm font-medium text-slate-500 transition-colors duration-200 ease-out hover:text-slate-900 dark:text-slate-400 dark:hover:text-white";
+}
+
+function formatClientDateTime(iso: string | null | undefined) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return formatDateTime(d);
+}
+
+const CLIENT_SELECT = [
+  "id",
+  "first_name",
+  "middle_initial",
+  "last_name",
+  "nickname",
+  "verbal_password",
+  "spouse_first_name",
+  "spouse_last_name",
+  "spouse_name",
+  "spouse_nickname",
+  "email",
+  "phone",
+  "phone_mobile",
+  "phone_work",
+  "phone_home",
+  "street_address",
+  "city",
+  "state",
+  "zip_code",
+  "stage",
+  "assigned_to",
+  "assigned_compliance_id",
+  "assigned_services_id",
+  "dnc_reason",
+  "is_active",
+  "created_at",
+  "updated_at",
+  "poa_signed_at",
+  "collection_letter_received_at",
+  "attorney_id",
+  "delivery_method",
+  "postlogic_unique_id",
+  "postlogic_status",
+  "fedex_batch_sent_at",
+  "fedex_tracking_number",
+  "resend_method",
+  "cc_charged_at",
+  "fedex_queued_at",
+  "pod_delivered_at",
+  "pod_signed_by",
+  "pod_tracking",
+  "pod_notes",
+  "reviewed_at",
+  "reviewed_by_name",
+  // Fallback MID for the refund request prefill when no card carries a merchant.
+  "fedex_merchant",
+].join(", ");
+
+type ClientPageProps = {
+  /** Next.js 15 may pass Promises for dynamic segment props. */
+  params: Promise<{ id: string }> | { id: string };
+  searchParams: Promise<{ tab?: string }> | { tab?: string };
+};
+
+export default async function ClientProfilePage({
+  params,
+  searchParams,
+}: ClientPageProps) {
+  const resolvedParams = await Promise.resolve(params);
+  const clientId =
+    typeof resolvedParams === "object" &&
+    resolvedParams !== null &&
+    "id" in resolvedParams &&
+    typeof (resolvedParams as { id: unknown }).id === "string"
+      ? (resolvedParams as { id: string }).id.trim()
+      : "";
+  const sp = await Promise.resolve(searchParams);
+  if (!clientId) {
+    notFound();
+  }
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { profile, error: pe } = await getProfileForUser(supabase, user);
+  if (pe || !profile) redirect("/login");
+  if (profile.role === "client") redirect("/portal");
+  if (profile.role === "attorney") redirect("/attorney/cases");
+
+  const tabRaw = sp.tab ?? "account";
+  const tabNormalized =
+    tabRaw === "email" ? "campaigns" : tabRaw === "letters" ? "documents" : tabRaw;
+  const tab: MainTab = MAIN_TABS.some((t) => t.id === tabNormalized)
+    ? (tabNormalized as MainTab)
+    : "account";
+
+  const { data: client, error: clientErr } = await supabase
+    .from("clients")
+    .select(
+      `${CLIENT_SELECT}, attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role), compliance_manager:profiles!assigned_compliance_id(full_name, email), services_manager:profiles!assigned_services_id(full_name, email)`
+    )
+    .eq("id", clientId)
+    .maybeSingle();
+
+  if (clientErr) {
+    console.error("[ClientProfilePage] clients select failed", {
+      clientId,
+      message: clientErr.message,
+      code: clientErr.code,
+      details: clientErr.details,
+      hint: clientErr.hint,
+    });
+    return (
+      <main className="mx-auto max-w-2xl px-6 py-16">
+        <h1 className="text-lg font-semibold text-red-600 dark:text-red-400">
+          Could not load client
+        </h1>
+        <p className="mt-3 text-sm text-slate-700 dark:text-slate-300">
+          {toUserFacingError(clientErr.message)}
+        </p>
+        <Link
+          href="/clients"
+          className="mt-8 inline-block text-sm font-semibold text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+        >
+          ← Back to clients
+        </Link>
+      </main>
+    );
+  }
+
+  try {
+  if (!client) {
+    notFound();
+  }
+
+  type ClientRow = Record<string, unknown> & { id: string };
+  const c = client as unknown as ClientRow;
+
+  const [
+    { data: viewerDept },
+    { data: complianceProfileRow },
+    { data: accountsProfileRow },
+    { data: servicesProfileRow },
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("is_compliance, is_accounts, is_services, full_name")
+      .eq("id", user.id)
+      .maybeSingle(),
+    c.assigned_compliance_id
+      ? supabase
+          .from("profiles")
+          .select("id, full_name")
+          .eq("id", String(c.assigned_compliance_id))
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    c.assigned_to
+      ? supabase
+          .from("profiles")
+          .select("id, full_name")
+          .eq("id", String(c.assigned_to))
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    c.assigned_services_id
+      ? supabase
+          .from("profiles")
+          .select("id, full_name")
+          .eq("id", String(c.assigned_services_id))
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+
+  const viewerDeptFlags = viewerDept as {
+    is_compliance?: boolean | null;
+    is_accounts?: boolean | null;
+    is_services?: boolean | null;
+  } | null;
+
+  const shouldPromptSelfAssign =
+    (!!(viewerDeptFlags?.is_compliance) && !c.assigned_compliance_id) ||
+    (!!(viewerDeptFlags?.is_accounts) && !c.assigned_to) ||
+    (!!(viewerDeptFlags?.is_services) && !c.assigned_services_id);
+
+  const isComplianceUser = !!viewerDeptFlags?.is_compliance;
+
+  const complianceUserForHeader = complianceProfileRow as {
+    id: string;
+    full_name: string | null;
+  } | null;
+  const accountsUserForHeader = accountsProfileRow as {
+    id: string;
+    full_name: string | null;
+  } | null;
+  const servicesUserForHeader = servicesProfileRow as {
+    id: string;
+    full_name: string | null;
+  } | null;
+
+  const canReassign = canReassignClient(profile.role);
+  const canEditAttorney = canEditAttorneyAssignment(profile.role);
+  const canViewAttorneyField = canViewAssignedAttorneyField(profile.role);
+  const canDeleteDocs = canDeleteDocuments(profile.role);
+
+  /* All rows for this client. Uploads groups every file by document type. */
+  const [
+    { data: documents, error: documentsQueryError },
+    { data: cardsRaw },
+    { data: remindersRaw },
+    { data: communicationsRaw },
+    { data: auditLogRaw },
+    { data: shipmentsRaw },
+  ] = await Promise.all([
+    supabase
+      .from("documents")
+      .select("*")
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("client_cards")
+      .select(
+        "id, creditor_name, merchant_name, card_type, last_four, charge_amount_cents, authorization_status, created_at, added_by, collection_letter_doc_id"
+      )
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("reminders")
+      .select("id, description, due_date, completed, cancelled, completed_at, assigned_to, appointment_type, notes")
+      .eq("client_id", clientId)
+      .order("due_date", { ascending: true, nullsFirst: false })
+      .limit(50),
+    supabase
+      .from("communications")
+      .select(
+        "id, type, direction, subject, body, sent_at, duration_seconds, recorded_by, ringcentral_call_id, is_pinned"
+      )
+      .eq("client_id", clientId)
+      .order("sent_at", { ascending: false })
+      .limit(500),
+    supabase
+      .from("audit_log")
+      .select("id, action, new_value, performed_by_name, created_at")
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    tab === "packets"
+      ? supabase
+          .from("client_fedex_shipments")
+          .select("id, tracking_number, carrier, batch_id, batch_date, status, merchant, sent_at, delivered_at")
+          .eq("client_id", clientId)
+          .neq("status", "Pending")
+          .order("sent_at", { ascending: false })
+      : Promise.resolve({ data: null as null }),
+  ]);
+
+  if (documentsQueryError) {
+    console.error("documents query error:", documentsQueryError);
+  }
+
+  const commRecorderIds = new Set<string>();
+  for (const c of communicationsRaw ?? []) {
+    if (c.recorded_by) commRecorderIds.add(c.recorded_by as string);
+  }
+  const uploaderIds = new Set<string>();
+  for (const d of documents ?? []) {
+    if (d.uploaded_by) uploaderIds.add(d.uploaded_by as string);
+  }
+  const allIds = new Set([...Array.from(commRecorderIds), ...Array.from(uploaderIds)]);
+  const letterDocIds = Array.from(
+    new Set(
+      (cardsRaw ?? [])
+        .map((row) => row.collection_letter_doc_id as string | null)
+        .filter((id): id is string => Boolean(id))
+    )
+  );
+
+  const nameById: Record<string, string> = {};
+  const letterDocById: Record<string, { file_name: string; storage_path: string }> = {};
+
+  const [{ data: profs }, { data: letterDocs }] = await Promise.all([
+    allIds.size > 0
+      ? supabase.from("profiles").select("id, full_name").in("id", Array.from(allIds))
+      : Promise.resolve({ data: null as { id: string; full_name: string | null }[] | null }),
+    letterDocIds.length > 0
+      ? supabase
+          .from("documents")
+          .select("id, file_name, storage_path")
+          .in("id", letterDocIds)
+      : Promise.resolve({ data: null as { id: string; file_name: string; storage_path: string }[] | null }),
+  ]);
+  for (const p of profs ?? []) {
+    nameById[p.id] = p.full_name?.trim() || "—";
+  }
+  for (const d of letterDocs ?? []) {
+    letterDocById[d.id as string] = {
+      file_name: d.file_name as string,
+      storage_path: d.storage_path as string,
+    };
+  }
+
+  const activityLogData = (auditLogRaw ?? []).map((a) => ({
+    id: a.id as string,
+    action: (a.action as string | null) ?? null,
+    new_value: a.new_value,
+    performed_by_name: (a.performed_by_name as string | null) ?? null,
+    created_at: a.created_at as string,
+  }));
+
+  // Legacy system-generated notes (stage changes, role assignments, and
+  // appointment creates) used to be written into communications as type="note".
+  // They now live in audit_log only; hide any leftover rows from Notes views.
+  const isLegacySystemNote = (row: { type?: unknown; body?: unknown }): boolean => {
+    if ((row.type as string) !== "note") return false;
+    const body = String(row.body ?? "");
+    return (
+      body.startsWith("Stage changed to:") ||
+      body.startsWith("Appointment scheduled:") ||
+      / assigned as /.test(body) ||
+      /self-assigned as /.test(body) ||
+      /assigned themselves as /.test(body)
+    );
+  };
+
+  const communicationRows = (communicationsRaw ?? [])
+    .filter((c) => !isLegacySystemNote(c))
+    .map((c) => ({
+      id: c.id as string,
+      type: c.type as string,
+      direction: c.direction as string,
+      subject: c.subject as string | null,
+      body: c.body as string | null,
+      sent_at: c.sent_at as string | null,
+      duration_seconds: c.duration_seconds as number | null,
+      recorded_by: (c.recorded_by as string | null) ?? null,
+      loggedByName: c.recorded_by
+        ? nameById[c.recorded_by as string]?.trim() || "System"
+        : "System",
+      is_pinned: (c.is_pinned as boolean | null) ?? false,
+    }));
+
+  const hasRingCentralAutoLog = (communicationsRaw ?? []).some(
+    (row) => !!(row as { ringcentral_call_id?: string | null }).ringcentral_call_id
+  );
+
+  const docs = (documents ?? []) as DocRow[];
+  const hasPoaDocument = docs.some((d) =>
+    isPoaDocumentTypeForCs(d.document_type)
+  );
+  const documentsForDocumentsTab: DocumentListItem[] = docs.map((d) => ({
+    id: d.id,
+    file_name: d.file_name,
+    mime_type: d.mime_type,
+    document_type: (d.document_type as string | null)?.trim() || "upload",
+    created_at: d.created_at,
+    uploaded_by: d.uploaded_by,
+    file_size_bytes: d.file_size_bytes,
+    storage_path: d.storage_path,
+    notes: d.notes,
+    is_collection_letter: d.is_collection_letter,
+  }));
+
+  const uploaderNames: Record<string, string> = {};
+  for (const id of Array.from(uploaderIds)) {
+    uploaderNames[id] = nameById[id] ?? "—";
+  }
+
+  /* Client Services checklist for the sidebar, behind the same gate as the
+   * Priority board. POA signals come from the documents already loaded above
+   * rather than a second query. */
+  const csChecklist = canAccessPriorityBoard(
+    profile.role,
+    viewerDeptFlags?.is_services
+  )
+    ? await fetchCsChecklistForClient(supabase, {
+        clientId,
+        poaSignedAt: (c.poa_signed_at as string | null) ?? null,
+        hasPoaDocument,
+      })
+    : null;
+  const showCsChecklist =
+    csChecklist !== null &&
+    shouldShowCsChecklistCard(
+      (c.stage as string | null) ?? null,
+      csChecklist.hasAnyRow
+    );
+
+  const [{ data: staff }, { data: attys }, { data: sidebarStaff }] = await Promise.all([
+    canReassign || isComplianceUser
+      ? supabase
+          .from("profiles")
+          .select(
+            "id, full_name, email, is_accounts, is_compliance, is_services"
+          )
+          .eq("is_active", true)
+          .or(
+            "is_accounts.eq.true,is_compliance.eq.true,is_services.eq.true"
+          )
+          .not(
+            "email",
+            "in",
+            '("dev@debtsupportpros.com","cs@debtsupportpros.com","jessica@debtsupportpros.com")'
+          )
+          .order("full_name", { ascending: true })
+      : Promise.resolve({
+          data: null as
+            | {
+                id: string;
+                full_name: string | null;
+                email: string | null;
+                is_accounts: boolean | null;
+                is_compliance: boolean | null;
+                is_services: boolean | null;
+              }[]
+            | null,
+        }),
+    canEditAttorney
+      ? supabase
+          .from("profiles")
+          .select("id, full_name, email, is_default_attorney")
+          .eq("role", "attorney")
+          .eq("is_active", true)
+          .order("full_name", { ascending: true })
+      : Promise.resolve({
+          data: null as
+            | {
+                id: string;
+                full_name: string | null;
+                is_default_attorney: boolean | null;
+              }[]
+            | null,
+        }),
+    supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .in("role", ["dev", "admin", "acct_manager", "manager"])
+      .eq("is_active", true)
+      .order("full_name", { ascending: true }),
+  ]);
+  let staffOptions = staff ?? [];
+  if (canReassign || isComplianceUser) {
+    const assigneeIds = [
+      c.assigned_to,
+      c.assigned_compliance_id,
+      c.assigned_services_id,
+    ].filter((id): id is string => typeof id === "string" && id.length > 0);
+    const missingIds = assigneeIds.filter(
+      (id) => !staffOptions.some((s) => s.id === id)
+    );
+    if (missingIds.length > 0) {
+      const { data: missingStaff } = await supabase
+        .from("profiles")
+        .select(
+          "id, full_name, email, is_accounts, is_compliance, is_services"
+        )
+        .in("id", missingIds);
+      if (missingStaff?.length) {
+        staffOptions = [...staffOptions, ...missingStaff];
+        staffOptions.sort((a, b) =>
+          (a.full_name ?? "").localeCompare(b.full_name ?? "")
+        );
+      }
+    }
+  }
+  const sidebarStaffOptions = (sidebarStaff ?? []).filter(
+    (row) => !isHiddenFromRole(row.email as string | null, profile.role)
+  );
+  const attorneyOptions = attys ?? [];
+
+  const assignedUser = c.assigned_user as
+    | { full_name: string | null; role: string | null }
+    | null
+    | undefined;
+  const assigneeName = assignedUser?.full_name?.trim() || null;
+  const assigneeRole = (assignedUser?.role as string | null) ?? null;
+
+  const complianceName = complianceUserForHeader?.full_name?.trim() || null;
+  const servicesAssigneeName = servicesUserForHeader?.full_name?.trim() || null;
+
+  const displayName =
+    `${String(c.first_name ?? "")} ${String(c.last_name ?? "")}`.trim() || "Client";
+
+  const performerName = profile.full_name?.trim() || user.email || "Staff";
+
+  const _allSidebarNotes = (communicationsRaw ?? []).filter(
+    (row) => (row.type as string) === "note" && !isLegacySystemNote(row)
+  );
+  const _pinnedSidebarNotes = _allSidebarNotes.filter((row) => !!(row.is_pinned as boolean));
+  const _unpinnedSidebarNotes = _allSidebarNotes
+    .filter((row) => !(row.is_pinned as boolean))
+    .slice(0, 3);
+  const commNotesForSidebar: SidebarCommNoteRow[] = [
+    ..._pinnedSidebarNotes,
+    ..._unpinnedSidebarNotes,
+  ].map((row) => ({
+    id: row.id as string,
+    body: String(row.body ?? ""),
+    sent_at: row.sent_at as string | null,
+    author_name: row.recorded_by
+      ? nameById[row.recorded_by as string]?.trim() || "System"
+      : "System",
+    is_pinned: (row.is_pinned as boolean | null) ?? false,
+  }));
+
+  const rawSf = (c.spouse_first_name as string | null) ?? null;
+  const rawSl = (c.spouse_last_name as string | null) ?? null;
+  const rawSpouseName = (c.spouse_name as string | null) ?? null;
+  let spouseFirst = rawSf?.trim() || "";
+  let spouseLast = rawSl?.trim() || "";
+  if (!spouseFirst && !spouseLast && rawSpouseName?.trim()) {
+    const parts = rawSpouseName.trim().split(/\s+/);
+    spouseFirst = parts[0] ?? "";
+    spouseLast = parts.length > 1 ? parts.slice(1).join(" ") : "";
+  }
+
+  const attorneyRow = c.attorney as
+    | { full_name: string | null; email: string | null }
+    | null
+    | undefined;
+
+  const accountClient: AccountTabClient = {
+    first_name: (c.first_name as string | null) ?? null,
+    middle_initial: (c.middle_initial as string | null) ?? null,
+    last_name: (c.last_name as string | null) ?? null,
+    nickname: (c.nickname as string | null) ?? null,
+    spouse_first_name: spouseFirst || null,
+    spouse_last_name: spouseLast || null,
+    spouse_name: rawSpouseName,
+    spouse_nickname: (c.spouse_nickname as string | null) ?? null,
+    verbal_password: (c.verbal_password as string | null) ?? null,
+    email: (c.email as string | null) ?? null,
+    phone: (c.phone as string | null) ?? null,
+    phone_mobile: (c.phone_mobile as string | null) ?? null,
+    phone_work: (c.phone_work as string | null) ?? null,
+    phone_home: (c.phone_home as string | null) ?? null,
+    street_address: (c.street_address as string | null) ?? null,
+    city: (c.city as string | null) ?? null,
+    state: (c.state as string | null) ?? null,
+    zip_code: (c.zip_code as string | null) ?? null,
+  };
+
+  const settingsClient: ClientSettingsTabClient = {
+    stage: (c.stage as string | null) ?? null,
+    assigned_to: (c.assigned_to as string | null) ?? null,
+    assigned_compliance_id: (c.assigned_compliance_id as string | null) ?? null,
+    assigned_services_id: (c.assigned_services_id as string | null) ?? null,
+    attorney_id: (c.attorney_id as string | null) ?? null,
+    attorney: attorneyRow
+      ? {
+          full_name: attorneyRow.full_name ?? null,
+          email: attorneyRow.email ?? null,
+        }
+      : null,
+    is_active: (c.is_active as boolean | null) ?? null,
+  };
+
+  const deliveryClient = {
+    first_name: (c.first_name as string | null) ?? null,
+    last_name: (c.last_name as string | null) ?? null,
+    email: (c.email as string | null) ?? null,
+    delivery_method: (c.delivery_method as string | null) ?? null,
+    resend_method: (c.resend_method as string | null) ?? null,
+    postlogic_status: (c.postlogic_status as string | null) ?? null,
+    postlogic_unique_id: (c.postlogic_unique_id as string | null) ?? null,
+    fedex_batch_sent_at: (c.fedex_batch_sent_at as string | null) ?? null,
+    fedex_queued_at: (c.fedex_queued_at as string | null) ?? null,
+    fedex_tracking_number: (c.fedex_tracking_number as string | null) ?? null,
+    stage: String(c.stage ?? ""),
+  };
+
+  const upcomingEmails = await listUpcomingEmailsForClient(supabase, clientId);
+
+  const remindersForSidebar = (remindersRaw ?? []).map((r) => ({
+    id: r.id as string,
+    description: r.description as string,
+    due_date: r.due_date as string | null,
+    completed: !!r.completed,
+    cancelled: !!(r as { cancelled?: boolean }).cancelled,
+    completed_at: ((r as { completed_at?: string | null }).completed_at as string | null) ?? null,
+    assigned_to: ((r as { assigned_to?: string | null }).assigned_to as string | null) ?? null,
+    appointment_type: ((r as { appointment_type?: string | null }).appointment_type as string | null) ?? null,
+    notes: ((r as { notes?: string | null }).notes as string | null) ?? null,
+  }));
+
+  return (
+    <main className="mx-auto min-w-0 max-w-[1600px] overflow-x-hidden px-4 py-6 sm:px-6 sm:py-8">
+      <ClientViewLogger clientId={clientId} userId={user.id} userName={performerName} />
+
+      <div className="mb-4">
+        <ClientBackButton />
+      </div>
+
+      <nav className="mb-6 text-sm text-slate-600 dark:text-slate-400">
+        <Link href="/dashboard" className="font-medium hover:text-[#8DE3B5]">
+          Dashboard
+        </Link>
+        <span className="mx-2 text-slate-400">/</span>
+        <Link href="/clients" className="font-medium hover:text-[#8DE3B5]">
+          Clients
+        </Link>
+        <span className="mx-2 text-slate-400">/</span>
+        <span className="font-semibold text-slate-900 dark:text-slate-200">{displayName}</span>
+      </nav>
+
+      <ClientStageHeader
+        displayName={displayName}
+        clientId={clientId}
+        stage={(c.stage as string | null) ?? null}
+        performerId={user.id}
+        performerName={performerName}
+        userRole={profile.role}
+        assignedTo={(c.assigned_to as string | null) ?? null}
+        assignedUserName={assigneeName}
+        assignedComplianceId={(c.assigned_compliance_id as string | null) ?? null}
+        assignedServicesId={(c.assigned_services_id as string | null) ?? null}
+        complianceUser={complianceUserForHeader}
+        accountsUser={accountsUserForHeader}
+        servicesUser={servicesUserForHeader}
+        isComplianceUser={isComplianceUser}
+        shouldPromptSelfAssign={shouldPromptSelfAssign}
+        viewerDept={{
+          is_compliance: !!viewerDeptFlags?.is_compliance,
+          is_accounts: !!viewerDeptFlags?.is_accounts,
+          is_services: !!viewerDeptFlags?.is_services,
+        }}
+        poaSignedAt={(c.poa_signed_at as string | null) ?? null}
+        hasPoaDocument={hasPoaDocument}
+        refundPrefill={refundPrefillFromCards(
+          (cardsRaw ?? []) as {
+            charge_amount_cents?: number | null;
+            merchant_name?: string | null;
+          }[],
+          (c.fedex_merchant as string | null) ?? null
+        )}
+      />
+
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <div className="order-1 min-w-0 flex-1 space-y-8">
+          <div className="-mx-4 overflow-x-auto overflow-y-hidden border-b border-slate-200 px-4 pb-px [-webkit-overflow-scrolling:touch] dark:border-[#1a3550] sm:-mx-6 sm:px-6 md:mx-0 md:overflow-visible md:px-0">
+            <nav className="flex min-w-max gap-0 md:min-w-0">
+              {VISIBLE_TABS.map((t) => (
+                <Link
+                  key={t.id}
+                  href={tabHref(clientId, t.id)}
+                  className={tabClass(tab === t.id)}
+                >
+                  {t.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <ErrorBoundary>
+            {tab === "account" ? (
+              <AccountTabForm
+                key={clientId}
+                clientId={clientId}
+                client={accountClient}
+                accountRevision={String((c.updated_at as string | null) ?? "")}
+              />
+            ) : null}
+
+            {tab === "documents" ? (
+              <DocumentsTab
+                key={`${clientId}-docs-${documentsForDocumentsTab.length}-${String(
+                  c.updated_at ?? ""
+                )}`}
+                clientId={clientId}
+                initialDocuments={documentsForDocumentsTab}
+                uploaderNames={uploaderNames}
+                canDeleteDocs={canDeleteDocs}
+                currentUserId={user.id}
+              />
+            ) : null}
+
+            {tab === "campaigns" ? (
+              <EmailActivityTabClient
+                clientId={clientId}
+                userRole={profile.role}
+                performerName={performerName}
+                upcomingEmails={upcomingEmails}
+                stage={(c.stage as string | null) ?? null}
+              />
+            ) : null}
+
+            {tab === "communications" ? (
+              <CommunicationsTab
+                clientId={clientId}
+                initialRows={communicationRows}
+                hasRingCentralAutoLog={hasRingCentralAutoLog}
+                activityLog={activityLogData}
+                templateMergeContext={{
+                  clientName: displayName,
+                  firstName: String(c.first_name ?? "").trim(),
+                  assignedUser: assigneeName?.trim() || "—",
+                  stageKey: String(c.stage ?? "lead"),
+                  trackingNumber:
+                    (c.fedex_tracking_number as string | null)?.trim() || null,
+                }}
+                currentUserId={user.id}
+                isAdminOrDev={profile.role === "dev" || profile.role === "admin"}
+              />
+            ) : null}
+
+            {tab === "packets" ? (
+              <div className="space-y-4">
+                {isEsignFeatureEnabled() &&
+                canUseEsignStaffUi(profile.role, user.email) ? (
+                  <EsignDripSection
+                    clientId={clientId}
+                    clientFirstName={
+                      String(c.first_name ?? "").trim() || String(c.nickname ?? "").trim()
+                    }
+                    clientLastName={String(c.last_name ?? "").trim()}
+                    advisorName={assigneeName ?? ""}
+                    canPlaceFields={canPlaceEsignFields(profile.role)}
+                    canSend={canShowEsignActions((c.stage as string | null) ?? null)}
+                  />
+                ) : null}
+                <PacketsHistoryTab
+                  clientId={clientId}
+                  shipments={(shipmentsRaw ?? []).map((s) => ({
+                    id: s.id as string,
+                    tracking_number: (s.tracking_number as string | null) ?? null,
+                    carrier: (s.carrier as string | null) ?? null,
+                    batch_id: (s.batch_id as string | null) ?? null,
+                    batch_date: (s.batch_date as string | null) ?? null,
+                    status: (s.status as string | null) ?? null,
+                    merchant: (s.merchant as string | null) ?? null,
+                    sent_at: (s.sent_at as string | null) ?? null,
+                    delivered_at: (s.delivered_at as string | null) ?? null,
+                  }))}
+                />
+              </div>
+            ) : null}
+
+            {tab === "billing" ? (
+              <BillingTabContent
+                clientId={clientId}
+                userRole={profile.role}
+                cards={(cardsRaw ?? []).map((row) => {
+                  const docId = row.collection_letter_doc_id as string | null;
+                  const meta = docId ? letterDocById[docId] : undefined;
+                  return {
+                    id: row.id as string,
+                    creditor_name: row.creditor_name as string,
+                    merchant_name: (row.merchant_name as string | null) ?? null,
+                    card_type: row.card_type as string,
+                    last_four: row.last_four as string,
+                    charge_amount_cents:
+                      (row as { charge_amount_cents?: number })
+                        .charge_amount_cents ?? 0,
+                    authorization_status:
+                      (row as { authorization_status?: string | null })
+                        .authorization_status ?? "pre_auth",
+                    created_at: row.created_at as string | null,
+                    added_by: row.added_by as string | null,
+                    collection_letter_doc_id: docId,
+                    collection_letter_file_name: meta?.file_name ?? null,
+                    collection_letter_storage_path: meta?.storage_path ?? null,
+                  };
+                })}
+              />
+            ) : null}
+
+            {tab === "settings" ? (
+              <ClientSettingsTab
+                key={`settings-${String(c.updated_at ?? c.id)}`}
+                clientId={clientId}
+                client={settingsClient}
+                canReassignClient={canReassign}
+                canViewAssignedAttorneyField={canViewAttorneyField}
+                viewerRole={profile.role}
+                userRole={profile.role}
+                staffOptions={staffOptions}
+                attorneyOptions={attorneyOptions}
+                assigneeName={assigneeName}
+                assigneeRole={assigneeRole}
+                complianceAssigneeName={complianceName}
+                servicesAssigneeName={servicesAssigneeName}
+                isComplianceUser={isComplianceUser}
+              />
+            ) : null}
+          </ErrorBoundary>
+        </div>
+
+        <ClientRightSidebar
+          className="order-2"
+          clientId={clientId}
+          clientStage={(c.stage as string | null) ?? null}
+          reminders={remindersForSidebar}
+          auditPerformedByName={performerName}
+          commNotes={commNotesForSidebar}
+          currentUserId={user.id}
+          currentRole={profile.role}
+          csChecklistSlot={
+            showCsChecklist && csChecklist ? (
+              <CsChecklistCard
+                clientId={clientId}
+                items={csChecklist.items}
+                completeCount={csChecklist.completeCount}
+                nextUpLabel={csChecklist.nextUpLabel}
+              />
+            ) : null
+          }
+          staffOptions={sidebarStaffOptions.map((m) => ({
+            id: m.id as string,
+            full_name: m.full_name as string | null,
+          }))}
+          accountInfo={{
+            created_at: (c.created_at as string | null) ?? null,
+            id: c.id as string,
+            verbal_password: (c.verbal_password as string | null) ?? null,
+            updated_at: (c.updated_at as string | null) ?? null,
+            fedex_tracking_number: (c.fedex_tracking_number as string | null) ?? null,
+            assigned_to: (c.assigned_to as string | null) ?? null,
+            assigned_user: assignedUser
+              ? { full_name: assignedUser.full_name ?? null }
+              : null,
+            pod_delivered_at: (c.pod_delivered_at as string | null) ?? null,
+            pod_signed_by: (c.pod_signed_by as string | null) ?? null,
+            pod_tracking: (c.pod_tracking as string | null) ?? null,
+            pod_notes: (c.pod_notes as string | null) ?? null,
+            attorney: attorneyRow
+              ? {
+                  full_name: attorneyRow.full_name ?? null,
+                  email: attorneyRow.email ?? null,
+                }
+              : null,
+          }}
+        />
+      </div>
+    </main>
+  );
+  } catch (error) {
+    console.error("Client profile error:", error);
+    Sentry.captureException(error);
+    return (
+      <div className="p-8 max-w-2xl">
+        <h1 className="text-lg font-bold text-red-600">Something went wrong</h1>
+        <p className="mt-4 text-sm text-slate-700 dark:text-slate-300">
+          {toUserFacingError(error instanceof Error ? error.message : error)}
+        </p>
+      </div>
+    );
+  }
+}

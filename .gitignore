@@ -1,0 +1,62 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files — never commit; credentials live in the host env only
+.env*.local
+.env
+
+# vercel
+.vercel
+
+*.tsbuildinfo
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+# npm lockfile — this project uses pnpm (see .github/workflows/ci.yml)
+package-lock.json
+
+# local tooling / one-off scripts & exports (do not commit)
+*.csv
+
+# Playwright — never commit test artifacts
+.playwright-mcp/
+playwright-report/
+test-results/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
+
+# Graphify: generated on every code change, so tracking it buries real diffs in
+# a ~20k-line churn. Rebuild locally with `graphify update .` (AST only).
+graphify-out/
+
+# Supabase CLI version marker — rewritten by the CLI, never meaningful in a diff
+supabase/.temp/
+
+# Local preview stack: holds a production data dump (real client PII) and the
+# local Supabase config that serves it. Never commit.
+.preview-dump/
+.preview-stack/

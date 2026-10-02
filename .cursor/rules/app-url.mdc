@@ -1,0 +1,19 @@
+---
+description: Public app URL for client emails and tokenized links
+alwaysApply: true
+---
+
+# Public app URL
+
+Client-facing links (eSign `/sign/{token}`, portal, unsubscribe, attorney case
+URLs) must use `publicAppUrl()` from `lib/constants/business-contact.ts`.
+
+- Override per environment with `NEXT_PUBLIC_APP_URL` (localhost in dev).
+- `DEFAULT_APP_URL` is the production fallback. **It is still a placeholder** —
+  set it to the real Golden Pathway production origin once the deployment exists,
+  and keep `scripts/check-business-contact.ts` asserting that exact value.
+
+Never hardcode an origin in an email template, a route handler, or a migration.
+There is exactly one fallback string; do not invent a second.
+
+`pnpm check:business-contact` guards the default.

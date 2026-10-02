@@ -1,0 +1,73 @@
+---
+description: Packets Needed + Resend via FedEx invariants — keep UI queue and batch send aligned
+globs: lib/packets/**/*,lib/postlogic/**/*,app/api/packets/**/*,app/admin/fedex-batches/**/*
+alwaysApply: false
+---
+
+# Packet Manager / Resend via FedEx
+
+Before changing Packets Needed eligibility, FedEx batch send, or `/api/packets/resend`,
+run impact analysis via graphify:
+
+```bash
+graphify query "fetchPacketsNeeded Resend via FedEx runPendingFedexBatch Pending"
+graphify path "fetchPacketsNeeded" "runPendingFedexBatch"
+```
+
+## Invariants (do not regress)
+
+1. **Resend mechanism** — Packets tab **Resend via FedEx** inserts a
+   `client_fedex_shipments` row with `status = 'Pending'`. It must not delete
+   prior shipment history.
+
+2. **Two queue paths must stay aligned**
+   - UI: `fetchPacketsNeeded()` in `lib/packets/fetch-packet-manager-data.ts`
+   - Batch: `runPendingFedexBatch()` in `lib/postlogic/run-pending-fedex-batch.ts`
+   - If you change who appears in Packets Needed, update batch eligibility the same way.
+
+3. **Packets Needed = A + B**
+   - **A (first-time):** active `client_services`, created on/after `2026-06-02`,
+     no non-Pending primary shipment, no `fedex_declined` audit.
+   - **B (explicit resend):** active client with a Pending marker — **any
+     non-terminal stage**. Pending also overrides:
+     - prior primary shipment exclusion
+     - prior `fedex_declined` (staff chose to resend)
+
+4. **Terminal stages never ship** — even with Pending. Use
+   `FEDEX_BATCH_EXCLUDED_STAGE_SET` from `lib/postlogic/fedex-ready-filter.ts`
+   (single source of truth). Do not re-copy the stage list in other files.
+
+5. **Auth perimeter** — `/api/packets/resend` stays behind
+   `canUsePostLogicApi` (dev / admin / acct_manager). Do not widen casually.
+
+6. **Pending pagination** — always page Pending / exclusion sets to completion
+   (never a single `.range(0, 999)`). Silent truncation re-breaks resend or
+   duplicates physical packets.
+
+7. **Secondary recipient** — requires **`spouse_last_name`** on the client
+   record. Use `hasSecondaryPacketLastName()` from
+   `lib/postlogic/send-fedex-recipients.ts` in **both**
+   `fetchPacketsNeeded()` and `runPendingFedexBatch()`. Spouse first name
+   alone must not queue a secondary row.
+
+8. **PDF generator advisor field** — send account manager **first name only**
+   via `advisorFirstNameForPdf()` in `lib/packets/pdf-generator.ts` when
+   building payloads for `callPdfGeneratorApi()`. Shipment rows / Packet
+   Manager UI keep the full `advisor` name from profiles.
+
+9. **Printer dispatch kill switch** — `crm_settings.fedex_print_batch_enabled`
+   must be exactly `"true"` for cron GET `/api/postlogic/send-batch` and
+   POST send (batch + `/api/packets/manual-send`) to reach PostLogic. Missing
+   or `"false"` = paused (fail-safe). Dev-only toggle lives on Packet Manager.
+   Queue eligibility (`fetchPacketsNeeded` / Pending) must not change when paused.
+   Cron skip still returns HTTP 200 and writes `fedex_print_batch_runs` with
+   `status = skipped` for that Pacific `batch_id`. A later skip must not
+   overwrite a `sent` row for the same date.
+
+## Known failure mode (Jul 2026)
+
+Resend inserted Pending correctly, but Needed only loaded `client_services` and
+always skipped `fedex_declined`. Clients past Client Services (or previously
+declined) got a success toast and never reappeared. Fixed by merging Pending
+clients into the pool and letting Pending override decline — in **both** UI and
+batch.
