@@ -93,26 +93,8 @@ const CC_W = 595.28;
 const CC_H = 841.89;
 const WP_W = 612;
 const WP_H = 792;
-const AC_W = 612;
-const AC_H = 792;
 
 export function defaultLayoutForKind(kind: EsignKind): EsignLayoutField[] {
-  if (kind === "ac_welcome_packet") {
-    return [
-      box("acwp-dear", "fullName", 1, 72, 172, 230, 16, AC_W, AC_H),
-      box("acwp-name", "fullName", 2, 120, 696, 250, 16, AC_W, AC_H),
-      box("acwp-date", "signedDate", 2, 432, 696, 130, 16, AC_W, AC_H),
-      box("acwp-sig", "signature", 2, 96, 716, 300, 26, AC_W, AC_H),
-    ];
-  }
-  if (kind === "ac_cc_authorization") {
-    return [
-      box("accc-amt", "amountAuthorized", 0, 145, 300, 180, 16, AC_W, AC_H),
-      box("accc-name", "fullName", 0, 124, 328, 280, 16, AC_W, AC_H),
-      box("accc-sig", "signature", 0, 122, 346, 240, 26, AC_W, AC_H),
-      box("accc-date", "signedDate", 0, 102, 376, 160, 16, AC_W, AC_H),
-    ];
-  }
   if (kind === "welcome_packet") {
     return [
       box("wp-name-0", "fullName", 0, 110, 179, 230, 16, WP_W, WP_H),

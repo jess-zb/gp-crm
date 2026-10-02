@@ -9,7 +9,6 @@ import {
   canShowEsignActions,
   documentTypeForKind,
   esignKindTitle,
-  isDspWelcomePacket,
   isEsignKind,
   isUploadableEsignKind,
 } from "../lib/esign/types";
@@ -54,19 +53,11 @@ console.log("  ✓ buttons only in Account Manager");
 
 assert.equal(documentTypeForKind("cc_authorization"), "cc_authorization");
 assert.equal(documentTypeForKind("welcome_packet"), "poa_signed");
-assert.equal(documentTypeForKind("ac_cc_authorization"), "cc_authorization");
-assert.equal(documentTypeForKind("ac_welcome_packet"), "client_agreement");
-assert.equal(isDspWelcomePacket("welcome_packet"), true);
-assert.equal(isDspWelcomePacket("ac_welcome_packet"), false);
 assert.equal(isEsignKind("welcome_packet"), true);
-assert.equal(isEsignKind("ac_welcome_packet"), true);
-assert.equal(isEsignKind("ac_cc_authorization"), true);
-assert.equal(isUploadableEsignKind("ac_welcome_packet"), true);
-assert.equal(isUploadableEsignKind("ac_cc_authorization"), true);
-assert.equal(isUploadableEsignKind("welcome_packet"), false);
-assert.equal(isUploadableEsignKind("cc_authorization"), false);
+assert.equal(isUploadableEsignKind("welcome_packet"), true);
+assert.equal(isUploadableEsignKind("cc_authorization"), true);
+assert.equal(isUploadableEsignKind("not_a_kind"), false);
 assert.equal(isEsignKind("client_agreement"), false);
-assert.equal(esignKindTitle("ac_welcome_packet"), "Arlington Coaching Welcome Packet");
 console.log("  ✓ Welcome Packet maps to signed POA");
 
 const secret = "test-webhook-secret";
@@ -117,22 +108,20 @@ console.log("  ✓ widget name aliases fill from the client file");
 
 assert.ok(defaultLayoutForKind("cc_authorization").some((f) => f.bind === "signature"));
 assert.ok(defaultLayoutForKind("welcome_packet").some((f) => f.bind === "fullName"));
-assert.ok(defaultLayoutForKind("ac_welcome_packet").some((f) => f.bind === "signature"));
-assert.ok(defaultLayoutForKind("ac_cc_authorization").some((f) => f.bind === "amountAuthorized"));
 assert.deepEqual(
-  reviewFieldsForKind("ac_welcome_packet")
+  reviewFieldsForKind("welcome_packet")
     .filter((f) => f.required)
     .map((f) => f.key),
-  ["fullName"]
+  ["mid"]
 );
 assert.deepEqual(
-  missingRequiredReviewLabels("ac_cc_authorization", { fullName: "Ada Lovelace" }),
-  ["Charge amount"]
+  missingRequiredReviewLabels("welcome_packet", { fullName: "Ada Lovelace" }),
+  ["MID"]
 );
 assert.deepEqual(
-  missingRequiredReviewLabels("ac_cc_authorization", {
+  missingRequiredReviewLabels("welcome_packet", {
     fullName: "Ada Lovelace",
-    amountAuthorized: "$150.00",
+    mid: "Golden Pathway",
   }),
   []
 );

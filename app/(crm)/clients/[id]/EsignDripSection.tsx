@@ -45,17 +45,7 @@ const ESIGN_CARDS: { kind: EsignKind; title: string; hint: string }[] = [
   {
     kind: "welcome_packet",
     title: "Welcome Packet",
-    hint: "Signed POA — queues print after the client signs",
-  },
-  {
-    kind: "ac_cc_authorization",
-    title: "Arlington Coaching CC Auth",
-    hint: "One-time card charge",
-  },
-  {
-    kind: "ac_welcome_packet",
-    title: "AC Welcome Packet",
-    hint: "Program agreement — one signature",
+    hint: "Signed POA — advances the client once signed",
   },
 ];
 

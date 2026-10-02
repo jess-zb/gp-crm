@@ -1,34 +1,66 @@
 ---
-description: Uploads grouping, undeletable POA/collection letters, Dev-only eSign rollout
-alwaysApply: true
+description: Uploads, locked files, and e-sign
+globs: lib/esign/**/*,app/api/esign/**/*,app/api/sign/**/*,app/sign/**/*,app/(crm)/clients/**/EsignDripSection.tsx,app/(crm)/esign-templates/**/*
+alwaysApply: false
 ---
 
-# Uploads, locked files, and Dev eSign (Aug 2026)
+# Uploads, locked files, and e-sign
 
 ## Uploads
 
-- There is no Letters tab. Collection letters live on **Uploads**, grouped by type (`collection_letter` or `is_collection_letter`).
+- There is no Letters tab. Collection letters live on **Uploads**, grouped by
+  type (`collection_letter` or `is_collection_letter`).
 - `?tab=letters` must keep redirecting to Uploads.
 
 ## Delete lock
 
-- **Locked for everyone:** Collection Letter and POA (`poa_document`, `poa`, `poa_signed`, `power_of_attorney`).
-- **Not locked:** CC Authorization (manual uploads). Signed eSign files stay undeletable via `esign_requests`, including signed CC Auth.
-- Enforce in UI, `deleteOwnClientDocument` / `deleteClientDocument`, and RLS (`lock_permanent_client_document_deletes`). Check eSign protection with the **service role**, not staff RLS.
+- **Locked for everyone:** Collection Letter and POA (`poa_document`, `poa`,
+  `poa_signed`, `power_of_attorney`).
+- **Not locked:** CC Authorization (manual uploads). Signed e-sign files stay
+  undeletable via `esign_requests`, including signed CC Auth.
+- Enforce in the UI, `deleteOwnClientDocument` / `deleteClientDocument`, and RLS
+  (`lock_permanent_client_document_deletes`). Check e-sign protection with the
+  **service role**, not staff RLS.
 
-## eSign (pilot send list; Place fields Dev-only)
+## E-Sign
 
-- Staff send UI: `role === "dev"` **or** email in `ESIGN_PILOT_EMAILS` (`lib/esign/config.ts`): Sami (`cs@`), Jessica Gonzales, Daniel M (`daniel@stellari.io`), Amanda Curry (`amanda@stellari.io`), Asim (`asim@voxtrongroup.com`), Developer. Other admins must not see Packets eSign.
-- Arlington Coaching templates (`ac_welcome_packet`, `ac_cc_authorization`) are extra send cards. Qualified users can replace those two PDFs from the E-Sign section (`Upload PDF`). They do not queue FedEx and the welcome packet is stored as `client_agreement`, not `poa_signed`, so signing it does not auto-advance stage.
-- Place fields stays Dev (`canPlaceEsignFields`).
-- Widen staff UI **and** matching `esign_requests` / `esign_events` RLS together. Layout write stays Dev.
-- Kill switch: `ESIGN_ENABLED=false` (or `OPENSIGN_ESIGN_ENABLED=false`). Unset = **on**.
-- Client `/sign/[token]` + `/api/sign/*` stay public (tokenized). Middleware must allow those paths **before** auth redirects.
-- Client sign links use `publicAppUrl()` (`lib/constants/business-contact.ts`). Fallback is **`https://dspcrm.vercel.app`**. Never `app.debtsupportpros.com` (no DNS). Staff **cannot** add `send.debtsupportpros.com` SPF or a `debtsupportpros.com` CRM hostname — do not keep asking for that. Reduce spam in `send-invite-email.ts`: plain text + HTML, `reply_to` support, brand in the subject, no emojis / all-caps CTAs, visible site + full link. Invites use the same Resend `FROM_EMAIL` as other CRM mail.
-- Welcome Packet signed file is stored as `poa_signed`. If the client is still in Account Manager (`welcome_packet`) or Client Services when that file lands on Uploads, auto-advance them to **Awaiting Collection Letter** (safety so they are not stuck in AM). CC Auth must not auto-stage. Welcome Packet sign still queues FedEx Pending so print is not lost.
-- Required review fields (`lib/esign/review-fields.ts`): CC Auth — Name, Account Manager, MID, Card 1 last 4, Card 1 amount. Amount authorized stays optional (it totals from card amounts). Welcome Packet — MID only. Cards 2–5 stay optional. Empty required fields highlight when Confirm Before Sending opens. Client name stamps in Title Case. Account Manager is **first name only**, Title Case (same as print packets).
-- Print batch still uses the packet generator, not the eSign PDF.
+- The engine is CRM-native: tokenised `/sign/[token]` + OTP + SHA-256 +
+  certificate of completion, with `pdf-lib` stamping and `pdfjs-dist` page
+  rasterising. There is no third-party e-sign provider.
+- Field placement is data-driven: percent-based boxes with a `bind` key from
+  `ESIGN_BIND_KEYS`, placed by drag-and-drop in `EsignDocumentBoard` (mode
+  `edit`) and saved as JSON. Never go back to absolute-point field maps.
+- `pdfjs-dist` is pinned to `3.11.174` with `canvas: false` aliased in
+  `next.config.mjs`. Do not bump it opportunistically.
+- Client `/sign/[token]` and `/api/sign/*` stay public (tokenised). Middleware
+  must allow those paths **before** auth redirects.
+- Client sign links use `publicAppUrl()` (`lib/constants/business-contact.ts`).
+  Never hardcode an origin.
+- Kill switch: `ESIGN_ENABLED=false`. Unset = **on**.
+- Keep `send-invite-email.ts` spam-resistant: plain text + HTML, `reply_to`
+  support, brand in the subject, no emojis or all-caps CTAs, visible site and
+  full link.
+- The signed Welcome Packet is stored as `poa_signed`, which both satisfies the
+  Account Manager stage gate and drives POA auto-advance. CC Auth must **not**
+  auto-stage. See `.cursor/rules/onboarding-stage-gates.mdc`.
+- Required review fields (`lib/esign/review-fields.ts`): CC Auth — Name,
+  Account Manager, MID, Card 1 last 4, Card 1 amount. Amount authorized stays
+  optional (it totals from the card amounts). Welcome Packet — MID only.
+  Cards 2–5 stay optional. Empty required fields highlight when Confirm Before
+  Sending opens. Client name stamps in Title Case. Account Manager is **first
+  name only**, Title Case.
+
+### Planned: MID-scoped templates
+
+Documents are being moved from the hardcoded `EsignKind` union to rows in
+`esign_templates`, owned by a MID. The hard requirement is that adding a MID and
+its documents stays **fully no-code**: an admin enters a MID name, uploads PDFs,
+and places fields in the existing editor. When that lands, delete the `EsignKind`
+union, `defaultLayoutForKind`, the bundled PDFs under `lib/esign/templates/` and
+`public/esign-templates/`, and the matching `next.config.mjs` /`vercel.json`
+bundling entries. Do not add a new hardcoded kind in the meantime.
 
 ## Attorney portal
 
-- Do not drop `/api/clients/documents/download` from `ATTORNEY_PORTAL_API_ALLOWLIST`.
+- Do not drop `/api/clients/documents/download` from
+  `ATTORNEY_PORTAL_API_ALLOWLIST`.

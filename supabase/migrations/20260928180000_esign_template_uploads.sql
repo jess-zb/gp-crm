@@ -1,4 +1,4 @@
--- Private bucket for qualified staff to replace Arlington Coaching eSign PDFs.
+-- Private bucket for qualified staff to replace blank eSign PDFs.
 -- Service role reads and writes through the app. No public access.
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit)

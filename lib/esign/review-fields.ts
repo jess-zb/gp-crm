@@ -52,21 +52,6 @@ export function reviewFieldsForKind(kind: EsignKind): PrefillReviewField[] {
       { key: "mid", label: "MID", kind: "mid", group: "top", required: true },
     ];
   }
-  if (kind === "ac_welcome_packet") {
-    return [{ key: "fullName", label: "Name", kind: "text", group: "top", required: true }];
-  }
-  if (kind === "ac_cc_authorization") {
-    return [
-      { key: "fullName", label: "Name", kind: "text", group: "top", required: true },
-      {
-        key: "amountAuthorized",
-        label: "Charge amount",
-        kind: "amount",
-        group: "top",
-        required: true,
-      },
-    ];
-  }
   return [
     { key: "fullName", label: "Name", kind: "text", group: "top", required: true },
     { key: "advisor", label: "Account Manager", kind: "advisor", group: "top", required: true },

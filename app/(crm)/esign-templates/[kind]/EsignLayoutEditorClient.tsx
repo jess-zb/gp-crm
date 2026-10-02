@@ -60,10 +60,10 @@ export function EsignLayoutEditorClient({ kind }: { kind: EsignKind }) {
         <Link className="text-[#0A2540] underline" href="/esign-templates/welcome_packet">
           Welcome Packet
         </Link>
-        <Link className="text-[#0A2540] underline" href="/esign-templates/ac_cc_authorization">
+        <Link className="text-[#0A2540] underline" href="/esign-templates/cc_authorization">
           AC CC Auth
         </Link>
-        <Link className="text-[#0A2540] underline" href="/esign-templates/ac_welcome_packet">
+        <Link className="text-[#0A2540] underline" href="/esign-templates/welcome_packet">
           AC Welcome Packet
         </Link>
         <button

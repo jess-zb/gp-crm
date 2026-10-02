@@ -6,10 +6,6 @@ export function esignTemplateFileName(kind: EsignKind): string {
   switch (kind) {
     case "welcome_packet":
       return "welcome-packet.pdf";
-    case "ac_welcome_packet":
-      return "ac-welcome-packet.pdf";
-    case "ac_cc_authorization":
-      return "ac-cc-auth.pdf";
     case "cc_authorization":
       return "cc-auth.pdf";
   }

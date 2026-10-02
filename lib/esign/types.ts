@@ -1,8 +1,6 @@
 export const ESIGN_KINDS = [
   "cc_authorization",
   "welcome_packet",
-  "ac_cc_authorization",
-  "ac_welcome_packet",
 ] as const;
 export type EsignKind = (typeof ESIGN_KINDS)[number];
 
@@ -38,21 +36,15 @@ export function isEsignKind(value: string): value is EsignKind {
   return (ESIGN_KINDS as readonly string[]).includes(value);
 }
 
-/** Qualified staff may replace these blank forms from the E-Sign section. */
-export function isUploadableEsignKind(
-  value: string
-): value is "ac_cc_authorization" | "ac_welcome_packet" {
-  return value === "ac_cc_authorization" || value === "ac_welcome_packet";
+/** Qualified staff may replace the blank form from the E-Sign section. */
+export function isUploadableEsignKind(value: string): value is EsignKind {
+  return isEsignKind(value);
 }
 
 export function esignKindTitle(kind: EsignKind): string {
   switch (kind) {
     case "welcome_packet":
-      return "Virtual Welcome Packet";
-    case "ac_welcome_packet":
-      return "Arlington Coaching Welcome Packet";
-    case "ac_cc_authorization":
-      return "Arlington Coaching Credit Card Authorization";
+      return "Welcome Packet";
     case "cc_authorization":
       return "Credit Card Authorization";
   }
@@ -61,11 +53,7 @@ export function esignKindTitle(kind: EsignKind): string {
 export function esignSignedFileStem(kind: EsignKind): string {
   switch (kind) {
     case "welcome_packet":
-      return "Virtual-Welcome-Packet";
-    case "ac_welcome_packet":
-      return "Arlington-Coaching-Welcome-Packet";
-    case "ac_cc_authorization":
-      return "Arlington-Coaching-CC-Authorization";
+      return "Welcome-Packet";
     case "cc_authorization":
       return "CC-Authorization";
   }
@@ -75,25 +63,15 @@ export function esignSentAuditAction(kind: EsignKind): string {
   switch (kind) {
     case "welcome_packet":
       return "esign_welcome_packet_sent";
-    case "ac_welcome_packet":
-      return "esign_ac_welcome_packet_sent";
-    case "ac_cc_authorization":
-      return "esign_ac_cc_auth_sent";
     case "cc_authorization":
       return "esign_cc_auth_sent";
   }
 }
 
-/** DSP Virtual Welcome Packet only. Arlington Coaching does not print or advance stage. */
-export function isDspWelcomePacket(kind: EsignKind): boolean {
-  return kind === "welcome_packet";
-}
-
 export function documentTypeForKind(
   kind: EsignKind
-): "cc_authorization" | "poa_signed" | "client_agreement" {
+): "cc_authorization" | "poa_signed" {
   if (kind === "welcome_packet") return "poa_signed";
-  if (kind === "ac_welcome_packet") return "client_agreement";
   return "cc_authorization";
 }
 
