@@ -8,7 +8,6 @@ import {
   canShowEsignActions,
   esignKindTitle,
   esignSentAuditAction,
-  isDspWelcomePacket,
   isEsignKind,
   type EsignKind,
 } from "@/lib/esign/types";
@@ -61,7 +60,7 @@ export async function POST(request: Request) {
 
   const { data: client, error: clientErr } = await supabase
     .from("clients")
-    .select("id, first_name, last_name, email, stage, assigned_to, attorney_id, fedex_queued_at")
+    .select("id, first_name, last_name, email, stage, assigned_to, attorney_id")
     .eq("id", clientId)
     .maybeSingle();
 
@@ -144,25 +143,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not record the request." }, { status: 500 });
   }
 
-  const chosenMid = String(body.prefill?.mid ?? "").trim();
-  if (chosenMid) {
-    const { error: midErr } = await createAdminClient()
-      .from("clients")
-      .update({ fedex_merchant: chosenMid })
-      .eq("id", clientId);
-    if (midErr) {
-      console.warn("[esign send] persist MID", midErr.message);
-    } else {
-      await supabase.from("audit_log").insert({
-        client_id: clientId,
-        action: "esign_mid_saved",
-        new_value: { fedex_merchant: chosenMid, source: "esign_review" },
-        performed_by: user.id,
-        performed_by_name: profile.full_name?.trim() || "Staff",
-      });
-    }
-  }
-
   const mailed = await sendEsignInviteEmail({
     to: email,
     signerName,
@@ -178,20 +158,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: toUserFacingError(mailed.error) }, { status: 502 });
   }
 
-  const queuedFedex =
-    isDspWelcomePacket(kind) && !client.fedex_queued_at
-      ? await queueWelcomePacketFedex(supabase, clientId, user.id, profile.full_name)
-      : false;
-
   await createAdminClient().from("esign_events").insert({
     request_id: inserted.id,
     event: "sent",
-    meta: { kind, queued_fedex: queuedFedex },
+    meta: { kind },
   });
   await supabase.from("audit_log").insert({
     client_id: clientId,
     action: esignSentAuditAction(kind),
-    new_value: { request_id: inserted.id, queued_fedex: queuedFedex, channel: "crm" },
+    new_value: { request_id: inserted.id, channel: "crm" },
     performed_by: user.id,
     performed_by_name: profile.full_name?.trim() || "Staff",
   });
@@ -201,31 +176,5 @@ export async function POST(request: Request) {
     requestId: inserted.id,
     status: "sent",
     sentAt: inserted.sent_at,
-    queuedFedex,
   });
-}
-
-async function queueWelcomePacketFedex(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  clientId: string,
-  userId: string,
-  performerName: string | null
-): Promise<boolean> {
-  const queuedAt = new Date().toISOString();
-  const { error } = await supabase
-    .from("clients")
-    .update({ delivery_method: "fedex", fedex_queued_at: queuedAt })
-    .eq("id", clientId);
-  if (error) {
-    console.warn("[esign send] fedex queue", error.message);
-    return false;
-  }
-  await supabase.from("audit_log").insert({
-    client_id: clientId,
-    action: "welcome_packet_queued",
-    new_value: { delivery_method: "fedex", queued_at: queuedAt, source: "esign" },
-    performed_by: userId,
-    performed_by_name: performerName?.trim() || "Staff",
-  });
-  return true;
 }

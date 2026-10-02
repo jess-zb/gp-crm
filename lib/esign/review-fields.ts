@@ -2,7 +2,12 @@ import type { EsignKind } from "./types";
 import type { EsignClientPrefill } from "./map-client-prefill";
 import { signerDisplayName } from "./map-client-prefill";
 import { formatUsd, isAmountField, parseUsdNumber } from "./money";
-import { advisorFirstNameForPdf } from "@/lib/packets/pdf-generator";
+
+function firstNameOnly(fullName: string | null | undefined): string {
+  const trimmed = fullName?.trim() ?? "";
+  if (!trimmed) return "";
+  return trimmed.split(/\s+/)[0] ?? trimmed;
+}
 
 /** Names on the PDF: "DAN ESIGN" / "marissa porter" → "Dan Esign" / "Marissa Porter". */
 export function toTitleCaseName(raw: string): string {
@@ -28,7 +33,7 @@ export function toTitleCaseName(raw: string): string {
 
 /** Account Manager stamps first name only, Title Case — "Marissa Porter" → "Marissa". */
 export function formatAdvisorNameForEsign(raw: string): string {
-  return toTitleCaseName(advisorFirstNameForPdf(raw));
+  return toTitleCaseName(firstNameOnly(raw));
 }
 
 export type PrefillReviewField = {

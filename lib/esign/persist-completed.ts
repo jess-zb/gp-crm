@@ -6,7 +6,6 @@ import {
   markPoaSignedOnClient,
 } from "@/lib/clients/poa-upload-advance";
 import { documentTypeForKind, esignSignedFileStem, type EsignKind } from "./types";
-import { queuePendingPrimaryFedex } from "@/lib/packets/queue-pending-fedex";
 
 /** OpenSign webhook leftover — native complete uses persistCompletedEsignBytes. */
 export async function persistCompletedEsign(_args: {
@@ -80,7 +79,7 @@ export async function persistCompletedEsignBytes(args: {
 
   const { data: clientRow } = await args.admin
     .from("clients")
-    .select("stage, fedex_queued_at")
+    .select("stage")
     .eq("id", args.clientId)
     .maybeSingle();
   const stageBefore = (clientRow?.stage as string | null) ?? null;
@@ -147,31 +146,6 @@ export async function persistCompletedEsignBytes(args: {
           trigger: "esign_welcome_packet_poa",
           from_stage: stageBefore,
           document_id: signedId,
-        },
-        performed_by_name: "System",
-      });
-    }
-  }
-
-  if (signedId && args.kind === "welcome_packet") {
-    if (!clientRow?.fedex_queued_at) {
-      await args.admin
-        .from("clients")
-        .update({
-          delivery_method: "fedex",
-          fedex_queued_at: new Date().toISOString(),
-        })
-        .eq("id", args.clientId);
-    }
-    const queued = await queuePendingPrimaryFedex(args.admin, args.clientId);
-    if (queued === "inserted") {
-      await args.admin.from("audit_log").insert({
-        client_id: args.clientId,
-        action: "welcome_packet_queued",
-        new_value: {
-          delivery_method: "fedex",
-          source: "esign_signed",
-          signed_document_id: signedId,
         },
         performed_by_name: "System",
       });

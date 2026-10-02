@@ -12,12 +12,12 @@ const SECTIONS: { title: string; items: FaqItem[] }[] = [
       {
         q: "What do the progress steps mean?",
         a:
-          "Your case moves through these steps:\n\n1) Lead Intake — we have your information\n2) Account Manager — your documents are on the way\n3) Client Services — your case manager is assigned\n4) Awaiting Collection Letter — please send us any debt collection letters you receive\n5) Case Sent to Attorneys — our attorneys are working your case\n6) Complete — your case is finished",
+          "Your case moves through these steps:\n\n1) Lead Intake — we have your information\n2) Account Manager — your welcome packet is sent to you to sign\n3) Client Services — your case manager is assigned\n4) Awaiting Collection Letter — please send us any debt collection letters you receive\n5) Case Sent to Attorneys — our attorneys are working your case\n6) Complete — your case is finished",
       },
       {
         q: "How long does each step take?",
         a:
-          "Steps 1-3 typically take 1-3 business days. Step 4 takes 2-5 business days for FedEx delivery. Steps 5-6 depend on when collection letters arrive. Your case manager will keep you updated.",
+          "Steps 1-3 typically take 1-3 business days once you have signed your welcome packet. Steps 5-6 depend on when collection letters arrive. Your case manager will keep you updated.",
       },
     ],
   },
@@ -25,19 +25,19 @@ const SECTIONS: { title: string; items: FaqItem[] }[] = [
     title: "Your Account Manager",
     items: [
       {
-        q: "How do I track my package?",
+        q: "How do I receive my welcome packet?",
         a:
-          "Once your packet ships, your tracking number appears on this page. Click the number to open your carrier’s tracking site (FedEx, UPS, or USPS, depending on the format).",
+          "By email. We send you a secure link to review and sign it electronically, so there is nothing to print, post, or mail back.",
       },
       {
-        q: "I received my packet — what do I do next?",
+        q: "I opened the link — what do I do next?",
         a:
-          "Sign the POA (Power of Attorney) document included in your packet. Return it using the pre-paid envelope or contact your case manager if you need another delivery option.",
+          "Read through the packet, including the POA (Power of Attorney), then type your name and sign at the bottom. Your signed copy is saved to the Documents section on this page as soon as you finish.",
       },
       {
-        q: "I never received my packet",
+        q: "I never received the email",
         a:
-          "Contact your case manager through the Messages section below. They can resend via FedEx or help with delivery options.",
+          "Check your spam or junk folder first. If it is not there, message your case manager through the Messages section below and they will resend the link.",
       },
     ],
   },

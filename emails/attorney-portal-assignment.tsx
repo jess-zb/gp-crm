@@ -9,6 +9,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import { BUSINESS_NAME, publicAppUrl } from "@/lib/constants/business-contact";
 import type { AttorneyPortalAssignmentEmailProps } from "./_staff-types";
 
 export default function AttorneyPortalAssignmentEmail({
@@ -24,8 +25,8 @@ export default function AttorneyPortalAssignmentEmail({
         <Container style={styles.container}>
           <Section style={styles.header}>
             <Img
-              src="https://dspcrm.vercel.app/logo.png"
-              alt="DebtSupportPros"
+              src={`${publicAppUrl()}/logo.png`}
+              alt={BUSINESS_NAME}
               width={180}
               style={styles.logo}
             />

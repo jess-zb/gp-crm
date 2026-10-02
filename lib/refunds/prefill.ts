@@ -19,7 +19,7 @@ export type RefundPrefill = {
 /**
  * Seeds the refund request fields from what the client was actually charged.
  * The MID is the merchant that appears on the most cards, matching how
- * resolveFedexMerchant picks one, with the persisted fedex_merchant as a
+ * The majority card merchant wins, with the client MID as a
  * fallback when no card carries a merchant.
  *
  * Both values are editable in the modal — a partial refund on a different MID is

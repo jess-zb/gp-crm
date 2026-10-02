@@ -295,7 +295,6 @@ export default async function ClientsPage({
       zip_code: (c.zip_code as string | null) ?? null,
       street_address: (c.street_address as string | null) ?? null,
       stage_entered_at: (c.stage_entered_at as string | null) ?? null,
-      fedex_tracking_number: (c.fedex_tracking_number as string | null) ?? null,
     });
 
     const clients = rawRows.map((c) => mapRowToItem(c));

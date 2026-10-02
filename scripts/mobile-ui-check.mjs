@@ -1,7 +1,7 @@
 /**
  * Quick mobile layout smoke test (iPhone viewport).
  * Usage: npm run dev (separate terminal), then node scripts/mobile-ui-check.mjs
- * Optional: BASE_URL=https://zb-crm.vercel.app LOGIN_EMAIL=... LOGIN_PASSWORD=...
+ * Optional: BASE_URL=https://your-app-host LOGIN_EMAIL=... LOGIN_PASSWORD=...
  */
 import { chromium, devices } from "playwright";
 

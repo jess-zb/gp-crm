@@ -45,7 +45,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE announcements;
 --   '*/15 * * * *',
 --   $$
 --   SELECT net.http_post(
---     url := 'https://zb-crm.vercel.app/api/notifications/appointments',
+--     url := 'https://YOUR_APP_HOST/api/notifications/appointments',
 --     headers := '{"Content-Type": "application/json", "x-cron-secret": "YOUR_CRON_SECRET"}'::jsonb,
 --     body := '{}'::jsonb
 --   );

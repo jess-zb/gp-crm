@@ -624,7 +624,7 @@ export function AccountTabForm({
             {addressWarning ? (
               <p className="mt-1 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
                 <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
-                {addressWarning} — FedEx packets cannot be sent to this address
+                {addressWarning} — mail cannot be delivered to this address
               </p>
             ) : null}
             <ErrorMessage fieldKey="street_address" fieldErrors={fieldErrors} />

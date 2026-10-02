@@ -167,7 +167,7 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    /* Admin surface (FedEx batches, etc.) */
+    /* Admin surface (attorney queue, bulk invite, drip backfill) */
     if (pathname.startsWith("/admin")) {
       if (!CRM_STAFF.has(role)) {
         return redirectTo(request, "/dashboard");

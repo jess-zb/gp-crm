@@ -8,7 +8,6 @@ export type TemplateMergeContext = {
   firstName: string;
   assignedUser: string;
   stageKey: string;
-  trackingNumber: string | null;
 };
 
 /** Replace merge tags in template subject/body with client-specific values. */
@@ -18,11 +17,9 @@ export function applyMergeTags(
 ): string {
   const s = text ?? "";
   const stage = STAGE_LABELS[ctx.stageKey] ?? ctx.stageKey.replace(/_/g, " ");
-  const tracking = ctx.trackingNumber?.trim() || "—";
   return s
     .replace(/\{\{client_name\}\}/g, ctx.clientName)
     .replace(/\{\{first_name\}\}/g, ctx.firstName)
     .replace(/\{\{assigned_user\}\}/g, ctx.assignedUser)
-    .replace(/\{\{stage\}\}/g, stage)
-    .replace(/\{\{tracking_number\}\}/g, tracking);
+    .replace(/\{\{stage\}\}/g, stage);
 }

@@ -23,7 +23,7 @@ export type CommTemplateRow = {
 };
 
 const MERGE_HINT =
-  "{{client_name}}, {{first_name}}, {{assigned_user}}, {{stage}}, {{tracking_number}}";
+  "{{client_name}}, {{first_name}}, {{assigned_user}}, {{stage}}";
 
 const TAB_BTN =
   "rounded-lg px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/40";

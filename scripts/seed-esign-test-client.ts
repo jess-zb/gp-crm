@@ -51,7 +51,6 @@ async function main() {
       zip_code: "33101",
       stage: "welcome_packet",
       is_active: true,
-      fedex_merchant: "TESTMID",
       assigned_to: jessica?.id ?? null,
       verbal_password: "esign-test",
     })

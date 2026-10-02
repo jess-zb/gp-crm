@@ -24,8 +24,6 @@ CREATE TYPE case_stage AS ENUM (
   'closed'
 );
 
-CREATE TYPE delivery_method AS ENUM ('fedex', 'docusign');
-
 CREATE TYPE card_type AS ENUM ('visa', 'mastercard', 'amex', 'discover', 'other');
 
 CREATE TYPE communication_type AS ENUM ('call', 'sms', 'email', 'note');
@@ -114,14 +112,7 @@ CREATE TABLE clients (
   client_notes TEXT,
   call_notes TEXT,
 
-  -- Welcome packet
-  delivery_method delivery_method,
-  fedex_tracking_number TEXT,
-  postlogic_unique_id TEXT,
-  fedex_batch_sent_at TIMESTAMPTZ,
-  postlogic_status TEXT,
-  docusign_envelope_id TEXT,
-  docusign_status TEXT,
+  -- Welcome packet (e-signature only)
   poa_signed_at TIMESTAMPTZ,
   poa_document_url TEXT,
 
@@ -796,9 +787,6 @@ CREATE INDEX idx_portal_messages_client_id ON portal_messages(client_id);
 --       SELECT id FROM clients WHERE assigned_to = auth.uid()
 --     )
 --   );
--- ALTER TABLE clients ADD COLUMN IF NOT EXISTS postlogic_unique_id TEXT;
--- ALTER TABLE clients ADD COLUMN IF NOT EXISTS fedex_batch_sent_at TIMESTAMPTZ;
--- ALTER TABLE clients ADD COLUMN IF NOT EXISTS postlogic_status TEXT;
 -- CREATE POLICY "Admin and management can insert audit log"
 --   ON audit_log FOR INSERT
 --   WITH CHECK (current_user_role() IN ('dev', 'admin', 'manager'));

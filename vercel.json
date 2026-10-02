@@ -23,22 +23,6 @@
     {
       "path": "/api/cron/holiday-autoresponder",
       "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/postlogic/poll-status",
-      "schedule": "0 17 * * *"
-    },
-    {
-      "path": "/api/postlogic/send-batch",
-      "schedule": "0 3 * * 1,4"
-    },
-    {
-      "path": "/api/packets/update-tracking",
-      "schedule": "0 */4 * * *"
-    },
-    {
-      "path": "/api/cron/sync-sunset",
-      "schedule": "0 2 * * *"
     }
   ]
 }

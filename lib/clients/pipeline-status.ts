@@ -53,7 +53,7 @@ export function isForwardPipelineTransition(oldStage: string, newStage: string):
  * True when a forward move would improperly skip required early-pipeline stages.
  * Primary guard: New Lead may only advance to Account Manager (`welcome_packet`).
  * Retention (Cancel path) and hidden/legacy Compliance are exempt.
- * Later-stage jumps keep existing gates (POA, FedEx, Retention exit modal).
+ * Later-stage jumps keep existing gates (Welcome Packet, POA, Retention exit modal).
  */
 export function wouldSkipPipelineStages(oldStage: string, newStage: string): boolean {
   if (isPipelineStageHidden(oldStage) || isPipelineStageHidden(newStage)) {

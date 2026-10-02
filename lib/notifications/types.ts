@@ -4,7 +4,6 @@ export interface CRMNotification {
     | "appointment"
     | "collection_letter"
     | "stage_change"
-    | "fedex_update"
     | "team_message"
     | "announcement"
     | "attorney_portal_assignment"

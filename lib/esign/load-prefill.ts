@@ -78,7 +78,7 @@ export async function loadEsignPrefill(
   const { data: client } = await admin
     .from("clients")
     .select(
-      "first_name, last_name, nickname, email, phone_mobile, phone, street_address, city, state, zip_code, date_of_birth, spouse_name, spouse_first_name, spouse_last_name, fedex_merchant, assigned_to"
+      "first_name, last_name, nickname, email, phone_mobile, phone, street_address, city, state, zip_code, date_of_birth, spouse_name, spouse_first_name, spouse_last_name, assigned_to"
     )
     .eq("id", clientId)
     .maybeSingle();
@@ -99,7 +99,6 @@ export async function loadEsignPrefill(
   out.spouseName =
     String(client.spouse_name ?? "").trim() ||
     `${String(client.spouse_first_name ?? "").trim()} ${String(client.spouse_last_name ?? "").trim()}`.trim();
-  out.mid = String(client.fedex_merchant ?? "").trim();
 
   if (client.assigned_to) {
     const { data: am } = await admin

@@ -9,7 +9,6 @@ import {
   runStageEntrySideEffects,
   type StageEntrySideEffectsArgs,
 } from "@/lib/reminders/stage-entry-appointments";
-import { autoMatchAndSaveMerchant } from "@/lib/packets/resolve-merchant";
 
 /**
  * Explicit allowlist of non-portal staff roles. Kept as an allowlist (not a
@@ -47,21 +46,6 @@ export async function runStageEntrySideEffectsServerAction(
   await requireStaff();
   const supabase = createServiceClient();
   await runStageEntrySideEffects(supabase, args);
-
-  if (args.forward && args.newStage === "welcome_packet") {
-    const { data: client } = await supabase
-      .from("clients")
-      .select("first_name, last_name")
-      .eq("id", args.clientId)
-      .maybeSingle();
-    await autoMatchAndSaveMerchant(
-      args.clientId,
-      (client?.first_name as string | null) ?? null,
-      (client?.last_name as string | null) ?? null
-    ).catch((err) =>
-      console.warn("[stage-entry] merchant auto-match failed:", err)
-    );
-  }
 
   // Day-0 drip emails: fire immediately instead of waiting up to 60 min
   // for the hourly cron. The DB trigger has already inserted any

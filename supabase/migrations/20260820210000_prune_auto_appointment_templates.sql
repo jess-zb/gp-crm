@@ -3,7 +3,7 @@
 --
 -- All templates are inactive, including Cards Charged and AM Enrollment Follow-Up.
 -- App auto-create that remains (not templates):
---   CS Intro Call, POA Follow Up (FedEx delivered)
+--   CS Intro Call, POA Follow Up
 -- Case Sent notify is disabled in app code (queue already emails client + attorney).
 --
 -- Open tasks from disabled templates are cancelled (not deleted) so they

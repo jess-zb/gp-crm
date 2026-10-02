@@ -30,7 +30,6 @@ import {
   snapshotFromReview,
   toTitleCaseName,
 } from "../lib/esign/review-fields";
-import { advisorFirstNameForPdf } from "../lib/packets/pdf-generator";
 import { createOtpCode, hashOtp, otpMatches } from "../lib/esign/tokens";
 import { DEFAULT_APP_URL, publicAppUrl } from "../lib/constants/business-contact";
 
@@ -142,8 +141,8 @@ assert.equal(formatUsdInput("1500", true), "1,500.00");
 assert.equal(formatUsdInput("1500.5", true), "1,500.50");
 assert.equal(valueForBind("amountAuthorized", sample, "8/19/2026"), "$150.00");
 assert.equal(valueForBind("card1Amount", sample, "8/19/2026"), "$100.00");
-assert.equal(advisorFirstNameForPdf("Jessica Gonzales"), "Jessica");
-assert.equal(advisorFirstNameForPdf("Jordan"), "Jordan");
+assert.equal(formatAdvisorNameForEsign("JESSICA GONZALES"), "Jessica");
+assert.equal(formatAdvisorNameForEsign("jordan"), "Jordan");
 console.log("  ✓ overlay maps for both forms");
 
 const ccRequired = reviewFieldsForKind("cc_authorization")
@@ -239,10 +238,10 @@ async function main() {
   assert.equal(otpMatches("000000", hashOtp(code)), false);
   console.log("  ✓ OTP hash verify");
 
-  assert.equal(DEFAULT_APP_URL, "https://dspcrm.vercel.app");
+  assert.match(DEFAULT_APP_URL, /^https:\/\/[^/]+$/);
   const prevAppUrl = process.env.NEXT_PUBLIC_APP_URL;
   delete process.env.NEXT_PUBLIC_APP_URL;
-  assert.equal(publicAppUrl(), "https://dspcrm.vercel.app");
+  assert.equal(publicAppUrl(), DEFAULT_APP_URL);
   process.env.NEXT_PUBLIC_APP_URL = "https://example.test/";
   assert.equal(publicAppUrl(), "https://example.test");
   if (prevAppUrl === undefined) delete process.env.NEXT_PUBLIC_APP_URL;

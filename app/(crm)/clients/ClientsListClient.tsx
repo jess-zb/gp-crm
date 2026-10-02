@@ -82,7 +82,6 @@ export type ClientsListItem = {
   assigned_services_id: string | null;
   services_user_name: string | null;
   dnc_reason: string | null;
-  fedex_tracking_number: string | null;
 };
 
 function listDisplayPhone(c: ClientsListItem): string {
@@ -123,7 +122,6 @@ const AVAILABLE_COLUMNS = [
   { id: "services", label: "Services" },
   { id: "created_at", label: "Date Added" },
   { id: "days_in_stage", label: "Days in Stage" },
-  { id: "tracking", label: "Tracking" },
 ] as const;
 
 const DEFAULT_VISIBLE_COLUMNS: string[] = [
@@ -147,7 +145,6 @@ const COLUMN_WIDTHS: Record<string, number> = {
   services: 140,
   created_at: 120,
   days_in_stage: 110,
-  tracking: 160,
   /** View + Edit + optional Reactivate + Delete in one row (4×32px + gaps + padding). */
   actions: 140,
 };
@@ -166,7 +163,6 @@ const COLUMNS_HIDDEN_BELOW_MD = new Set([
   "services",
   "created_at",
   "days_in_stage",
-  "tracking",
 ]);
 
 const MOBILE_COLUMN_WIDTHS: Record<string, number> = {
@@ -472,14 +468,6 @@ const ClientCell = memo(({
       return (
         <td className="hidden px-4 py-2.5 text-sm tabular-nums text-slate-700 md:table-cell dark:text-slate-300">
           {daysInClientStage(client)}
-        </td>
-      );
-    case "tracking":
-      return (
-        <td className="hidden max-w-[120px] px-4 py-2.5 text-sm text-slate-700 lg:table-cell dark:text-slate-300">
-          <span className="block truncate" title={client.fedex_tracking_number?.trim() || undefined}>
-            {client.fedex_tracking_number?.trim() || "—"}
-          </span>
         </td>
       );
     default:
@@ -888,16 +876,6 @@ export function ClientsListClient({
             className="hidden w-[90px] md:table-cell"
           />
         );
-      case "tracking":
-        return (
-          <th
-            key={colId}
-            scope="col"
-            className="hidden w-[120px] px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-600 lg:table-cell dark:text-slate-400"
-          >
-            Tracking
-          </th>
-        );
       default:
         return null;
     }
@@ -1175,7 +1153,7 @@ export function ClientsListClient({
                 );
               }, 400);
             }}
-            placeholder="Search name, phone, email, tracking number…"
+            placeholder="Search name, phone, or email…"
             autoComplete="off"
             className="crm-input w-full pl-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
           />

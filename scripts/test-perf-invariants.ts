@@ -2,7 +2,7 @@
  * Pre-deploy gate for CRM list + POA upload speed work.
  *
  * Fails if a "make it faster" change would change live side effects:
- * drips, appointments, packets, collection-letter / attorney path,
+ * drips, appointments, collection-letter / attorney path,
  * POA auto-advance stages, or RLS-facing list filters.
  *
  * Run: npm run test:perf-invariants
@@ -20,16 +20,12 @@ const uploadComplete = read("app/api/clients/documents/upload-complete/route.ts"
 const poaAdvance = read("lib/clients/poa-upload-advance.ts");
 const persistEsign = read("lib/esign/persist-completed.ts");
 const documentsTab = read("app/(crm)/clients/[id]/DocumentsTab.tsx");
-const onboarding = read("app/(crm)/clients/[id]/OnboardingChecklist.tsx");
 const stageHeader = read("app/(crm)/clients/[id]/ClientStageHeader.tsx");
 const stageEntry = read("lib/reminders/stage-entry-appointments.ts");
 const caseSent = read("lib/clients/case-sent-triggers.ts");
-const packets = read("lib/packets/fetch-packet-manager-data.ts");
-const fedexFilter = read("lib/postlogic/fedex-ready-filter.ts");
 const listQuery = read("lib/clients/clients-list-query.ts");
 const tabCounts = read("lib/clients/tab-counts.ts");
 const allowlist = read("lib/attorney/portal-api-allowlist.ts");
-const queuePending = read("lib/packets/queue-pending-fedex.ts");
 
 assert.doesNotMatch(
   uploadComplete,
@@ -74,11 +70,6 @@ assert.match(
   /from ["']@\/lib\/clients\/documents-upload-client["']/,
   "Documents tab must use the API upload helper, not the leftover server action"
 );
-assert.match(
-  onboarding,
-  /from ["']@\/lib\/clients\/documents-upload-client["']/,
-  "Checklist POA upload must use the API upload helper"
-);
 console.log("  ✓ Uploads UI still uses documents-upload-client (no extra stage-entry path)");
 
 assert.match(
@@ -95,22 +86,18 @@ console.log("  ✓ auto-appointment flags unchanged");
 assert.match(caseSent, /CREATE_CASE_SENT_NOTIFY_APPOINTMENT = false/);
 console.log("  ✓ case-sent notify appointment stays off");
 
-assert.match(packets, /loadStageClientRows\(supabase, ["']client_services["']\)/);
-assert.match(packets, /loadPendingResendClientIds/);
-assert.match(fedexFilter, /"retention"/);
-assert.match(fedexFilter, /"dnc"/);
-assert.match(fedexFilter, /"closed"/);
-console.log("  ✓ Packets Needed still CS first-time + Pending resend; terminal stages excluded");
-
-assert.match(persistEsign, /queuePendingPrimaryFedex/);
-assert.match(persistEsign, /kind === ["']welcome_packet["']/);
-assert.match(queuePending, /status:\s*["']Pending["']/);
 assert.doesNotMatch(
-  queuePending,
-  /batch_id:/,
-  "Pending markers must not stamp batch_id (set only at send)"
+  persistEsign,
+  /fedex|postlogic|shipment/i,
+  "Signed e-sign filing must not reintroduce shipping side effects"
 );
-console.log("  ✓ eSign Welcome Packet still queues FedEx Pending");
+assert.match(persistEsign, /advanceClientAfterPoaUpload/);
+console.log("  ✓ signed Welcome Packet still advances stage and files no shipment");
+
+const stageBlockers = read("lib/workflow/stage-blockers.ts");
+assert.match(stageBlockers, /blockAdvanceFromAccountManagerWithoutSignedWelcomePacket/);
+assert.match(stageHeader, /blockAdvanceFromAccountManagerWithoutSignedWelcomePacket/);
+console.log("  ✓ Account Manager exit is gated on a signed Welcome Packet");
 
 assert.match(listQuery, /count:\s*["']exact["']/);
 assert.match(
@@ -148,12 +135,5 @@ assert.match(
   "Collection-letter upload must still full-refresh the profile"
 );
 console.log("  ✓ collection-letter upload still refreshes the profile");
-
-assert.doesNotMatch(
-  onboarding,
-  /\.update\(\{\s*poa_signed_at/,
-  "Checklist POA upload must not overwrite poa_signed_at after markPoaSignedOnClient"
-);
-console.log("  ✓ checklist POA upload no longer resets poa_signed_at");
 
 console.log("\nAll perf invariant checks passed.");

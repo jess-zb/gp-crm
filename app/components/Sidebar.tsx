@@ -125,12 +125,7 @@ export function Sidebar({
       core.push(
         { href: "/clients", label: "Clients", Icon: UsersGroupIcon },
         { href: "/pipeline", label: "Pipeline", Icon: GitBranch, lucide: true },
-        { href: "/reminders", label: "Appointments", Icon: FilledBellIcon },
-        {
-          href: "/admin/fedex-batches",
-          label: "Packet Manager",
-          Icon: SendHorizontalIcon,
-        }
+        { href: "/reminders", label: "Appointments", Icon: FilledBellIcon }
       );
       if (canAccessAttorneyQueue(role)) {
         core.push({

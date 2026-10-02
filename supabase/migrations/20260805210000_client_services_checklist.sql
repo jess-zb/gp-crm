@@ -1,8 +1,8 @@
 -- Client Services checklist phase for the admin/services Priority board.
 --
--- The existing onboarding rows stay exactly as they are. Four trigger functions
--- (handle_poa_upload, handle_collection_letter_upload, the two FedEx delivered
--- variants) find their rows with `item ILIKE '%poa%'`, `'%collection letter%'`,
+-- The existing onboarding rows stay exactly as they are. The trigger functions
+-- (handle_poa_upload, handle_collection_letter_upload) find their rows with
+-- `item ILIKE '%poa%'`, `'%collection letter%'`,
 -- and `'%welcome packet%'`, so `item` text is load-bearing and is not rewritten
 -- here. `item_key` is added alongside it as a stable identifier so application
 -- code can stop matching on labels.

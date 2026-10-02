@@ -34,11 +34,6 @@ const SIDEBAR_DESCRIPTION_ALIASES: Record<string, string> = {
   "30 Day Call": "thirty_day_call",
 };
 
-/**
- * @legacy FedEx keys — re-export from workflow-config so Postlogic matches `autoCompleteOnFedexDelivered`.
- * Prefer importing `FEDEX_PACKET_REMINDER_KEYS` from workflow-config in new code.
- */
-export { FEDEX_PACKET_REMINDER_KEYS as PACKET_SENT_REMINDER_KEYS } from "@/lib/reminders/workflow-config";
 
 export function slugifyForKey(text: string): string {
   return text

@@ -26,8 +26,7 @@ export type ChecklistAutoContext = {
   hasPoaDocument: boolean;
   poa_signed_at: string | null;
   hasCollectionDoc: boolean;
-  hasFedexShipment: boolean;
-  fedex_queued_at: string | null;
+  hasSignedWelcomePacket: boolean;
 };
 
 export type ChecklistItemVisualState = {
@@ -45,11 +44,7 @@ export function isAutoCheckedForChecklistItem(
 
   switch (label) {
     case CHECKLIST_WELCOME_PACKET_ITEM:
-      return (
-        stage !== "lead" ||
-        ctx.hasFedexShipment ||
-        !!ctx.fedex_queued_at?.trim()
-      );
+      return stage !== "lead" || ctx.hasSignedWelcomePacket;
     case CHECKLIST_POA_ITEM:
       return hasSignedPoaOnRecord({
         hasPoaDocument: ctx.hasPoaDocument,

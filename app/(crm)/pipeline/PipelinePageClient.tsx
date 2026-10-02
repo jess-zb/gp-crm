@@ -264,7 +264,6 @@ export const PipelinePageClient = memo(function PipelinePageClient({
           city: null,
           zip_code: null,
           street_address: null,
-          fedex_tracking_number: null,
         },
         q
       )
@@ -324,7 +323,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
         />
         <input
           type="search"
-          placeholder="Search name, phone, email, tracking number…"
+          placeholder="Search name, phone, or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="crm-input pl-9"

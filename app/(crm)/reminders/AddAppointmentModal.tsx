@@ -25,7 +25,6 @@ type SearchClient = {
   email: string | null;
   spouse_first_name: string | null;
   spouse_last_name: string | null;
-  fedex_tracking_number: string | null;
   assigned_to: string | null;
 };
 
@@ -115,7 +114,7 @@ export function AddAppointmentModal({
     const { data, error } = await supabase
       .from("clients")
       .select(
-        "id, first_name, last_name, phone_mobile, stage, email, spouse_first_name, spouse_last_name, fedex_tracking_number, assigned_to"
+        "id, first_name, last_name, phone_mobile, stage, email, spouse_first_name, spouse_last_name, assigned_to"
       )
       .or(orFrag)
       .limit(8);

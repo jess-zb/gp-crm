@@ -3,7 +3,7 @@ import { buildSearchQuery } from "@/lib/clients/client-search";
 
 /** Columns needed for the CRM clients table + search OR targets. */
 export const CLIENT_LIST_SELECT =
-  "id, first_name, last_name, nickname, secondary_first_name, spouse_first_name, spouse_last_name, spouse_name, email, phone, phone_mobile, phone_work, phone_home, street_address, city, zip_code, stage, is_active, created_at, stage_entered_at, assigned_to, assigned_compliance_id, assigned_services_id, dnc_reason, fedex_tracking_number";
+  "id, first_name, last_name, nickname, secondary_first_name, spouse_first_name, spouse_last_name, spouse_name, email, phone, phone_mobile, phone_work, phone_home, street_address, city, zip_code, stage, is_active, created_at, stage_entered_at, assigned_to, assigned_compliance_id, assigned_services_id, dnc_reason";
 
 const TERMINAL_STAGES = "(dnc,not_interested,dnq,mortgage,closed)";
 
@@ -49,7 +49,6 @@ export interface ClientListRow extends Record<string, unknown> {
   assigned_compliance_id: string | null;
   assigned_services_id: string | null;
   dnc_reason: string | null;
-  fedex_tracking_number: string | null;
 }
 
 export type FetchClientsListPageParams = {

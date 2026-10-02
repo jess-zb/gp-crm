@@ -1,8 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ChevronRight, Loader2, Package, Search, UserCheck, X } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronRight,
+  Loader2,
+  PenLine,
+  Search,
+  UserCheck,
+  X,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/app/components/Toast";
 import { ModalOverlay } from "@/app/components/ModalOverlay";
@@ -25,14 +34,16 @@ import {
   runStageEntrySideEffectsServerAction,
 } from "./stage-entry-actions";
 import { buildSearchQuery } from "@/lib/clients/client-search";
-import { blockAdvanceFromClientServicesWithoutPoa } from "@/lib/workflow/stage-blockers";
+import {
+  blockAdvanceFromAccountManagerWithoutSignedWelcomePacket,
+  blockAdvanceFromClientServicesWithoutPoa,
+  WELCOME_PACKET_GATE_TITLE,
+} from "@/lib/workflow/stage-blockers";
 import {
   getStageDropdownOptionLabel,
   getStageDropdownOptions,
 } from "@/lib/clients/stage-dropdown-options";
 import { AssignmentModal, type AssignmentDepartment } from "./AssignmentModal";
-import { formatFedexBatchFromDeadline } from "@/lib/utils/date";
-import { queuePendingPrimaryFedex } from "@/lib/packets/queue-pending-fedex";
 import { formatMoneyUsdFromCents } from "@/lib/utils/format";
 import { useMerchantOptions } from "@/lib/hooks/use-merchant-options";
 import {
@@ -137,7 +148,6 @@ type AssignmentFlowState = {
   department: AssignmentDepartment;
   pendingStage: string;
   applyOpts?: {
-    skipWelcomeExitFedexPrompt?: boolean;
   };
 };
 
@@ -207,7 +217,7 @@ export function ClientStageHeader({
   }, [clientId]);
   const suppressDropdownRevert = useRef(false);
   const [loading, setLoading] = useState<"advance" | "back" | null>(null);
-  const [showFedexExitModal, setShowFedexExitModal] = useState(false);
+  const [welcomePacketGate, setWelcomePacketGate] = useState<string | null>(null);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showCancelReasonModal, setShowCancelReasonModal] = useState(false);
   const [cancelReasonBackToConfirm, setCancelReasonBackToConfirm] =
@@ -236,7 +246,6 @@ export function ClientStageHeader({
       stage: string | null;
       phone_mobile: string | null;
       email: string | null;
-      fedex_tracking_number: string | null;
     }[]
   >([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -300,7 +309,7 @@ export function ClientStageHeader({
       const supabase = createClient();
       const { data } = await supabase
         .from("clients")
-        .select("id, first_name, last_name, stage, phone_mobile, email, fedex_tracking_number")
+        .select("id, first_name, last_name, stage, phone_mobile, email")
         .eq("is_active", true)
         .or(orFragment)
         .limit(8);
@@ -318,8 +327,7 @@ export function ClientStageHeader({
   async function applyStage(
     newStage: string,
     opts?: {
-      skipWelcomeExitFedexPrompt?: boolean;
-      skipAssignmentModal?: boolean;
+        skipAssignmentModal?: boolean;
       reminderAssigneeOverride?: string | null;
       /** Retention exit modal / legacy Compliance escape may jump non-adjacent stages. */
       allowStageSkip?: boolean;
@@ -340,15 +348,18 @@ export function ClientStageHeader({
       return false;
     }
 
-    if (
-      forward &&
-      oldS === "welcome_packet" &&
-      newStage === "client_services" &&
-      !opts?.skipWelcomeExitFedexPrompt
-    ) {
-      setShowFedexExitModal(true);
-      suppressDropdownRevert.current = false;
-      return false;
+    if (forward) {
+      const gate = blockAdvanceFromAccountManagerWithoutSignedWelcomePacket({
+        fromStage: oldS,
+        toStage: newStage,
+        poaSignedAt: poaSignedAt ?? null,
+        hasPoaDocument: hasPoaDocument ?? false,
+      });
+      if (gate.blocked) {
+        setWelcomePacketGate(gate.reason ?? null);
+        suppressDropdownRevert.current = false;
+        return false;
+      }
     }
 
     if (forward && newStage === "welcome_packet" && !opts?.skipAssignmentModal) {
@@ -357,9 +368,6 @@ export function ClientStageHeader({
         title: "Assign Account Manager",
         department: "accounts",
         pendingStage: "welcome_packet",
-        applyOpts: {
-          skipWelcomeExitFedexPrompt: opts?.skipWelcomeExitFedexPrompt,
-        },
       });
       return false;
     }
@@ -370,9 +378,6 @@ export function ClientStageHeader({
         title: "Assign Services",
         department: "services",
         pendingStage: "client_services",
-        applyOpts: {
-          skipWelcomeExitFedexPrompt: opts?.skipWelcomeExitFedexPrompt,
-        },
       });
       return false;
     }
@@ -406,13 +411,6 @@ export function ClientStageHeader({
       stage: newStage,
       stage_entered_at: new Date().toISOString(),
     };
-    // Entering welcome_packet resets the send-batch cycle so the cron picks them up
-    if (newStage === "welcome_packet") {
-      stageUpdate.postlogic_unique_id = null;
-      stageUpdate.fedex_batch_sent_at = null;
-      stageUpdate.batch_id = null;
-    }
-
     const { error: updateErr } = await supabase
       .from("clients")
       .update(stageUpdate)
@@ -622,58 +620,6 @@ export function ClientStageHeader({
       toast.error(toUserFacingError(e instanceof Error ? e.message : "Assign failed"));
     } finally {
       setProfileSelfAssigning(false);
-    }
-  }
-
-  async function handleFedexExitConfirm(sendViaFedex: boolean) {
-    setShowFedexExitModal(false);
-    const supabase = createClient();
-    const { batchId } = formatFedexBatchFromDeadline();
-
-    if (sendViaFedex) {
-      const queued = await queuePendingPrimaryFedex(supabase, clientId);
-      if (queued === "failed") {
-        toast.error("Could not queue packet for print");
-        return;
-      }
-
-      const { error: fedexAuditErr } = await supabase.from("audit_log").insert({
-        client_id: clientId,
-        action: "fedex_queued",
-        new_value: {
-          stage: "client_services",
-          queued_for_batch: batchId,
-        },
-        performed_by: performerId,
-        performed_by_name: performerName,
-      });
-      if (fedexAuditErr) {
-        toast.error(toUserFacingError(fedexAuditErr.message));
-        return;
-      }
-    } else {
-      const { error: auditErr } = await supabase.from("audit_log").insert({
-        client_id: clientId,
-        action: "fedex_declined",
-        new_value: { stage: "client_services", reason: "declined" },
-        performed_by: performerId,
-        performed_by_name: performerName,
-      });
-      if (auditErr) {
-        console.warn("[ClientStageHeader] fedex_declined audit:", auditErr.message);
-      }
-    }
-
-    const ok = await applyStage("client_services", {
-      skipWelcomeExitFedexPrompt: true,
-      skipAssignmentModal: true,
-    });
-    if (ok) {
-      toast.success(
-        sendViaFedex
-          ? "Packet queued + Client moved to Client Services"
-          : "Packet declined — Client moved to Client Services"
-      );
     }
   }
 
@@ -1327,39 +1273,44 @@ export function ClientStageHeader({
         </ModalOverlay>
       ) : null}
 
-      {showFedexExitModal ? (
+      {welcomePacketGate ? (
         <ModalOverlay
-          labelledBy="fedex-exit-welcome-title"
+          labelledBy="welcome-packet-gate-title"
           className="z-[200] bg-black/40"
-          onBackdropClick={() => setShowFedexExitModal(false)}
+          onBackdropClick={() => setWelcomePacketGate(null)}
         >
           <div className="crm-modal-panel w-full max-w-sm">
-            <h3
-              id="fedex-exit-welcome-title"
-              className="mb-2 text-lg font-bold text-gray-900 dark:text-white"
-            >
-              Send Welcome Packet?
-            </h3>
+            <div className="mb-2 flex items-start gap-2">
+              <AlertTriangle
+                className="mt-0.5 h-5 w-5 shrink-0 text-amber-500"
+                aria-hidden
+              />
+              <h3
+                id="welcome-packet-gate-title"
+                className="text-lg font-bold text-gray-900 dark:text-white"
+              >
+                {WELCOME_PACKET_GATE_TITLE}
+              </h3>
+            </div>
             <p className="mb-6 text-sm text-gray-500 dark:text-slate-400">
-              Send the welcome packet via FedEx for the next batch, or decline and move this client
-              to Client Services without queuing a shipment.
+              {welcomePacketGate}
             </p>
             <div className="flex gap-3">
               <button
                 type="button"
-                onClick={() => void handleFedexExitConfirm(false)}
+                onClick={() => setWelcomePacketGate(null)}
                 className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
               >
-                Decline
+                Close
               </button>
-              <button
-                type="button"
-                onClick={() => void handleFedexExitConfirm(true)}
+              <Link
+                href={`/clients/${clientId}?tab=packets`}
+                onClick={() => setWelcomePacketGate(null)}
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#8DE3B5] py-2.5 text-sm font-medium text-[#0A2540] hover:bg-[#6BC99A]"
               >
-                <Package className="h-4 w-4" />
-                Send via FedEx
-              </button>
+                <PenLine className="h-4 w-4" aria-hidden />
+                Go to E-Sign
+              </Link>
             </div>
           </div>
         </ModalOverlay>
@@ -1504,7 +1455,7 @@ export function ClientStageHeader({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search name, phone, email, tracking number…"
+                placeholder="Search name, phone, or email…"
                 className="flex-1 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white"
               />
               {searchLoading ? (
@@ -1539,7 +1490,7 @@ export function ClientStageHeader({
                         {[c.first_name, c.last_name].filter(Boolean).join(" ") || "—"}
                       </span>
                       <span className="shrink-0 text-right text-xs text-slate-400">
-                        {c.phone_mobile || c.email || c.fedex_tracking_number || ""}
+                        {c.phone_mobile || c.email || ""}
                       </span>
                     </button>
                   </li>

@@ -29,9 +29,6 @@ interface AuditPayload {
   direction?: string;
   duration_seconds?: number;
   matched_by?: string;
-  tracking?: string;
-  fedex_tracking_number?: string;
-  tracking_number?: string;
   item?: string | number;
   description?: string;
   reason?: string;
@@ -73,7 +70,6 @@ function auditIcon(action: string): string {
   if (action === "appointment_completed") return "✅";
   if (action === "profile_reviewed" || action === "profile_review_cleared") return "✅";
   if (action.includes("stage")) return "🔁";
-  if (action.includes("fedex") || action.includes("tracking")) return "📦";
   if (action.includes("viewed")) return "👁";
   return "📋";
 }
@@ -130,13 +126,6 @@ export const ACTION_LABELS: Record<string, string> = {
   sms_auto_logged: "Text Sent",
 
   // System
-  webhook_dedup_matched: "Record Updated via Webhook",
-  fedex_queued: "Queued for FedEx",
-  fedex_sent: "Sent to Printer",
-  fedex_batch_sent: "Sent to Printer",
-  fedex_tracking_updated: "Tracking Updated",
-  fedex_delivered: "Delivered",
-  welcome_packet_queued: "Queued for FedEx",
   welcome_packet_resent: "Welcome Packet Resent",
 
   // Appointments
@@ -257,32 +246,8 @@ export function formatAuditDescription(
     const direction = typeof o?.direction === "string" ? o.direction : "";
     return `Text logged: ${direction}`;
   }
-  if (action === "webhook_dedup_matched") {
-    const by = typeof o?.matched_by === "string" ? o.matched_by : "";
-    return by
-      ? `Shape webhook matched existing client (${by})`
-      : "Shape webhook matched existing client";
-  }
-  if (action === "welcome_packet_queued") {
-    return "Welcome packet queued for FedEx";
-  }
   if (action === "welcome_packet_resent") {
-    return "Welcome packet resent via FedEx";
-  }
-  if (action === "fedex_batch_sent") {
-    return "Welcome packet sent to print";
-  }
-  if (action === "fedex_tracking_updated") {
-    const tracking =
-      (typeof o?.tracking === "string" && o.tracking) ||
-      (typeof o?.fedex_tracking_number === "string" && o.fedex_tracking_number) ||
-      "";
-    return `Tracking number updated: ${tracking}`;
-  }
-  if (action === "fedex_delivered") {
-    const trk =
-      typeof o?.tracking_number === "string" ? o.tracking_number.trim() : "";
-    return `FedEx delivered — Tracking: ${trk}. Client advanced to Awaiting Collection Letter.`;
+    return "Welcome packet resent for signature";
   }
   if (action === "client_record_viewed") {
     return `Profile viewed by ${(entry.performed_by_name ?? "").trim() || "—"}`;

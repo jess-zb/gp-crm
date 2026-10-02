@@ -279,8 +279,8 @@ export function SettingsClient({
               <span>Team Management</span>
               <ChevronRight className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
             </Link>
-            <Link href="/admin/fedex-batches" className={workspaceLinkClass}>
-              <span>Packet Manager</span>
+            <Link href="/admin/attorney-queue" className={workspaceLinkClass}>
+              <span>Attorney Queue</span>
               <ChevronRight className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
             </Link>
           </nav>

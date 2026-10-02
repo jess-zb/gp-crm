@@ -1,6 +1,6 @@
 # Workflow reminder system — QA & regression plan (launch)
 
-Use this checklist before and after production deployment of the workflow reminder work (columns like `appointment_type_key`, `workflow_source`, `pipeline_type`, Postlogic completion, department queues, and legacy fallbacks). **Goal:** same user-visible behavior as validated on staging; catch regressions in creation, completion, notifications, and data backfills.
+Use this checklist before and after production deployment of the workflow reminder work (columns like `appointment_type_key`, `workflow_source`, `pipeline_type`, department queues, and legacy fallbacks). **Goal:** same user-visible behavior as validated on staging; catch regressions in creation, completion, notifications, and data backfills.
 
 **Test environment:** record results in a copy of this doc or a ticket; note tester, date, and build/commit.
 
@@ -20,7 +20,7 @@ Validate that new rows are created with the expected metadata and visible in the
 | **Template reminders** | Stage transition or admin template that calls template key resolution (`lib/reminders/workflow.ts` — `workflow_source: "template"`) | **`appointment_type_key`** matches template mapping; description matches template text. |
 | **Department assignment** | For each creation path, check inferred **department** / queue membership | Matches client stage and pipeline rules (`inferDepartment` / `inferPipelineFromClientStage` from `lib/reminders/workflow-config.ts` & `workflow-keys.ts`). Spot-check: sales vs service vs legal vs retention clients. |
 | **`appointment_type_key`** | Modal / form **appointment type** selections | Persisted key aligns with `workflow-config.ts` / `APPOINTMENT_LABEL_TO_KEY`; not null for new typed appointments where the UI supplies a type. |
-| **`workflow_source` population** | Query `reminders` after each path | Only expected enum values: `manual`, `template`, `import`, `migration`, `postlogic`, `system` (see migration comments on column). |
+| **`workflow_source` population** | Query `reminders` after each path | Only expected enum values: `manual`, `template`, `import`, `migration`, `system` (see migration comments on column). |
 
 **SQL spot-check (read-only):**
 
@@ -38,8 +38,7 @@ limit 20;
 | Area | What to validate | Pass criteria |
 | --- | --- | --- |
 | **Manual complete** | Mark complete from Appointments list / client UI | `completed` = true; **`completed_at`** set (if column used in app); row leaves open queues; audit trail if applicable. |
-| **FedEx auto-complete** | Packet delivered path in Postlogic poll (`lib/postlogic/poll-status.ts`) | Open reminder with matching **`appointment_type_key`** in FedEx key set completes without manual action; **`@legacy`** path: row with **null** `appointment_type_key` and description matching packet-sent pattern still completes. |
-| **Legacy reminders** | Old rows: null `appointment_type_key`, old `appointment_type` string | Still completable manually; FedEx path still hits legacy branch when key is null. |
+| **Legacy reminders** | Old rows: null `appointment_type_key`, old `appointment_type` string | Still completable manually. |
 | **`completed_at`** | Complete and cancel flows | Timestamps consistent with product rules; no null where UI expects completion time. |
 | **Audit behavior** | If audit tables / `performed_by` exist on completion | Logged for staff actions; automated completion records system/cron identity per current design. |
 | **Cancelled reminders** | Set `cancelled` = true | Hidden from default open lists; do not receive “due soon” notifications; do not block stage logic incorrectly. |
@@ -104,35 +103,22 @@ curl -sS -H "x-cron-secret: zb-cron-2026" "https://<staging-host>/api/notificati
 
 ---
 
-## 7. FedEx / Postlogic tests
-
-| Area | What to validate | Pass criteria |
-| --- | --- | --- |
-| **Packet delivered completes reminder** | Postlogic status → delivered for tracked packet | Matching open reminder completes via **`appointment_type_key`** filter (`FEDEX_PACKET_REMINDER_KEYS` in `lib/postlogic/poll-status.ts`). |
-| **Stage transitions** | After completion | Client stage / downstream automation matches existing production behavior. |
-| **Legacy fallback** | Row with **null** `appointment_type_key` and packet-sent **description** | Still completes via **ILIKE** legacy branch (documented in code). |
-| **`sync-batch-ids` does not regress** | `lib/postlogic/sync-batch-ids.ts` + any **pg_cron** job hitting batch sync (`supabase/manual/pg_cron_sync_postlogic_batch_ids.sql`) | Batch IDs update; **`poll-status`** still completes reminders after delivery; no new errors in logs. |
-
-Cron reference: **`/api/postlogic/poll-status`** in `vercel.json` (scheduled); verify staging/prod parity.
-
----
-
-## 8. Production deployment checklist
+## 7. Production deployment checklist
 
 Complete in order; sign off each line.
 
 - [ ] **Run migrations:** apply all pending Supabase migrations (including `20260506150000_workflow_reminders_phase1.sql` and related) on staging first, then production; confirm no failed statements.
-- [ ] **Verify env vars:** `NEXT_PUBLIC_APP_URL`, Supabase URL/keys, Postlogic credentials, **`HOLIDAY_MODE`** awareness for email/notifications (`app/api/cron/dispatch-emails/route.ts`), Resend/email if touched by flows under test.
+- [ ] **Verify env vars:** `NEXT_PUBLIC_APP_URL`, Supabase URL/keys, **`HOLIDAY_MODE`** awareness for email/notifications (`app/api/cron/dispatch-emails/route.ts`), Resend/email if touched by flows under test.
 - [ ] **Backup production DB:** snapshot or verified backup window before migrate + deploy.
 - [ ] **Deploy staging first:** full QA pass using sections 1–7; compare behavior to production baseline screenshots or notes.
 - [ ] **Smoke test after deploy:** login, open Reminders + one client record, complete one reminder, advance one stage, confirm bell notifications.
-- [ ] **Verify cron jobs:** `vercel.json` — `/api/cron`, `/api/cron/dispatch-emails`, `/api/cron/compliance-watcher`, `/api/postlogic/poll-status`, `/api/postlogic/send-batch`; plus **scheduled call to `/api/notifications/appointments`** if maintained outside `vercel.json` (Supabase pg_cron).
+- [ ] **Verify cron jobs:** `vercel.json` — `/api/cron/dispatch-emails`, `/api/cron/missed-appointments`, `/api/cron/holiday-autoresponder`; plus **scheduled call to `/api/notifications/appointments`** if maintained outside `vercel.json` (Supabase pg_cron).
 - [ ] **Verify Supabase triggers/functions:** reminder template inserts, collection-letter triggers, RLS unchanged for staff roles.
 - [ ] **Attorney portal unaffected:** no regressions on attorney-facing surfaces (per launch scope — confirm login and critical read paths).
 
 ---
 
-## 9. Rollback plan
+## 8. Rollback plan
 
 **Revert deployment**
 
@@ -141,8 +127,7 @@ Complete in order; sign off each line.
 
 **Disable new workflow logic safely (operational)**
 
-- **Pause automation:** Disable or reschedule **Postlogic poll** cron (`/api/postlogic/poll-status`) and optional **notifications/appointments** cron to stop automated side effects while investigating.
-- **Stop Postlogic batch sync** (if needed): Unschedule or pause `sync-postlogic-batch-ids` in Supabase (`cron.unschedule`) per `supabase/manual/pg_cron_sync_postlogic_batch_ids.sql` — only if business accepts delayed tracking updates.
+- **Pause automation:** Disable or reschedule the **email dispatch** cron (`/api/cron/dispatch-emails`) and optional **notifications/appointments** cron to stop automated side effects while investigating.
 - **No code change required for “read-only” mitigation:** older app versions that ignore new columns continue to read legacy fields; confirm with engineering whether rolled-back app expects new columns (NOT NULL constraints, etc.).
 
 **Restore old reminder behavior**
@@ -162,7 +147,6 @@ Complete in order; sign off each line.
 | Workflow orchestration | `lib/reminders/workflow.ts` |
 | Config / keys | `lib/reminders/workflow-config.ts`, `lib/reminders/workflow-keys.ts` |
 | Appointments aggregation | `app/(crm)/reminders/AppointmentsView.tsx`, `lib/reminders/appointments.ts` |
-| Postlogic completion | `lib/postlogic/poll-status.ts` |
 | 60-minute notifications | `app/api/notifications/appointments/route.ts` |
 
 _End of checklist._

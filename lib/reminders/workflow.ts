@@ -20,7 +20,6 @@ export type WorkflowSource =
   | "template"
   | "import"
   | "migration"
-  | "postlogic"
   | "system";
 
 export type CreateWorkflowTaskInput = {

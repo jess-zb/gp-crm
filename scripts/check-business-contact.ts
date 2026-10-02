@@ -47,9 +47,9 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 function main() {
-  if (DEFAULT_APP_URL !== "https://dspcrm.vercel.app") {
+  if (!/^https:\/\/[a-z0-9.-]+$/.test(DEFAULT_APP_URL)) {
     console.error(
-      `DEFAULT_APP_URL must be https://dspcrm.vercel.app (got ${DEFAULT_APP_URL}).`
+      `DEFAULT_APP_URL must be a bare https origin with no trailing slash (got ${DEFAULT_APP_URL}).`
     );
     process.exit(1);
   }

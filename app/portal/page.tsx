@@ -7,11 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { documentTypeLabel } from "@/lib/clients/document-upload";
-import {
-  getCarrierColor,
-  getCarrierLabel,
-  getTrackingUrl,
-} from "@/lib/utils/tracking";
 
 import { ClientFormattedDate } from "@/app/components/ClientFormattedDate";
 import { PortalShell } from "@/app/components/PortalShell";
@@ -30,9 +25,6 @@ type ClientRow = {
   first_name: string;
   last_name: string;
   stage: string;
-  delivery_method: string | null;
-  fedex_tracking_number: string | null;
-  postlogic_status: string | null;
 };
 
 type DocRow = {
@@ -64,34 +56,6 @@ function atOrAfterWelcomePacket(stage: string): boolean {
   return stageIndex(stage) >= keys.indexOf("welcome_packet");
 }
 
-function postlogicPlainEnglish(raw: string | null | undefined): string {
-  if (!raw?.trim()) return "";
-  const s = raw.toLowerCase();
-  if (
-    s.includes("processing") ||
-    s.includes("pending") ||
-    s.includes("label") ||
-    s.includes("prepared")
-  ) {
-    return "Your packet is being prepared";
-  }
-  if (s.includes("delivered")) {
-    return "Your packet has been delivered";
-  }
-  if (
-    s.includes("transit") ||
-    s.includes(" on the way") ||
-    s.includes("on the way") ||
-    s.includes("in transit") ||
-    s.includes("picked up") ||
-    s.includes("out for delivery")
-  ) {
-    return "Your packet is on the way";
-  }
-  return "We're updating your welcome packet.";
-}
-
-
 export default function PortalPage() {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -121,7 +85,7 @@ export default function PortalPage() {
     const { data: clientRow, error: clientErr } = await supabase
       .from("clients")
       .select(
-        "id, first_name, last_name, stage, delivery_method, fedex_tracking_number, postlogic_status"
+        "id, first_name, last_name, stage"
       )
       .eq("email", email)
       .maybeSingle();
@@ -288,61 +252,23 @@ export default function PortalPage() {
 
   const welcomeSection = useMemo(() => {
     if (!client || !atOrAfterWelcomePacket(client.stage)) return null;
-    const dm = client.delivery_method;
-
-    if (dm === "fedex") {
-      const trk = client.fedex_tracking_number?.trim();
-      const statusMsg = postlogicPlainEnglish(client.postlogic_status);
-      return (
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">
-            Welcome packet
-          </h2>
-          {trk ? (
-            <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-              <span className="font-medium text-slate-800 dark:text-slate-200">
-                Tracking number:
-              </span>
-              <a
-                href={getTrackingUrl(trk)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="break-all font-mono text-[#8DE3B5] underline"
-              >
-                {trk}
-              </a>
-              <span
-                className={`rounded border px-1.5 py-0.5 text-xs font-medium ${getCarrierColor(trk)}`}
-              >
-                {getCarrierLabel(trk)}
-              </span>
-            </p>
-          ) : (
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Tracking number will appear here when available.
-            </p>
-          )}
-          {statusMsg ? (
-            <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-              {statusMsg}
-            </p>
-          ) : null}
-        </section>
-      );
-    }
-    if (dm === "docusign") {
-      return (
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white">
-            Welcome packet
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-            Your team will share delivery and signing details by email or phone.
-          </p>
-        </section>
-      );
-    }
-    return null;
+    return (
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+          Welcome packet
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+          Your welcome packet is sent to you by email for electronic signature.
+          Open the link in that email to review and sign it. There is nothing to
+          print or mail back. Once you have signed, your signed copy appears in
+          Documents below.
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          Cannot find the email? Message your case manager below and they will
+          resend the link.
+        </p>
+      </section>
+    );
   }, [client]);
 
   if (notClient) {

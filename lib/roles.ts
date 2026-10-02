@@ -116,10 +116,6 @@ export function canAccessReports(role: string): boolean {
   return role === "dev" || role === "admin";
 }
 
-export function canAccessFedExBatches(role: string): boolean {
-  return role === "dev" || role === "admin" || role === "acct_manager";
-}
-
 /** Attorney Queue (portal bulk assign) — dev and admin only. */
 export function canAccessAttorneyQueue(role: string): boolean {
   return isOpsLead(role);
@@ -132,42 +128,6 @@ export function canViewClientActivityLog(role: string): boolean {
 
 export function canManageRingCentral(role: string): boolean {
   return role === "dev";
-}
-
-export function canUsePostLogicApi(role: string): boolean {
-  return role === "dev" || role === "admin" || role === "acct_manager";
-}
-
-/**
- * Packet Manager admin actions — CSV export, skip secondary, sync MIDs.
- * Dev, admin, or Jessica. (Merchant/MID edit uses canEditPacketMid instead.)
- */
-export function canExportPacketsNeeded(
-  role: string,
-  email: string | null | undefined
-): boolean {
-  return (
-    role === "dev" ||
-    role === "admin" ||
-    (email?.trim().toLowerCase() ?? "") === "jessica@debtsupportpros.com"
-  );
-}
-
-/** Packet Manager "Export List" / "Copy CSV" only — not skip-secondary or MID sync. */
-export function canExportPacketsNeededCsv(
-  role: string,
-  email: string | null | undefined
-): boolean {
-  return isCrmCsvExportEnabled() && canExportPacketsNeeded(role, email);
-}
-
-/**
- * Edit the Merchant/MID on a Packet Needed row. Available to everyone who can
- * open the Packet Manager (dev, admin, acct_manager) — MID edit is no longer
- * limited to the CSV-export group.
- */
-export function canEditPacketMid(role: string): boolean {
-  return canAccessFedExBatches(role);
 }
 
 /** Checklist bypass: dev and admin only. */

@@ -17,7 +17,6 @@ const KNOWN_NOTIF_TYPES = new Set([
   "appointment",
   "collection_letter",
   "stage_change",
-  "fedex_update",
   "team_message",
   "announcement",
   "attorney_portal_assignment",
@@ -363,11 +362,9 @@ export function NotificationBell({
                             ? "⏰"
                             : notif.type === "stage_change"
                               ? "🔄"
-                              : notif.type === "fedex_update"
-                                ? "📦"
-                                : notif.type === "collection_letter"
-                                  ? "📄"
-                                  : "🔔";
+                              : notif.type === "collection_letter"
+                                ? "📄"
+                                : "🔔";
                   const bubbleClass =
                     notif.type === "attorney_portal_assignment"
                       ? "bg-emerald-100 dark:bg-emerald-950/50"
@@ -379,11 +376,9 @@ export function NotificationBell({
                             ? "bg-yellow-100 dark:bg-yellow-950/50"
                             : notif.type === "stage_change"
                               ? "bg-purple-100 dark:bg-purple-950/50"
-                              : notif.type === "fedex_update"
-                                ? "bg-green-100 dark:bg-green-950/50"
-                                : notif.type === "collection_letter"
-                                  ? "bg-emerald-100 dark:bg-emerald-950/50"
-                                  : "bg-gray-100 dark:bg-[#1a3550]";
+                              : notif.type === "collection_letter"
+                                ? "bg-emerald-100 dark:bg-emerald-950/50"
+                                : "bg-gray-100 dark:bg-[#1a3550]";
 
                   return (
                     <button

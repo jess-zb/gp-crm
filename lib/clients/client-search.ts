@@ -20,7 +20,6 @@ export type ClientSearchMatchInput = {
   city?: string | null;
   zip_code?: string | null;
   street_address?: string | null;
-  fedex_tracking_number?: string | null;
 };
 
 function digits(s: string): string {
@@ -85,7 +84,6 @@ export function searchFilter(client: ClientSearchMatchInput, query: string): boo
     client.phone_home,
     client.phone_work,
     client.phone,
-    client.fedex_tracking_number,
     client.city,
     client.zip_code,
     client.nickname,
@@ -131,7 +129,6 @@ export function buildSearchQuery(q: string): string {
       `spouse_first_name.ilike.${p}`,
       `spouse_last_name.ilike.${p}`,
       `secondary_first_name.ilike.${p}`,
-      `fedex_tracking_number.ilike.${p}`,
       `phone.ilike.${p}`,
       `phone_work.ilike.${p}`,
       `phone_home.ilike.${p}`,

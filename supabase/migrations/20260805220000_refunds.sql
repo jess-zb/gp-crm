@@ -6,7 +6,7 @@
 -- for, so `requested_at` and `refunded_at` are tracked separately.
 --
 -- processor_mid is its own column rather than a reference to
--- client_cards.merchant_name. That column drives FedEx/packet routing, and
+-- client_cards.merchant_name. That column records the processing MID, and
 -- reusing it would couple two unrelated concerns; the picker is seeded from the
 -- same MERCHANT_OPTIONS list instead.
 

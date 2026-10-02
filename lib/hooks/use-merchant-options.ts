@@ -10,7 +10,7 @@ import {
 
 /**
  * Sorted merchant/MID options for CRM pickers (built-ins + crm_settings extras).
- * Same source as Packet Manager Dev "MID options" adds.
+ * Shared across every CRM MID picker.
  */
 export function useMerchantOptions(): string[] {
   const [extras, setExtras] = useState<string[]>([]);

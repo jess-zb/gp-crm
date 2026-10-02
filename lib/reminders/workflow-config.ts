@@ -3,7 +3,7 @@
  *
  * This file does NOT replace DB columns; it describes behavior, SLA intent, and UI/analytics hooks.
  * Orchestration in `workflow.ts` + `workflow-keys.ts` continues to persist rows; consume this config
- * when adding FedEx rules, calendar, SLA reports, or stage gates — without schema churn.
+ * when adding calendar, SLA reports, or stage gates — without schema churn.
  *
  * ─── Workflow lanes (how to think about departments) ─────────────────────────────────
  *
@@ -16,7 +16,7 @@
  *   ops can prioritize win-back work separately from net-new sales.
  *
  * SERVICE (department `service`):
- *   Post-sale operations: welcome packet, FedEx, POA, awaiting collection letter, client touchpoints
+ *   Post-sale operations: welcome packet, POA, awaiting collection letter, client touchpoints
  *   until attorney handoff is fully baked. Packet-sent / delivery confirmations are service-owned.
  *
  * LEGAL HANDOFF (department `legal`):
@@ -29,7 +29,10 @@
  */
 
 import { PIPELINE_STAGE_ORDER } from "@/lib/constants/stages";
-import { blockAdvanceFromClientServicesWithoutPoa } from "@/lib/workflow/stage-blockers";
+import {
+  blockAdvanceFromAccountManagerWithoutSignedWelcomePacket,
+  blockAdvanceFromClientServicesWithoutPoa,
+} from "@/lib/workflow/stage-blockers";
 
 /** Operational queue — persisted on `reminders.department`; dual-written with legacy `pipeline_type` until removed. */
 export type WorkflowDepartment = "sales" | "retention" | "service" | "legal";
@@ -45,9 +48,8 @@ export type CalendarCategory =
   | "legal_handoff"
   | "generic";
 
-/** Events that may trigger server-side auto-completion (FedEx path must stay backward compatible). */
+/** Events that may trigger server-side auto-completion. */
 export type AutoCompleteEvent =
-  | { type: "fedex_delivered"; /** ISO status from shipper */ carrierStatus?: string | null }
   | { type: "collection_letter_recorded" }
   | { type: "stage_transition"; fromStage: string; toStage: string }
   | { type: "manual" };
@@ -61,8 +63,6 @@ export type WorkflowTypeConfig = {
   stages: readonly string[];
   /** If false, automation may complete without user clicking Complete (subject to event rules). */
   manualCompletion: boolean;
-  /** FedEx “delivered” automation (`poll-status`) — must remain compatible with legacy description match. */
-  autoCompleteOnFedexDelivered: boolean;
   /** When true, open instances of this type may prevent stage advance until completed or cancelled (future UI). */
   blocksStageAdvance: boolean;
   /** Default offset from creation / anchor for due_date (hours). Template rows often override via DB template hours. */
@@ -86,7 +86,6 @@ const DEFAULT_UNKNOWN: WorkflowTypeConfig = {
   department: "sales",
   stages: PIPELINE_STAGE_ORDER as unknown as string[],
   manualCompletion: true,
-  autoCompleteOnFedexDelivered: false,
   blocksStageAdvance: false,
   dueHours: 48,
   slaHours: 48,
@@ -108,7 +107,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet"],
     manualCompletion: false,
-    autoCompleteOnFedexDelivered: true,
     blocksStageAdvance: false,
     dueHours: 24,
     slaHours: 24,
@@ -123,7 +121,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet"],
     manualCompletion: false,
-    autoCompleteOnFedexDelivered: true,
     blocksStageAdvance: false,
     dueHours: 2,
     slaHours: 4,
@@ -139,7 +136,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -153,7 +149,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -167,7 +162,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -181,7 +175,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -195,7 +188,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -209,7 +201,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -223,7 +214,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -239,7 +229,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet", "awaiting_collection_letter", "case_sent_to_attorneys"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -253,7 +242,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet", "client_services", "awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -267,7 +255,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet", "awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -281,7 +268,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet", "awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 168,
     slaHours: 168,
@@ -295,7 +281,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services", "retention"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 0,
     slaHours: 0,
@@ -311,7 +296,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["client_services"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 24,
     slaHours: 24,
@@ -325,7 +309,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["compliance_verification"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 4,
     slaHours: 8,
@@ -339,7 +322,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "retention",
     stages: ["retention"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 24,
     slaHours: 24,
@@ -353,7 +335,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 72,
@@ -367,7 +348,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 1440,
     slaHours: 1440,
@@ -381,7 +361,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 2160,
     slaHours: 2160,
@@ -395,7 +374,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "legal",
     stages: ["case_sent_to_attorneys"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 4,
     slaHours: 8,
@@ -409,7 +387,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["dnc"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 24,
     slaHours: 48,
@@ -423,7 +400,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services", "retention"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 24,
     slaHours: 24,
@@ -437,7 +413,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: ["lead", "compliance_verification", "client_services", "retention"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 48,
@@ -451,7 +426,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet", "awaiting_collection_letter"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 168,
     slaHours: 168,
@@ -465,7 +439,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "service",
     stages: ["welcome_packet", "awaiting_collection_letter", "case_sent_to_attorneys"],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 720,
     slaHours: 720,
@@ -481,7 +454,6 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     department: "sales",
     stages: PIPELINE_STAGE_ORDER as unknown as string[],
     manualCompletion: true,
-    autoCompleteOnFedexDelivered: false,
     blocksStageAdvance: false,
     dueHours: 48,
     slaHours: 72,
@@ -617,16 +589,13 @@ export function getDefaultReminderConfig(key: string | null | undefined): Workfl
   return { ...DEFAULT_UNKNOWN, ...base };
 }
 
-// ─── Automation hooks (FedEx / orchestration must remain compatible) ─────────────────
+// ─── Automation hooks ────────────────────────────────────────────────────────────────
 
 export function shouldAutoCompleteTask(
   key: string | null | undefined,
   event: AutoCompleteEvent
 ): boolean {
   const cfg = getWorkflowType(key);
-  if (event.type === "fedex_delivered") {
-    return cfg.autoCompleteOnFedexDelivered;
-  }
   if (event.type === "manual") {
     return cfg.manualCompletion;
   }
@@ -642,7 +611,7 @@ export type StageAdvanceClient = {
 
 /**
  * Whether the CRM allows advancing `fromStage` → `toStage` for this client (manual Advance button).
- * Automated triggers (FedEx poll, document upload) may still move stages separately.
+ * Automated triggers (document upload, e-sign completion) may still move stages separately.
  */
 export function canAdvanceStage(
   fromStage: string,
@@ -657,6 +626,16 @@ export function canAdvanceStage(
   });
   if (poa.blocked) return { ok: false, reason: poa.reason };
 
+  const welcomePacket = blockAdvanceFromAccountManagerWithoutSignedWelcomePacket({
+    fromStage,
+    toStage,
+    poaSignedAt: client.poa_signed_at,
+    hasPoaDocument: client.hasPoaDocument,
+  });
+  if (welcomePacket.blocked) {
+    return { ok: false, reason: welcomePacket.reason };
+  }
+
   // Future: scan open reminders with blocksStageAdvance for this client (requires query layer).
   return { ok: true };
 }
@@ -666,17 +645,3 @@ export function shouldAutoCancelOnBackward(key: string | null | undefined): bool
   return getWorkflowType(key).autoCancelOnStageBackward;
 }
 
-/** Keys that FedEx “delivered” automation should try before falling back to legacy description ILIKE. */
-export function keysWithFedExAutoComplete(): string[] {
-  return Object.entries(WORKFLOW_TYPES)
-    .filter(([, v]) => v.autoCompleteOnFedexDelivered)
-    .map(([k]) => k);
-}
-
-/**
- * Stable array for PostgREST `.in()` — derived from `autoCompleteOnFedexDelivered` in WORKFLOW_TYPES.
- * Legacy alias: was `PACKET_SENT_REMINDER_KEYS` in workflow-keys (same values: packet_sent + tpl_*).
- */
-export const FEDEX_PACKET_REMINDER_KEYS: readonly string[] = Object.freeze(
-  keysWithFedExAutoComplete()
-);

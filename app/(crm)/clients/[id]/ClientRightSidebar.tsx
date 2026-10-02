@@ -9,11 +9,6 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/app/components/Toast";
 import { toUserFacingError } from "@/lib/user-facing-error";
 
-import {
-  getCarrierColor,
-  getCarrierLabel,
-  getTrackingUrl,
-} from "@/lib/utils/tracking";
 import { DictationMicButton } from "@/app/components/DictationMicButton";
 import { ChevronDown, Loader2, Mail, MessageSquare, Pencil, Phone, Pin, Plus, X } from "lucide-react";
 import {
@@ -85,13 +80,8 @@ export function ClientRightSidebar({
     id: string;
     verbal_password: string | null;
     updated_at: string | null;
-    fedex_tracking_number: string | null;
     assigned_to: string | null;
     assigned_user: { full_name: string | null } | null;
-    pod_delivered_at: string | null;
-    pod_signed_by: string | null;
-    pod_tracking: string | null;
-    pod_notes: string | null;
     attorney: { full_name: string | null; email: string | null } | null;
   };
   className?: string;
@@ -894,30 +884,6 @@ export function ClientRightSidebar({
             <span className="text-xs text-gray-500 dark:text-slate-400">Verbal Password</span>
             <span className="max-w-[60%] text-right text-xs font-medium text-gray-800 dark:text-slate-100">
               {accountInfo.verbal_password || "—"}
-            </span>
-          </div>
-          <div className="flex items-start justify-between py-1.5">
-            <span className="text-xs text-gray-500 dark:text-slate-400">Tracking Number</span>
-            <span className="max-w-[60%] text-right text-xs font-medium text-gray-800 dark:text-slate-100">
-              {accountInfo.fedex_tracking_number ? (
-                <span className="inline-flex flex-col items-end gap-1">
-                  <a
-                    href={getTrackingUrl(accountInfo.fedex_tracking_number)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="break-all font-mono text-xs text-blue-600 hover:underline dark:text-blue-400"
-                  >
-                    {accountInfo.fedex_tracking_number}
-                  </a>
-                  <span
-                    className={`rounded border px-1.5 py-0.5 text-xs font-medium ${getCarrierColor(accountInfo.fedex_tracking_number)}`}
-                  >
-                    {getCarrierLabel(accountInfo.fedex_tracking_number)}
-                  </span>
-                </span>
-              ) : (
-                <span className="text-gray-400 dark:text-slate-500">—</span>
-              )}
             </span>
           </div>
           <div className="flex items-start justify-between py-1.5">

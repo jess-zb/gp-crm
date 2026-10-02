@@ -111,14 +111,9 @@ function ActivityLogActionIcon({ action }: { action: string | null }) {
     return <MessageSquare className={c} aria-hidden />;
   }
   if (a === "webhook_dedup_matched") return <Link2 className={c} aria-hidden />;
-  if (a === "fedex_queued" || a === "welcome_packet_queued") {
+  if (a === "welcome_packet_queued") {
     return <Package className={c} aria-hidden />;
   }
-  if (a === "fedex_batch_sent" || a === "fedex_sent") {
-    return <Printer className={c} aria-hidden />;
-  }
-  if (a === "fedex_tracking_updated") return <Truck className={c} aria-hidden />;
-  if (a === "fedex_delivered") return <Package className={c} aria-hidden />;
   if (a === "welcome_packet_resent") return <Send className={c} aria-hidden />;
   if (a === "appointment_created") return <CalendarPlus className={c} aria-hidden />;
   if (a === "appointment_completed") {

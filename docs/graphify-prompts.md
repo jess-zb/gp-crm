@@ -88,29 +88,10 @@ graphify path "ResendDispatcher" "email_logs"
 graphify query "every place sequence_enrollments is read or written"
 graphify explain "EmailSequenceCronRoute"
 graphify query "where is the bank holiday pause logic?"
-graphify query "webhook handlers for delivery status updates"
 ```
 
 The dispatcher cron, the webhook, and the admin UI for enrollments all touch
 overlapping tables. The graph is the fastest way to see the full picture.
-
-### Packet Manager / FedEx Resend
-
-```bash
-graphify query "fetchPacketsNeeded Resend via FedEx runPendingFedexBatch Pending"
-graphify path "fetchPacketsNeeded" "runPendingFedexBatch"
-graphify explain "fetchPacketsNeeded"
-graphify query "every writer of client_fedex_shipments status Pending"
-graphify query "where is fedex_declined checked for Packets Needed"
-```
-
-**Invariant:** Packets Needed UI (`fetchPacketsNeeded`) and batch send
-(`runPendingFedexBatch`) must use the same eligibility rules. Explicit
-**Resend via FedEx** inserts a `Pending` shipment marker; that marker must
-re-queue the client even if they left `client_services` or have a prior
-`fedex_declined`. Terminal stages live in `FEDEX_BATCH_EXCLUDED_STAGE_SET`
-(`lib/postlogic/fedex-ready-filter.ts`). See
-`.cursor/rules/packet-manager-resend.mdc`.
 
 ### Attorney Queue / Public Batch Downloads
 

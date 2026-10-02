@@ -10,9 +10,9 @@ ALTER TABLE reminders DROP CONSTRAINT IF EXISTS reminders_department_check;
 ALTER TABLE reminders ADD CONSTRAINT reminders_department_check
   CHECK (department IS NULL OR department IN ('sales', 'retention', 'service', 'legal'));
 
-COMMENT ON COLUMN reminders.appointment_type_key IS 'Stable slug for automation, FedEx matching, and future grouping; legacy appointment_type unchanged.';
+COMMENT ON COLUMN reminders.appointment_type_key IS 'Stable slug for automation and future grouping; legacy appointment_type unchanged.';
 COMMENT ON COLUMN reminders.department IS 'Operational queue (sales|retention|service|legal). Dual-write with pipeline_type during migration.';
-COMMENT ON COLUMN reminders.workflow_source IS 'Origin: manual, template, import, migration, postlogic, system.';
+COMMENT ON COLUMN reminders.workflow_source IS 'Origin: manual, template, import, migration, system.';
 COMMENT ON COLUMN reminders.origin_stage IS 'Pipeline stage this task was created under (for stage-transition orchestration).';
 
 -- Dashboard / cron / list queries

@@ -12,8 +12,13 @@ export const SUPPORT_PHONE = "888-885-6042";
 export const SUPPORT_PHONE_E164 = "+18888856042";
 
 export const WEBSITE_URL = "https://debtsupportpros.com/";
-/** Live CRM origin. `app.debtsupportpros.com` has no DNS — never use it. */
-export const DEFAULT_APP_URL = "https://dspcrm.vercel.app";
+
+/**
+ * Production CRM origin used by every client-facing link when
+ * `NEXT_PUBLIC_APP_URL` is unset. Placeholder until the Golden Pathway
+ * deployment exists — update it there and nowhere else.
+ */
+export const DEFAULT_APP_URL = "https://golden-pathway-crm.example";
 
 /** Client-facing CRM origin for emails and tokenized links. */
 export function publicAppUrl(): string {
@@ -52,6 +57,8 @@ export const FORBIDDEN_CONTACT_PATTERNS: readonly RegExp[] = [
   /jessica@zerobalance\.info/i,
   /https?:\/\/zerobalance\.info/i,
   /app\.debtsupportpros\.com/i,
+  /dspcrm\.vercel\.app/i,
+  /zb-crm\.vercel\.app/i,
   /Welcome to Zero Balance/i,
   /Zero Balance Team/i,
   /with Zero Balance/i,

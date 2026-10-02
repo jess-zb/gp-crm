@@ -204,17 +204,12 @@ export function EsignDripSection({
       const json = (await res.json()) as {
         error?: string;
         sentAt?: string;
-        queuedFedex?: boolean;
       };
       if (!res.ok) {
         toast.error(toUserFacingError(json.error || "Could not send"));
         return;
       }
-      toast.success(
-        kind === "welcome_packet" && json.queuedFedex
-          ? "Welcome Packet sent — also queued for FedEx"
-          : "Sent to the client"
-      );
+      toast.success("Sent to the client");
       await load();
     } catch (err) {
       toast.error(toUserFacingError(err instanceof Error ? err.message : "Could not send"));

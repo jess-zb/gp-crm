@@ -36,7 +36,6 @@ import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 import { formatDateTime } from "@/lib/utils/date";
 import { ClientBackButton } from "./ClientBackButton";
-import { PacketsHistoryTab } from "./PacketsHistoryTab";
 import { EsignDripSection } from "./EsignDripSection";
 import { canShowEsignActions } from "@/lib/esign/types";
 
@@ -126,22 +125,11 @@ const CLIENT_SELECT = [
   "poa_signed_at",
   "collection_letter_received_at",
   "attorney_id",
-  "delivery_method",
-  "postlogic_unique_id",
-  "postlogic_status",
-  "fedex_batch_sent_at",
-  "fedex_tracking_number",
   "resend_method",
   "cc_charged_at",
-  "fedex_queued_at",
-  "pod_delivered_at",
-  "pod_signed_by",
-  "pod_tracking",
-  "pod_notes",
   "reviewed_at",
   "reviewed_by_name",
   // Fallback MID for the refund request prefill when no card carries a merchant.
-  "fedex_merchant",
 ].join(", ");
 
 type ClientPageProps = {
@@ -298,7 +286,6 @@ export default async function ClientProfilePage({
     { data: remindersRaw },
     { data: communicationsRaw },
     { data: auditLogRaw },
-    { data: shipmentsRaw },
   ] = await Promise.all([
     supabase
       .from("documents")
@@ -332,14 +319,6 @@ export default async function ClientProfilePage({
       .eq("client_id", clientId)
       .order("created_at", { ascending: false })
       .limit(50),
-    tab === "packets"
-      ? supabase
-          .from("client_fedex_shipments")
-          .select("id, tracking_number, carrier, batch_id, batch_date, status, merchant, sent_at, delivered_at")
-          .eq("client_id", clientId)
-          .neq("status", "Pending")
-          .order("sent_at", { ascending: false })
-      : Promise.resolve({ data: null as null }),
   ]);
 
   if (documentsQueryError) {
@@ -646,13 +625,6 @@ export default async function ClientProfilePage({
     first_name: (c.first_name as string | null) ?? null,
     last_name: (c.last_name as string | null) ?? null,
     email: (c.email as string | null) ?? null,
-    delivery_method: (c.delivery_method as string | null) ?? null,
-    resend_method: (c.resend_method as string | null) ?? null,
-    postlogic_status: (c.postlogic_status as string | null) ?? null,
-    postlogic_unique_id: (c.postlogic_unique_id as string | null) ?? null,
-    fedex_batch_sent_at: (c.fedex_batch_sent_at as string | null) ?? null,
-    fedex_queued_at: (c.fedex_queued_at as string | null) ?? null,
-    fedex_tracking_number: (c.fedex_tracking_number as string | null) ?? null,
     stage: String(c.stage ?? ""),
   };
 
@@ -718,7 +690,7 @@ export default async function ClientProfilePage({
             charge_amount_cents?: number | null;
             merchant_name?: string | null;
           }[],
-          (c.fedex_merchant as string | null) ?? null
+          null
         )}
       />
 
@@ -782,8 +754,6 @@ export default async function ClientProfilePage({
                   firstName: String(c.first_name ?? "").trim(),
                   assignedUser: assigneeName?.trim() || "—",
                   stageKey: String(c.stage ?? "lead"),
-                  trackingNumber:
-                    (c.fedex_tracking_number as string | null)?.trim() || null,
                 }}
                 currentUserId={user.id}
                 isAdminOrDev={profile.role === "dev" || profile.role === "admin"}
@@ -805,20 +775,6 @@ export default async function ClientProfilePage({
                     canSend={canShowEsignActions((c.stage as string | null) ?? null)}
                   />
                 ) : null}
-                <PacketsHistoryTab
-                  clientId={clientId}
-                  shipments={(shipmentsRaw ?? []).map((s) => ({
-                    id: s.id as string,
-                    tracking_number: (s.tracking_number as string | null) ?? null,
-                    carrier: (s.carrier as string | null) ?? null,
-                    batch_id: (s.batch_id as string | null) ?? null,
-                    batch_date: (s.batch_date as string | null) ?? null,
-                    status: (s.status as string | null) ?? null,
-                    merchant: (s.merchant as string | null) ?? null,
-                    sent_at: (s.sent_at as string | null) ?? null,
-                    delivered_at: (s.delivered_at as string | null) ?? null,
-                  }))}
-                />
               </div>
             ) : null}
 
@@ -900,15 +856,10 @@ export default async function ClientProfilePage({
             id: c.id as string,
             verbal_password: (c.verbal_password as string | null) ?? null,
             updated_at: (c.updated_at as string | null) ?? null,
-            fedex_tracking_number: (c.fedex_tracking_number as string | null) ?? null,
-            assigned_to: (c.assigned_to as string | null) ?? null,
+                    assigned_to: (c.assigned_to as string | null) ?? null,
             assigned_user: assignedUser
               ? { full_name: assignedUser.full_name ?? null }
               : null,
-            pod_delivered_at: (c.pod_delivered_at as string | null) ?? null,
-            pod_signed_by: (c.pod_signed_by as string | null) ?? null,
-            pod_tracking: (c.pod_tracking as string | null) ?? null,
-            pod_notes: (c.pod_notes as string | null) ?? null,
             attorney: attorneyRow
               ? {
                   full_name: attorneyRow.full_name ?? null,

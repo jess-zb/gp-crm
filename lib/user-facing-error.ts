@@ -48,7 +48,6 @@ export function toUserFacingError(raw: unknown): string {
     return "We couldn't reach the server. Check your connection and try again.";
   }
   if (
-    lower.includes("postlogic") ||
     lower.includes("invalid json") ||
     lower.includes("returned invalid")
   ) {

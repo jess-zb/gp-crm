@@ -20,7 +20,7 @@ export const MERCHANT_OPTIONS = [
   "Other",
 ] as const;
 
-/** Packet Manager curated subset (prefer mergeMerchantOptions for UI pickers). */
+/** Curated subset (prefer mergeMerchantOptions for UI pickers). */
 export const PACKET_MID_OPTIONS = [
   "Councel Pay",
   "Progressive",
@@ -39,8 +39,7 @@ export const PACKET_MID_OPTIONS = [
 
 /**
  * crm_settings key — JSON string array of MID/merchant names added via the
- * Packet Manager Dev UI. Shared across Billing, Refunds, Packet Needed, and
- * eSign MID pickers.
+ * Dev UI. Shared across Billing, Refunds and eSign MID pickers.
  */
 export const PACKET_MID_EXTRAS_SETTING_KEY = "packet_mid_extra_options";
 

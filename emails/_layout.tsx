@@ -1,6 +1,11 @@
 import * as React from "react";
 import { Body, Container, Head, Html, Img, Link, Section, Text } from "@react-email/components";
-import { BUSINESS_NAME, SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants/business-contact";
+import {
+  BUSINESS_NAME,
+  publicAppUrl,
+  SUPPORT_EMAIL,
+  SUPPORT_PHONE,
+} from "@/lib/constants/business-contact";
 import type { EmailProps } from "./_types";
 
 type LayoutProps = EmailProps & {
@@ -22,7 +27,7 @@ export default function Layout({ children, unsubscribeUrl }: LayoutProps) {
         <Container style={styles.card}>
           <Section style={styles.banner}>
             <Img
-              src="https://dspcrm.vercel.app/logo.png"
+              src={`${publicAppUrl()}/logo.png`}
               alt={BUSINESS_NAME}
               width={160}
               style={styles.logoImg}
