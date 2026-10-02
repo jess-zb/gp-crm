@@ -2,7 +2,7 @@
  * Lightweight client-profile updates after an upload, so the stage header and
  * checklist can move without router.refresh() of the whole page.
  */
-export const CLIENT_PROFILE_PATCH_EVENT = "zb-crm:client-profile-patch";
+export const CLIENT_PROFILE_PATCH_EVENT = "gp-crm:client-profile-patch";
 
 export type ClientProfilePatch = {
   clientId: string;

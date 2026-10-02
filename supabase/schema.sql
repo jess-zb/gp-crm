@@ -1,7 +1,7 @@
 -- ============================================================
--- ZERO BALANCE CRM — SUPABASE SCHEMA
+-- GOLDEN PATHWAY CRM — SUPABASE SCHEMA
 -- Run this entire file in Supabase SQL Editor
--- Project: zb-crm
+-- Baseline: run this file first, then `pnpm migrate`.
 -- ============================================================
 
 -- Enable required extensions

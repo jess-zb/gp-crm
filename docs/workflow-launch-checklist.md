@@ -86,7 +86,7 @@ Exercise **Sales**, **Retention**, **Service**, **Legal** department filters or 
 
 ## 6. Notification tests
 
-Primary implementation: **`GET/POST /api/notifications/appointments`** (`app/api/notifications/appointments/route.ts`) — due window **now → now + 60 minutes**; auth via `vercel-cron/1.0` or `x-cron-secret: zb-cron-2026` (same pattern as other cron routes).
+Primary implementation: **`GET/POST /api/notifications/appointments`** (`app/api/notifications/appointments/route.ts`) — due window **now → now + 60 minutes**; auth via `vercel-cron/1.0` or `x-cron-secret: $CRON_SECRET` (same pattern as other cron routes).
 
 | Area | What to validate | Pass criteria |
 | --- | --- | --- |
@@ -98,7 +98,7 @@ Primary implementation: **`GET/POST /api/notifications/appointments`** (`app/api
 **Manual invoke (staging):**
 
 ```bash
-curl -sS -H "x-cron-secret: zb-cron-2026" "https://<staging-host>/api/notifications/appointments"
+curl -sS -H "x-cron-secret: $CRON_SECRET" "https://<staging-host>/api/notifications/appointments"
 ```
 
 ---
