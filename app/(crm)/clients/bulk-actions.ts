@@ -71,7 +71,7 @@ export async function bulkChangeStage(
   }
 
   // Block New Lead → anything other than Account Manager (same rule as profile stage dropdown).
-  if (stage !== "welcome_packet" && stage !== "lead") {
+  if (stage !== "account_manager" && stage !== "lead") {
     const { data: rows } = await supabase
       .from("clients")
       .select("id, stage")

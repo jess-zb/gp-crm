@@ -18,7 +18,7 @@ export const APPOINTMENT_TYPES_BY_STAGE: Record<string, StageAppointmentTypeDef[
     { value: "appointment_set", label: "Appointment Set", color: "green", pipeline: "sales" },
   ],
 
-  welcome_packet: [
+  account_manager: [
     { value: "pre_auth_appointment", label: "Pre-Auth Appointment", color: "green", pipeline: "sales" },
     { value: "charge_appointment", label: "Charge Appointment", color: "green", pipeline: "sales" },
     { value: "decline_appointment", label: "Decline Appointment", color: "yellow", pipeline: "sales" },

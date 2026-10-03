@@ -24,7 +24,7 @@ function addHoursIso(from: Date, hours: number): string {
  */
 export const STAGE_APPOINTMENT_TYPES: Record<string, string[]> = {
   lead: [],
-  welcome_packet: [],
+  account_manager: [],
   client_services: ["cs_intro_call", "poa_follow_up_call"],
   awaiting_collection_letter: [
     "check_in_30_day",
@@ -134,8 +134,8 @@ export async function runStageEntrySideEffects(
     return;
   }
 
-  // Account Manager (welcome_packet) — nudge-to-enroll drip
-  if (newStage === "welcome_packet") {
+  // Account Manager (account_manager) — nudge-to-enroll drip
+  if (newStage === "account_manager") {
     await enrollClientInEmailSequence(supabase, {
       clientId,
       sequenceKey: "partial_arc",

@@ -32,7 +32,7 @@ export function AccountsDashboard({
         clients={myAmClients}
         emptyMessage="No clients in your Account Manager queue"
         columns={["name", "phone", "sub_status", "days_in_stage"]}
-        stageColor="welcome_packet"
+        stageColor="account_manager"
       />
 
       <DashboardClientTable

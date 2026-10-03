@@ -3,7 +3,7 @@ import { PIPELINE_PAGE_STAGES } from "@/lib/crm/pipeline-stage-counts";
 /** @deprecated Use PIPELINE_PAGE_STAGES — kept for any legacy imports. */
 export const PIPELINE_VIEW_SALES_STAGES = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "not_interested",
   "dnq",

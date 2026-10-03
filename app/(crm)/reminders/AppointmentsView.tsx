@@ -50,7 +50,7 @@ const TYPE_FILTER_OPTIONS = [
   { value: "case_sent_notification", label: "Case Sent Notification" },
 ] as const;
 
-const SALES_STAGES = ["lead", "welcome_packet", "account_manager", "retention"] as const;
+const SALES_STAGES = ["lead", "account_manager", "retention"] as const;
 
 const SERVICE_STAGES = [
   "client_services",

@@ -11,7 +11,7 @@ import { getStageConfig } from "@/lib/constants/stages";
 
 const SALES_TABS: { id: PipelinePageStage; label: string }[] = [
   { id: "lead", label: "New Leads" },
-  { id: "welcome_packet", label: "Account Manager" },
+  { id: "account_manager", label: "Account Manager" },
   { id: "retention", label: "Retention" },
 ];
 

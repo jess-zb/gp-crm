@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 export function generateMetadata(): Metadata {
   return {
     title: 'Golden Pathway CRM',
-    description: 'Case management for Golden Pathway Financial',
+    description: 'Case management for Golden Pathway',
     manifest: '/manifest.json',
     icons: {
       icon: '/favicon.png',

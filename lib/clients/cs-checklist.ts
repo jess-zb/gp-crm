@@ -23,7 +23,7 @@ export type CsChecklistItemKey =
 export const CS_CHECKLIST_ITEMS = [
   { key: "cs_intro", label: "CS Intro" },
   { key: "tracking_update", label: "Tracking Update" },
-  { key: "packet_update", label: "Packet Update" },
+  { key: "packet_update", label: "Welcome Packet on file" },
   { key: "poa_on_file", label: "POA on File" },
 ] as const satisfies readonly { key: CsChecklistItemKey; label: string }[];
 

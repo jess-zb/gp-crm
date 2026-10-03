@@ -61,8 +61,8 @@ export function blockAdvanceFromAccountManagerWithoutSignedWelcomePacket(opts: {
   const to = opts.toStage.trim();
 
   if (
-    from === "welcome_packet" &&
-    to !== "welcome_packet" &&
+    from === "account_manager" &&
+    to !== "account_manager" &&
     !isExitFromPipeline(to) &&
     !hasSignedPoaOnRecord({
       poaSignedAt: opts.poaSignedAt,

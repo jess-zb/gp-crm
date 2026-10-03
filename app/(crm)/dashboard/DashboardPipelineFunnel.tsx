@@ -5,7 +5,7 @@ import { getStageConfig } from "@/lib/constants/stages";
 
 const FUNNEL_STAGES = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "client_services",
   "awaiting_collection_letter",

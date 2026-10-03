@@ -18,7 +18,7 @@ const TERMINAL_NO_SELECT = new Set([
 /** Visible pipeline destinations. */
 const PIPELINE_DROPDOWN_STAGES = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "client_services",
   "awaiting_collection_letter",
   "case_sent_to_attorneys",
@@ -48,7 +48,7 @@ export function getStageDropdownOptions(
   if (s === "retention") {
     return [
       option("retention", true),
-      option("welcome_packet"),
+      option("account_manager"),
       option("client_services"),
       option("awaiting_collection_letter"),
       option("case_sent_to_attorneys"),
@@ -61,7 +61,7 @@ export function getStageDropdownOptions(
   // New Lead: only Account Manager is selectable forward (Cancel handles Retention).
   if (s === "lead") {
     return PIPELINE_DROPDOWN_STAGES.map((value) =>
-      option(value, value !== "lead" && value !== "welcome_packet")
+      option(value, value !== "lead" && value !== "account_manager")
     );
   }
 

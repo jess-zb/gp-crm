@@ -8,7 +8,7 @@
  * ─── Workflow lanes (how to think about departments) ─────────────────────────────────
  *
  * SALES (department `sales`):
- *   Early funnel: lead → welcome_packet → client_services. Focus: dialer-style follow-ups,
+ *   Early funnel: lead → account_manager → client_services. Focus: dialer-style follow-ups,
  *   auth/charge milestones, prospecting. Most `follow_up_*` tasks live here.
  *
  * RETENTION (department `retention`):
@@ -104,7 +104,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   packet_sent: {
     label: "Packet Sent",
     department: "service",
-    stages: ["welcome_packet"],
+    stages: ["account_manager"],
     manualCompletion: false,
     blocksStageAdvance: false,
     dueHours: 24,
@@ -114,11 +114,11 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
     autoCancelOnStageBackward: true,
     category: "service_ops",
   },
-  /** Template-generated title “Packet Sent” under welcome_packet — matches `templateReminderKey` */
+  /** Template-generated title “Packet Sent” under account_manager — matches `templateReminderKey` */
   tpl_welcome_packet_packet_sent: {
     label: "Packet Sent",
     department: "service",
-    stages: ["welcome_packet"],
+    stages: ["account_manager"],
     manualCompletion: false,
     blocksStageAdvance: false,
     dueHours: 2,
@@ -133,7 +133,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_appt_pre_auth: {
     label: "Follow Up Appointment (Pre-Auth)",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -146,7 +146,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_appt_charge: {
     label: "Follow Up Appointment (Charge)",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -159,7 +159,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_appt_decline: {
     label: "Follow Up Appointment (Decline)",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -172,7 +172,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_attempt_pre_auth: {
     label: "Follow Up Attempt (Pre-Auth)",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -185,7 +185,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_attempt_charge: {
     label: "Follow Up Attempt (Charge)",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -198,7 +198,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   appointment_set: {
     label: "Appointment Set",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -211,7 +211,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   prospect_follow_up: {
     label: "Prospect Follow Up",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services"],
+    stages: ["lead", "account_manager", "client_services"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -226,7 +226,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_needed: {
     label: "Follow Up Needed",
     department: "service",
-    stages: ["welcome_packet", "awaiting_collection_letter", "case_sent_to_attorneys"],
+    stages: ["account_manager", "awaiting_collection_letter", "case_sent_to_attorneys"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -239,7 +239,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_appt_service: {
     label: "Follow Up Appointment",
     department: "service",
-    stages: ["welcome_packet", "client_services", "awaiting_collection_letter"],
+    stages: ["account_manager", "client_services", "awaiting_collection_letter"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -252,7 +252,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   follow_up_attempt_service: {
     label: "Follow Up Attempt",
     department: "service",
-    stages: ["welcome_packet", "awaiting_collection_letter"],
+    stages: ["account_manager", "awaiting_collection_letter"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -265,7 +265,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   active_follow_up: {
     label: "Active Follow Up",
     department: "service",
-    stages: ["welcome_packet", "awaiting_collection_letter"],
+    stages: ["account_manager", "awaiting_collection_letter"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 168,
@@ -278,7 +278,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   dead_mark_client: {
     label: "Dead",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services", "retention"],
+    stages: ["lead", "account_manager", "client_services", "retention"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 0,
@@ -306,7 +306,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   all_cards_charged: {
     label: "All Cards Charged",
     department: "sales",
-    stages: ["lead", "welcome_packet"],
+    stages: ["lead", "account_manager"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 4,
@@ -397,7 +397,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   twenty_four_hr_call: {
     label: "24 HR Call",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services", "retention"],
+    stages: ["lead", "account_manager", "client_services", "retention"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 24,
@@ -410,7 +410,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   forty_eight_hr_call: {
     label: "48 HR Call",
     department: "sales",
-    stages: ["lead", "welcome_packet", "client_services", "retention"],
+    stages: ["lead", "account_manager", "client_services", "retention"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 48,
@@ -423,7 +423,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   seven_day_call: {
     label: "AM Enrollment Follow-Up",
     department: "service",
-    stages: ["welcome_packet", "awaiting_collection_letter"],
+    stages: ["account_manager", "awaiting_collection_letter"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 168,
@@ -436,7 +436,7 @@ export const WORKFLOW_TYPES: Record<string, WorkflowTypeConfig> = {
   thirty_day_call: {
     label: "30 Day Call",
     department: "service",
-    stages: ["welcome_packet", "awaiting_collection_letter", "case_sent_to_attorneys"],
+    stages: ["account_manager", "awaiting_collection_letter", "case_sent_to_attorneys"],
     manualCompletion: true,
     blocksStageAdvance: false,
     dueHours: 720,
@@ -529,7 +529,6 @@ export function buildModalAppointmentLabelToKey(): Record<string, string> {
 
 const SALES_PIPELINE_STAGES = new Set([
   "lead",
-  "welcome_packet",
   "account_manager",
   "retention",
 ]);
@@ -558,7 +557,7 @@ export function inferPipelineFromClientStage(stage: string | null | undefined): 
 
 const STAGE_DEFAULT_DEPARTMENT: Partial<Record<string, WorkflowDepartment>> = {
   lead: "sales",
-  welcome_packet: "sales",
+  account_manager: "sales",
   retention: "retention",
   client_services: "service",
   awaiting_collection_letter: "service",

@@ -1,7 +1,7 @@
 /** Stages shown on the redesigned Pipeline page (active clients only). */
 export const PIPELINE_PAGE_STAGES = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "client_services",
   "awaiting_collection_letter",
@@ -13,7 +13,7 @@ export type PipelinePageStage = (typeof PIPELINE_PAGE_STAGES)[number];
 export function emptyPipelineStageCounts(): Record<PipelinePageStage, number> {
   return {
     lead: 0,
-    welcome_packet: 0,
+    account_manager: 0,
     retention: 0,
     client_services: 0,
     awaiting_collection_letter: 0,
@@ -35,7 +35,7 @@ export function aggregatePipelinePageCounts(
 }
 
 export function salesPipelineTabTotal(counts: Record<PipelinePageStage, number>): number {
-  return counts.lead + counts.welcome_packet + counts.retention;
+  return counts.lead + counts.account_manager + counts.retention;
 }
 
 export function servicePipelineTabTotal(counts: Record<PipelinePageStage, number>): number {
@@ -53,7 +53,7 @@ export function totalPipelineNavBadge(counts: Record<PipelinePageStage, number>)
 /** Dashboard / analytics: broader stage set (active rows only). */
 export type DashboardStageCountKey =
   | "lead"
-  | "welcome_packet"
+  | "account_manager"
   | "client_services"
   | "awaiting_collection_letter"
   | "case_sent_to_attorneys"
@@ -66,7 +66,7 @@ export type DashboardStageCountKey =
 export function emptyDashboardStageCounts(): Record<DashboardStageCountKey, number> {
   return {
     lead: 0,
-    welcome_packet: 0,
+    account_manager: 0,
     client_services: 0,
     awaiting_collection_letter: 0,
     case_sent_to_attorneys: 0,
@@ -91,7 +91,7 @@ export function aggregateDashboardStageCounts(
 }
 
 export function dashboardSalesActive(counts: Record<DashboardStageCountKey, number>): number {
-  return counts.lead + counts.welcome_packet + counts.retention;
+  return counts.lead + counts.account_manager + counts.retention;
 }
 
 export function dashboardServiceActive(counts: Record<DashboardStageCountKey, number>): number {

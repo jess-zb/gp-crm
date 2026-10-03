@@ -71,7 +71,7 @@ CREATE FUNCTION public.create_default_checklist() RETURNS trigger
 BEGIN
   INSERT INTO onboarding_checklist (client_id, item) VALUES
     (NEW.id, 'Charge CC Information'),
-    (NEW.id, 'Send Welcome Packet + POA'),
+    (NEW.id, 'Welcome Packet signed'),
     (NEW.id, 'Signed POA Received'),
     (NEW.id, 'Collection Letter Received');
   RETURN NEW;
@@ -277,7 +277,7 @@ BEGIN
     stage = 'awaiting_collection_letter',
     stage_entered_at = NOW()
   WHERE id = NEW.client_id
-    AND stage IN ('welcome_packet', 'client_services');
+    AND stage IN ('account_manager', 'client_services');
 
   GET DIAGNOSTICS advanced = ROW_COUNT;
 

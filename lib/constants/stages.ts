@@ -5,7 +5,7 @@
 /** Active happy-path + Retention (Cancel) order. */
 export const PIPELINE_STAGE_ORDER = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "client_services",
   "awaiting_collection_letter",
@@ -44,7 +44,7 @@ export const STAGE_CONFIG: Record<
     border: "border-blue-200",
     hex: "#3B82F6",
   },
-  welcome_packet: {
+  account_manager: {
     label: "Account Manager",
     color: "bg-amber-100 text-amber-700",
     dot: "bg-amber-500",
@@ -127,7 +127,7 @@ const FALLBACK_STAGE = {
 /** Full CRM order including terminal stages (for audit + reporting). */
 export const ALL_STAGE_ORDER = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "client_services",
   "awaiting_collection_letter",

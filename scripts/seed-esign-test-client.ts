@@ -49,7 +49,7 @@ async function main() {
       city: "Miami",
       state: "FL",
       zip_code: "33101",
-      stage: "welcome_packet",
+      stage: "account_manager",
       is_active: true,
       assigned_to: jessica?.id ?? null,
       verbal_password: "esign-test",

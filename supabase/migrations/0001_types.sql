@@ -16,7 +16,7 @@ CREATE TYPE public.card_type AS ENUM (
 CREATE TYPE public.case_stage AS ENUM (
     'lead',
     'client_services',
-    'welcome_packet',
+    'account_manager',
     'awaiting_collection_letter',
     'case_sent_to_attorneys',
     'closed',

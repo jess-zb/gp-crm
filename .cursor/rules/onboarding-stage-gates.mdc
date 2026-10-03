@@ -15,7 +15,7 @@ upload requirements.
 ### Welcome Packet — gate at Account Manager exit
 
 - `blockAdvanceFromAccountManagerWithoutSignedWelcomePacket` blocks
-  **`welcome_packet` → anything forward** until the Welcome Packet is signed.
+  **`account_manager` → anything forward** until the Welcome Packet is signed.
 - The signed copy lands as a POA document (`poa_document` / `poa_signed`) or
   sets `clients.poa_signed_at`, whether it arrived through e-signature or a
   manual upload, so **both satisfy the gate**. Use `hasSignedPoaOnRecord()`.

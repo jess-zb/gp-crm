@@ -53,7 +53,7 @@ function stageIndex(stage: string): number {
 
 function atOrAfterWelcomePacket(stage: string): boolean {
   const keys = STAGE_KEYS as readonly string[];
-  return stageIndex(stage) >= keys.indexOf("welcome_packet");
+  return stageIndex(stage) >= keys.indexOf("account_manager");
 }
 
 export default function PortalPage() {

@@ -2,12 +2,12 @@
  * Canonical Golden Pathway client-facing contact information.
  * Import from here — never hardcode phone/email/brand in templates or dispatch code.
  *
- * BUSINESS_LEGAL_NAME is provisional. The wordmark reads "Golden Pathway
- * Financial"; confirm the legal entity before anything is filed or printed
- * as a contract.
+ * BUSINESS_LEGAL_NAME is the entity string used in emails and PDF stamps.
+ * The wordmark artwork still includes the word FINANCIAL; this constant does
+ * not.
  */
 export const BUSINESS_NAME = "Golden Pathway";
-export const BUSINESS_LEGAL_NAME = "Golden Pathway Financial";
+export const BUSINESS_LEGAL_NAME = "Golden Pathway";
 
 export const SUPPORT_EMAIL = "support@goldenpathway.io";
 export const FROM_EMAIL = `${BUSINESS_NAME} <${SUPPORT_EMAIL}>`;

@@ -13,7 +13,7 @@ import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 
 const PIPELINE_COUNT_STAGES = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "client_services",
   "awaiting_collection_letter",

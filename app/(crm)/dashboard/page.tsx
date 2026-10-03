@@ -134,7 +134,7 @@ export default async function DashboardPage() {
       admin
         .from("clients")
         .select("id, first_name, last_name, stage_entered_at")
-        .eq("stage", "welcome_packet")
+        .eq("stage", "account_manager")
         .eq("sub_status", "rna")
         .eq("is_active", true)
         .limit(5),
@@ -142,7 +142,7 @@ export default async function DashboardPage() {
         .from("clients")
         .select("id, first_name, last_name, stage, stage_entered_at")
         .eq("is_active", true)
-        .in("stage", ["welcome_packet", "lead"])
+        .in("stage", ["account_manager", "lead"])
         .lt("stage_entered_at", sevenDaysAgo)
         .limit(5),
       admin
@@ -174,7 +174,7 @@ export default async function DashboardPage() {
       .from("clients")
       .select("id, first_name, last_name, phone_mobile, stage_entered_at, stage")
       .eq("is_active", true)
-      .in("stage", ["lead", "welcome_packet", "client_services"])
+      .in("stage", ["lead", "account_manager", "client_services"])
       .order("stage_entered_at", { ascending: true });
 
     const clientIds = funnelClients?.map((c) => c.id as string) ?? [];
@@ -204,7 +204,7 @@ export default async function DashboardPage() {
           .select(
             "id, first_name, last_name, phone_mobile, stage_entered_at, sub_status"
           )
-          .eq("stage", "welcome_packet")
+          .eq("stage", "account_manager")
           .eq("assigned_to", profile.id)
           .eq("is_active", true)
           .order("stage_entered_at", { ascending: true }),

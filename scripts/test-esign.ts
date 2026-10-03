@@ -30,7 +30,7 @@ import { DEFAULT_APP_URL, publicAppUrl } from "../lib/constants/business-contact
 
 console.log("E-Sign helper smoke test\n");
 
-assert.equal(canShowEsignActions("welcome_packet"), true);
+assert.equal(canShowEsignActions("account_manager"), true);
 assert.equal(canShowEsignActions("client_services"), true);
 assert.equal(canShowEsignActions("lead"), false);
 assert.equal(canShowEsignActions(null), false);

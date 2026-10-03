@@ -1606,7 +1606,7 @@ export function ClientsListClient({
             >
               <optgroup label="Sales Pipeline">
                 <option value="lead">New Lead</option>
-                <option value="welcome_packet">Account Manager</option>
+                <option value="account_manager">Account Manager</option>
                 <option value="retention">Retention</option>
               </optgroup>
               <optgroup label="Service Pipeline">

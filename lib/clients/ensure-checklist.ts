@@ -10,15 +10,17 @@ export const CHECKLIST_CHARGE_ITEM = "Charge CC Information";
 export const CHECKLIST_POA_ITEM = "Signed POA Received";
 export const CHECKLIST_COLLECTION_ITEM = "Collection Letter Received";
 
-/** Legacy DB item strings — still matched when rendering rows. */
+/** Older item strings for the same step. Matched so they are not inserted again. */
 export const CHECKLIST_WELCOME_PACKET_ITEM_LEGACY = "Send Welcome Packet + POA";
+export const CHECKLIST_WELCOME_PACKET_ITEM_LEGACY_SEND = "Send Welcome Packet";
 export const CHECKLIST_WELCOME_PACKET_ITEM_LEGACY_ACCOUNT_MANAGER = "Send Account Manager";
 export const CHECKLIST_WELCOME_PACKET_ITEM_LEGACY_SEND_TO = "Send to Account Manager";
 
-export const CHECKLIST_WELCOME_PACKET_ITEM = "Send Welcome Packet";
+export const CHECKLIST_WELCOME_PACKET_ITEM = "Welcome Packet signed";
 
 export const CHECKLIST_WELCOME_PACKET_LEGACY_LABELS = [
   CHECKLIST_WELCOME_PACKET_ITEM_LEGACY,
+  CHECKLIST_WELCOME_PACKET_ITEM_LEGACY_SEND,
   CHECKLIST_WELCOME_PACKET_ITEM_LEGACY_ACCOUNT_MANAGER,
   CHECKLIST_WELCOME_PACKET_ITEM_LEGACY_SEND_TO,
 ] as const;
@@ -45,10 +47,9 @@ export function findWelcomeChecklistRow<T extends ChecklistRowPick>(
  * Whether this client already has a row covering `item`, treating the
  * welcome-packet aliases as one step.
  *
- * Without the alias check, a client holding the legacy 'Send Welcome Packet +
- * POA' row looked like it was missing 'Send Welcome Packet', so a second row was
- * inserted for the same step. That is how 155 clients ended up with duplicate
- * welcome-packet rows.
+ * Without the alias check, a client holding an older welcome-packet label
+ * looked like it was missing 'Welcome Packet signed', so a second row was
+ * inserted for the same step.
  */
 function hasChecklistItem(rows: ChecklistRowPick[], item: string): boolean {
   if (item === CHECKLIST_WELCOME_PACKET_ITEM) {

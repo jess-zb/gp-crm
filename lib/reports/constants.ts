@@ -18,7 +18,7 @@ export const STAGE_BAR_CLASS: Record<string, string> = { ...DASHBOARD_PIPELINE_C
 /** Stage velocity table order for reports (excludes mortgage). */
 export const REPORTS_VELOCITY_ORDER = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "retention",
   "client_services",
   "awaiting_collection_letter",

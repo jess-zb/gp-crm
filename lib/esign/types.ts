@@ -118,5 +118,5 @@ export function advancesStageOnSign(behavior: string): boolean {
 
 export function canShowEsignActions(stage: string | null | undefined): boolean {
   const s = (stage ?? "").trim();
-  return s === "welcome_packet" || s === "client_services";
+  return s === "account_manager" || s === "client_services";
 }

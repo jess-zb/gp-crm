@@ -99,7 +99,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 We tried reaching you for your scheduled follow-up today but weren''t able to connect. This call is important — it''s where we confirm your account details, review your goals, and officially activate your program.
 
-Please give us a call at (888) 807-4221 or reply to this email to pick a new time that works best for you.
+Please give us a call at 928-433-8408 or reply to this email to pick a new time that works best for you.
 
 Warm regards,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'follow_up', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
@@ -151,7 +151,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 Just checking in to say you''re on the right track. If you get emails, texts, or letters from creditors, please send them to me right away. This documentation strengthens your case with our nationwide network of attorneys.
 
-Questions? Reply here or call (888) 807-4221.
+Questions? Reply here or call 928-433-8408.
 
 Warmly,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'cs_active', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
@@ -184,7 +184,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 Staying confident helps the process. Quick tips:
 - If creditors call, don''t engage—ignore the call.
 - Forward any emails, texts, or letters to us immediately.
-- Keep our number handy: (888) 807-4221.
+- Keep our number handy: 928-433-8408.
 
 You''re doing great—every week is progress.
 
@@ -193,7 +193,7 @@ With you,
 ON CONFLICT DO NOTHING;
 INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('f6deb16d-0a1f-468f-b597-52ee8978afbf', 'active_6', 'Active 1–7 — Day 60', 'active_arc', 6, 60, 'Halfway Through—Keeping You on Track', 'Hi {client.firstName},
 
-You''re making solid progress. Thank you for forwarding communications and sticking to the plan. If anything feels unclear—or if your situation changes—reply here or contact us at (888) 807-4221 and we''ll adjust together.
+You''re making solid progress. Thank you for forwarding communications and sticking to the plan. If anything feels unclear—or if your situation changes—reply here or contact us at 928-433-8408 and we''ll adjust together.
 
 Proud to be on your team,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'cs_active', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
@@ -211,7 +211,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 We noticed we missed you for the final step of enrollment. To activate your program and protect your enrolled accounts, we just need to complete your retainer.
 
-Please call us today at (888) 807-4221 and we''ll wrap this up in a couple of minutes.
+Please call us today at 928-433-8408 and we''ll wrap this up in a couple of minutes.
 
 If it''s easier, reply to this email with a good time to call you.
 
@@ -222,7 +222,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 Your program isn''t active yet. Once we finalize your retainer on the enrolled card, your file moves forward and your accounts are protected.
 
-Call us at (888) 807-4221 or reply with a good time—we''ll make this quick and easy.
+Call us at 928-433-8408 or reply with a good time—we''ll make this quick and easy.
 
 You''re almost there.
 
@@ -233,7 +233,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 We''re still holding your file so you don''t lose your place in line. To activate your program, we need to complete the retainer payment you authorized.
 
-Please call (888) 807-4221 or reply to this email and we''ll take care of it.
+Please call 928-433-8408 or reply to this email and we''ll take care of it.
 
 Thanks,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'partial', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
@@ -242,7 +242,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 This is our final attempt to help you finish enrollment. Without completing the retainer on your enrolled card, we cannot activate your program or move your file forward.
 
-If you''d like to proceed, call (888) 807-4221 or reply within the next 24 hours.
+If you''d like to proceed, call 928-433-8408 or reply within the next 24 hours.
 
 If you no longer wish to continue, let us know and we''ll close your file.
 
@@ -255,7 +255,7 @@ Congratulations—your program is fully active and your file has been referred t
 
 At Golden Pathway, your Account Manager remains the same and our Client Services department too. If you receive emails, texts, or letters from any creditors, continue to forward them to us right away.
 
-We''re here for you—reply to this email or call (888) 807-4221 with any questions.
+We''re here for you—reply to this email or call 928-433-8408 with any questions.
 
 Warm regards,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'case_referred', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
@@ -279,7 +279,7 @@ Sign in with your attorney CRM credentials to review client contact info, signed
 ON CONFLICT DO NOTHING;
 
 -- reminder_templates (17 rows)
-INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('fc6e0bdc-b8ab-434b-be8c-49795024274f', 'welcome_packet', 'Follow up with a client still in Account Manager (enrollment), not packet delivery', 168, false, '2026-10-02 21:41:34.40847+00', 'AM Enrollment Follow-Up')
+INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('fc6e0bdc-b8ab-434b-be8c-49795024274f', 'account_manager', 'Follow up with a client still in Account Manager (enrollment), not packet delivery', 168, false, '2026-10-02 21:41:34.40847+00', 'AM Enrollment Follow-Up')
 ON CONFLICT DO NOTHING;
 INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('2c4bf75d-07b0-4886-872f-abc6ead655a8', 'lead', 'Initial lead follow up call', 0, false, '2026-10-02 21:41:34.40847+00', 'Lead Call')
 ON CONFLICT DO NOTHING;
@@ -297,7 +297,7 @@ INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage
 ON CONFLICT DO NOTHING;
 INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('bd059b4b-1f73-41a1-99d4-470a22370b36', 'retention', '48 hour retention follow up', 48, false, '2026-10-02 21:41:34.40847+00', '48hr Call')
 ON CONFLICT DO NOTHING;
-INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('dec6fcd8-1c70-4f33-8864-d54805e0689e', 'welcome_packet', 'Confirm welcome packet sent', 2, false, '2026-10-02 21:41:34.40847+00', 'Packet Sent')
+INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('dec6fcd8-1c70-4f33-8864-d54805e0689e', 'account_manager', 'Confirm welcome packet sent', 2, false, '2026-10-02 21:41:34.40847+00', 'Packet Sent')
 ON CONFLICT DO NOTHING;
 INSERT INTO public.reminder_templates (id, stage, description, hours_after_stage_entry, is_active, created_at, title) VALUES ('d819d2ea-cafd-4005-a457-eae0a286a282', 'awaiting_collection_letter', 'Check on collection letters', 48, false, '2026-10-02 21:41:34.40847+00', 'Waiting Call')
 ON CONFLICT DO NOTHING;

@@ -221,7 +221,7 @@ export function DripBackfillClient({
       onRun: backfillLeadDrips,
     },
     {
-      title: "Account Manager (welcome_packet)",
+      title: "Account Manager (account_manager)",
       description: "Active Account Manager clients missing the partial_arc enrollment nudge.",
       sequenceLabel: "partial_arc",
       initialCount: amCount,

@@ -63,7 +63,7 @@ const STAGE_DISPLAY = STAGE_LABELS;
 /** Advance / Go Back skip `retention` and `dnc` (use Cancel modal for those). */
 const NAVIGATION_STAGE_ORDER = [
   "lead",
-  "welcome_packet",
+  "account_manager",
   "client_services",
   "awaiting_collection_letter",
   "case_sent_to_attorneys",
@@ -89,7 +89,7 @@ const STAGES_WITH_ENTRY_SIDE_EFFECTS = new Set([
 
 function getPrevStage(current: string | null): string | null {
   const s = normalizePipelineStage(current);
-  if (s === "retention") return "welcome_packet";
+  if (s === "retention") return "account_manager";
   if (s === "dnc") return "case_sent_to_attorneys";
   const idx = (NAVIGATION_STAGE_ORDER as readonly string[]).indexOf(s);
   if (idx <= 0) return null;
@@ -352,12 +352,12 @@ export function ClientStageHeader({
       }
     }
 
-    if (forward && newStage === "welcome_packet" && !opts?.skipAssignmentModal) {
+    if (forward && newStage === "account_manager" && !opts?.skipAssignmentModal) {
       suppressDropdownRevert.current = true;
       setAssignmentFlow({
         title: "Assign Account Manager",
         department: "accounts",
-        pendingStage: "welcome_packet",
+        pendingStage: "account_manager",
       });
       return false;
     }
@@ -650,11 +650,11 @@ export function ClientStageHeader({
 
   function onClickAdvance() {
     if (!nextStage || loading !== null) return;
-    if (nextStage === "welcome_packet") {
+    if (nextStage === "account_manager") {
       setAssignmentFlow({
         title: "Assign Account Manager",
         department: "accounts",
-        pendingStage: "welcome_packet",
+        pendingStage: "account_manager",
         applyOpts: {},
       });
       return;

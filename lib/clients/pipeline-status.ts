@@ -37,7 +37,7 @@ export function pipelineStageAuditAction(
  * Whether `newStage` is strictly later than `oldStage` on the main CRM pipeline
  * (`PIPELINE_STAGE_ORDER`). Used for reminder workflow + entry side-effects so the
  * stage dropdown matches linear "advance" behavior even when audit order uses
- * `ALL_STAGE_ORDER` (e.g. lead → welcome_packet).
+ * `ALL_STAGE_ORDER` (e.g. lead → account_manager).
  */
 export function isForwardPipelineTransition(oldStage: string, newStage: string): boolean {
   const order = PIPELINE_STAGE_ORDER as readonly string[];
@@ -51,7 +51,7 @@ export function isForwardPipelineTransition(oldStage: string, newStage: string):
 
 /**
  * True when a forward move would improperly skip required early-pipeline stages.
- * Primary guard: New Lead may only advance to Account Manager (`welcome_packet`).
+ * Primary guard: New Lead may only advance to Account Manager (`account_manager`).
  * Retention (Cancel path) is exempt.
  * Later-stage jumps keep existing gates (Welcome Packet, POA, Retention exit modal).
  */
@@ -66,5 +66,5 @@ export function wouldSkipPipelineStages(oldStage: string, newStage: string): boo
     return false;
   }
   // From New Lead, only Account Manager is a valid forward destination via stage UI.
-  return newStage !== "welcome_packet";
+  return newStage !== "account_manager";
 }

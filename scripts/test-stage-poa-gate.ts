@@ -69,10 +69,10 @@ assert.equal(hasSignedPoaOnRecord({ hasPoaDocument: false, poaSignedAt: null }),
 console.log("  ✓ hasSignedPoaOnRecord matches checklist logic");
 
 assert.equal(poaAdvanceAlreadyApplied("client_services", "awaiting_collection_letter"), true);
-assert.equal(poaAdvanceAlreadyApplied("welcome_packet", "awaiting_collection_letter"), true);
+assert.equal(poaAdvanceAlreadyApplied("account_manager", "awaiting_collection_letter"), true);
 assert.equal(poaAdvanceAlreadyApplied("client_services", "client_services"), false);
 assert.equal(poaAdvanceAlreadyApplied("lead", "awaiting_collection_letter"), false);
-assert.equal(shouldAttemptPoaAdvance("welcome_packet"), true);
+assert.equal(shouldAttemptPoaAdvance("account_manager"), true);
 assert.equal(shouldAttemptPoaAdvance("client_services"), true);
 assert.equal(shouldAttemptPoaAdvance("awaiting_collection_letter"), false);
 console.log("  ✓ POA auto-advance helpers only cover AM + CS");

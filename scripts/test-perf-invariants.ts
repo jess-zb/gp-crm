@@ -49,7 +49,7 @@ assert.match(
 assert.match(uploadComplete, /isCollection|collection_letter/);
 console.log("  ✓ collection-letter / case-sent path still present");
 
-assert.match(poaAdvance, /welcome_packet/);
+assert.match(poaAdvance, /account_manager/);
 assert.match(poaAdvance, /client_services/);
 assert.match(poaAdvance, /awaiting_collection_letter/);
 assert.match(poaAdvance, /\.is\("poa_signed_at", null\)/);
@@ -61,7 +61,7 @@ const poaFn = functionsSql.slice(
   functionsSql.indexOf("CREATE FUNCTION public.insert_auto_reminders_from_templates")
 );
 assert.ok(poaFn.includes("handle_poa_upload"), "handle_poa_upload must live in the squashed functions");
-assert.match(poaFn, /welcome_packet/);
+assert.match(poaFn, /account_manager/);
 assert.match(poaFn, /client_services/);
 assert.match(poaFn, /awaiting_collection_letter/);
 console.log("  ✓ handle_poa_upload still advances AM and CS");

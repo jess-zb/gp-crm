@@ -188,7 +188,7 @@ export async function backfillLeadDrips(): Promise<BackfillResult> {
   return { ok: true, processed: candidates.length, enrolled, skipped, reasons };
 }
 
-// ─── Account Manager (welcome_packet) ────────────────────────────────────────
+// ─── Account Manager (account_manager) ────────────────────────────────────────
 
 export async function listStrandedAccountManager(): Promise<
   { ok: true; count: number; sample: StrandedRow[] } | { ok: false; error: string }
@@ -200,7 +200,7 @@ export async function listStrandedAccountManager(): Promise<
     .from("clients")
     .select("id, first_name, last_name, created_at")
     .eq("is_active", true)
-    .eq("stage", "welcome_packet");
+    .eq("stage", "account_manager");
   if (error) return { ok: false, error: error.message };
   const list = (clients ?? []) as (StrandedRow & { id: string })[];
   if (!list.length) return { ok: true, count: 0, sample: [] };
@@ -223,10 +223,10 @@ export async function backfillAccountManagerDrips(): Promise<BackfillResult> {
     .from("clients")
     .select("id, created_at, email")
     .eq("is_active", true)
-    .eq("stage", "welcome_packet");
+    .eq("stage", "account_manager");
   if (error) return { ok: false, error: error.message };
   const candidates = (data ?? []) as ClientRow[];
-  const refDates = await stageEntryDates(supabase, candidates.map((c) => c.id), "welcome_packet");
+  const refDates = await stageEntryDates(supabase, candidates.map((c) => c.id), "account_manager");
   const { enrolled, skipped, reasons } = await runBackfill(supabase, candidates, ["partial_arc"], refDates);
   return { ok: true, processed: candidates.length, enrolled, skipped, reasons };
 }
