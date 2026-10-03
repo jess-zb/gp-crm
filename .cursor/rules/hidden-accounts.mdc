@@ -12,7 +12,7 @@ assignee columns, sender names, or activity feeds.
 
 ## Enforcement lives in the database
 
-`20260804230000_hide_dev_account.sql` makes the dev profile unreadable to
+`0019_hide_dev_account.sql` drops the blanket profile read policies so the dev profile is unreadable to
 everyone except itself:
 
 ```sql

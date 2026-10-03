@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Info, Loader2, PenLine } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useMids } from "@/lib/hooks/use-mids";
+import { parseLayoutFields } from "@/lib/esign/layout";
 import { useToast } from "@/app/components/Toast";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { EsignPrefillReviewModal } from "@/app/components/esign/EsignPrefillReviewModal";
@@ -60,7 +63,11 @@ export function EsignDripSection({
   canSend?: boolean;
 }) {
   const toast = useToast();
+  const router = useRouter();
+  const { mids } = useMids();
   const [helpOpen, setHelpOpen] = useState(false);
+  const [midId, setMidId] = useState<string | null>(null);
+  const [midSaving, setMidSaving] = useState(false);
   const [rows, setRows] = useState<EsignRequestRow[]>([]);
   const [templates, setTemplates] = useState<EsignTemplateCard[] | null>(null);
   const [midName, setMidName] = useState<string | null>(null);
@@ -91,6 +98,7 @@ export function EsignDripSection({
 
     const json = (await templateRes.json().catch(() => null)) as {
       error?: string;
+      midId?: string | null;
       midName?: string | null;
       templates?: EsignTemplateCard[];
     } | null;
@@ -100,6 +108,7 @@ export function EsignDripSection({
       return;
     }
     setLoadError("");
+    setMidId(json.midId ?? null);
     setMidName(json.midName ?? null);
     setTemplates(json.templates);
   }, [clientId]);
@@ -184,6 +193,31 @@ export function EsignDripSection({
   }
 
   const midLabel = midName?.trim() || "this MID";
+  const midOptions = useMemo(() => {
+    const rows = mids.map((mid) => ({ id: mid.id, name: mid.name }));
+    if (midId && !rows.some((row) => row.id === midId)) {
+      rows.unshift({ id: midId, name: midName?.trim() || "Current MID" });
+    }
+    return rows;
+  }, [midId, midName, mids]);
+
+  async function onMidChange(nextId: string) {
+    if (!nextId || nextId === midId || midSaving) return;
+    setMidSaving(true);
+    const supabase = createClient();
+    const { error } = await supabase.from("clients").update({ mid_id: nextId }).eq("id", clientId);
+    setMidSaving(false);
+    if (error) {
+      toast.error(toUserFacingError(error.message));
+      return;
+    }
+    const picked = midOptions.find((row) => row.id === nextId);
+    setMidId(nextId);
+    if (picked) setMidName(picked.name);
+    toast.success("MID updated");
+    await load();
+    router.refresh();
+  }
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
@@ -212,6 +246,24 @@ export function EsignDripSection({
             </div>
           ) : null}
         </div>
+        <label className="ml-auto flex min-w-[10rem] items-center gap-2">
+          <span className="sr-only">Client MID</span>
+          <select
+            aria-label="Client MID"
+            value={midId ?? ""}
+            disabled={midSaving}
+            onChange={(event) => void onMidChange(event.target.value)}
+            className="w-full rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-800 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 disabled:opacity-60 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-slate-100"
+          >
+            {midId ? null : <option value="">Select a MID</option>}
+            {midOptions.map((mid) => (
+              <option key={mid.id} value={mid.id}>
+                {mid.name}
+              </option>
+            ))}
+          </select>
+          {midSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" aria-hidden /> : null}
+        </label>
       </div>
 
       {templates === null ? (
@@ -223,12 +275,11 @@ export function EsignDripSection({
         <p className="text-sm text-red-600 dark:text-red-400">{loadError}</p>
       ) : !midName ? (
         <p className="text-sm text-slate-600 dark:text-slate-300">
-          This client has no MID, so there are no documents to send. Assign a MID
-          on Settings, then come back.
+          This client has no MID, so there are no documents to send. Choose one above.
         </p>
       ) : templates.length === 0 ? (
         <p className="text-sm text-slate-600 dark:text-slate-300">
-          {midLabel} has no e-sign documents yet. Add them under Settings → MIDs.
+          {midLabel} has no e-sign documents yet. Add them from E-Sign Documents in the sidebar.
         </p>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
@@ -258,6 +309,11 @@ export function EsignDripSection({
           midOptions={reviewPrefill.mid ? [reviewPrefill.mid] : []}
           advisorOptions={reviewAdvisors}
           confirmLabel="Send document"
+          preview={{
+            clientId,
+            templateId: review.templateId,
+            fields: parseLayoutFields(review.fields) ?? [],
+          }}
           submitting={busyId === review.templateId}
           onCancel={() => {
             if (busyId) return;

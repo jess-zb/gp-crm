@@ -14,6 +14,8 @@ import {
 } from "@/lib/esign/review-fields";
 import { formatUsd, formatUsdInput, isAmountField, parseUsdNumber } from "@/lib/esign/money";
 import { ModalOverlay } from "@/app/components/ModalOverlay";
+import { EsignSendPreview } from "@/app/components/esign/EsignSendPreview";
+import type { EsignLayoutField } from "@/lib/esign/layout";
 
 export function EsignPrefillReviewModal({
   template,
@@ -24,6 +26,7 @@ export function EsignPrefillReviewModal({
   hideCancel,
   submitting = false,
   audience = "staff",
+  preview = null,
   onCancel,
   onConfirm,
 }: {
@@ -33,6 +36,12 @@ export function EsignPrefillReviewModal({
   advisorOptions?: string[];
   confirmLabel: string;
   audience?: "staff" | "signer";
+  /** Staff send flow: live PDF beside the fields. Filling a field does not send. */
+  preview?: {
+    clientId: string;
+    templateId: string;
+    fields: EsignLayoutField[];
+  } | null;
   hideCancel?: boolean;
   submitting?: boolean;
   onCancel: () => void;
@@ -170,7 +179,7 @@ export function EsignPrefillReviewModal({
       className="z-[100] bg-black/40"
       onBackdropClick={busy || hideCancel ? undefined : onCancel}
     >
-      <div className="crm-modal-panel flex max-h-[calc(100vh-2rem)] max-w-xl flex-col p-0">
+      <div className={`crm-modal-panel flex max-h-[calc(100vh-2rem)] flex-col p-0 ${preview ? "max-w-6xl" : "max-w-xl"}`}>
         <div className="flex items-start justify-between gap-3 border-b border-slate-200 px-6 py-4 dark:border-[#2E2E2E]">
           <div>
             <h3 id="esign-review-title" className="crm-modal-title mb-0 text-[15px]">
@@ -179,7 +188,7 @@ export function EsignPrefillReviewModal({
             <p className="crm-modal-subtitle mb-0 mt-1">
               {audience === "signer"
                 ? "Confirm the starred fields, then fill in the rest. This prints on the document."
-                : "Confirm the starred fields from the client file. Everything here prints on the template."}
+                : "Confirm the starred fields from the client file. The preview updates as you type. Nothing is sent until you press the button below."}
             </p>
           </div>
           {hideCancel ? null : (
@@ -198,6 +207,17 @@ export function EsignPrefillReviewModal({
         <div
           className={`min-h-0 flex-1 overflow-y-auto px-6 py-4 ${busy ? "pointer-events-none opacity-60" : ""}`}
         >
+          <div className={preview ? "grid items-start gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(16rem,0.85fr)]" : ""}>
+          {preview ? (
+            <EsignSendPreview
+              clientId={preview.clientId}
+              templateId={preview.templateId}
+              fields={preview.fields}
+              basePrefill={prefill}
+              values={values}
+            />
+          ) : null}
+          <div>
           <div className="grid gap-4 sm:grid-cols-2">
             {top.map((field) => (
               <label
@@ -242,6 +262,8 @@ export function EsignPrefillReviewModal({
               </div>
             </div>
           ) : null}
+          </div>
+          </div>
         </div>
 
         <div className="flex justify-end gap-2 border-t border-slate-200 px-6 py-4 dark:border-[#2E2E2E]">

@@ -167,7 +167,7 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    /* Admin surface (attorney queue, bulk invite, drip backfill) */
+    /* Admin surface (attorney queue, bulk invite) */
     if (pathname.startsWith("/admin")) {
       if (!CRM_STAFF.has(role)) {
         return redirectTo(request, "/dashboard");
@@ -187,6 +187,14 @@ export async function middleware(request: NextRequest) {
     /* Communications hub */
     if (matchesPath(pathname, "/communications")) {
       if (!COMMS_AND_SETTINGS.has(role)) {
+        return redirectTo(request, "/dashboard");
+      }
+      return response;
+    }
+
+    /* E-Sign documents: dev and admin, not admin alone. */
+    if (matchesPath(pathname, "/esign-documents")) {
+      if (!OPS_LEAD.has(role)) {
         return redirectTo(request, "/dashboard");
       }
       return response;

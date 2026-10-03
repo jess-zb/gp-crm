@@ -2261,11 +2261,15 @@ export function CommunicationsHub() {
                         }`}
                       >
                         <span className="font-medium text-slate-600 dark:text-slate-300">
-                          {msg.sender_name ?? "—"}
+                          {currentRole !== "dev" && msg.sender_role === "dev"
+                            ? "System"
+                            : msg.sender_name ?? "—"}
                         </span>
+                        {currentRole !== "dev" && msg.sender_role === "dev" ? null : (
                         <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-slate-700 dark:bg-[#2E2E2E] dark:text-[#A87830]">
                           {roleLabel(msg.sender_role)}
                         </span>
+                        )}
                         <ClientFormattedDate
                           iso={msg.created_at}
                           pattern="MMM d, h:mm a"

@@ -156,7 +156,7 @@ export function AttorneyCommunicationsClient({
                   }`}
                 >
                   <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                    {(m.sender_name ?? "Sender").trim() || "Sender"}{" "}
+                    {m.sender_role === "dev" ? "Team" : (m.sender_name ?? "Sender").trim() || "Sender"}{" "}
                     <span className="font-normal text-slate-400">
                       {m.created_at ? formatShortMonthDayTime(m.created_at) : ""}
                     </span>

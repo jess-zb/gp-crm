@@ -28,7 +28,9 @@ import { DocumentsTab, type DocumentListItem } from "./DocumentsTab";
 import { EmailActivityTabClient } from "./EmailActivityTabClient";
 import { canUseEsignStaffUi, isEsignFeatureEnabled } from "@/lib/esign/config";
 import { toUserFacingError } from "@/lib/user-facing-error";
-import { HIDDEN_FROM_NON_DEV_EMAILS, isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import { HIDDEN_FROM_NON_DEV_EMAILS, isHiddenProfile } from "@/lib/constants/hidden-accounts";
+import { midNameFromEmbed } from "@/lib/mids/queries";
+import { loadHiddenActors, redactActorName } from "@/lib/auth/hidden-actor";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 import { formatDateTime } from "@/lib/utils/date";
 import { ClientBackButton } from "./ClientBackButton";
@@ -122,6 +124,7 @@ const CLIENT_SELECT = [
   "cc_charged_at",
   "reviewed_at",
   "reviewed_by_name",
+  "mid_id",
   // Fallback MID for the refund request prefill when no card carries a merchant.
 ].join(", ");
 
@@ -172,7 +175,7 @@ export default async function ClientProfilePage({
   const { data: client, error: clientErr } = await supabase
     .from("clients")
     .select(
-      `${CLIENT_SELECT}, attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role), services_manager:profiles!assigned_services_id(full_name, email)`
+      `${CLIENT_SELECT}, mids(name), attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role, email), services_manager:profiles!assigned_services_id(full_name, role, email)`
     )
     .eq("id", clientId)
     .maybeSingle();
@@ -224,14 +227,14 @@ export default async function ClientProfilePage({
     c.assigned_to
       ? supabase
           .from("profiles")
-          .select("id, full_name")
+          .select("id, full_name, email, role")
           .eq("id", String(c.assigned_to))
           .maybeSingle()
       : Promise.resolve({ data: null }),
     c.assigned_services_id
       ? supabase
           .from("profiles")
-          .select("id, full_name")
+          .select("id, full_name, email, role")
           .eq("id", String(c.assigned_services_id))
           .maybeSingle()
       : Promise.resolve({ data: null }),
@@ -246,14 +249,28 @@ export default async function ClientProfilePage({
     (!!(viewerDeptFlags?.is_accounts) && !c.assigned_to) ||
     (!!(viewerDeptFlags?.is_services) && !c.assigned_services_id);
 
-  const accountsUserForHeader = accountsProfileRow as {
-    id: string;
-    full_name: string | null;
-  } | null;
-  const servicesUserForHeader = servicesProfileRow as {
-    id: string;
-    full_name: string | null;
-  } | null;
+  const visibleStaffName = (
+    row: { id: string; full_name: string | null; email?: string | null; role?: string | null } | null
+  ) => {
+    if (!row || isHiddenProfile(row, profile.role)) return null;
+    return { id: row.id, full_name: row.full_name };
+  };
+  const accountsUserForHeader = visibleStaffName(
+    accountsProfileRow as {
+      id: string;
+      full_name: string | null;
+      email?: string | null;
+      role?: string | null;
+    } | null
+  );
+  const servicesUserForHeader = visibleStaffName(
+    servicesProfileRow as {
+      id: string;
+      full_name: string | null;
+      email?: string | null;
+      role?: string | null;
+    } | null
+  );
 
   const canReassign = canReassignClient(profile.role);
   const canEditAttorney = canEditAttorneyAssignment(profile.role);
@@ -296,7 +313,7 @@ export default async function ClientProfilePage({
       .limit(500),
     supabase
       .from("audit_log")
-      .select("id, action, new_value, performed_by_name, created_at")
+      .select("id, action, new_value, performed_by, performed_by_name, created_at")
       .eq("client_id", clientId)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -347,11 +364,16 @@ export default async function ClientProfilePage({
     };
   }
 
+  const hiddenActors = await loadHiddenActors(profile.role);
   const activityLogData = (auditLogRaw ?? []).map((a) => ({
     id: a.id as string,
     action: (a.action as string | null) ?? null,
     new_value: a.new_value,
-    performed_by_name: (a.performed_by_name as string | null) ?? null,
+    performed_by_name: redactActorName(
+      (a.performed_by_name as string | null) ?? null,
+      (a.performed_by as string | null) ?? null,
+      hiddenActors
+    ),
     created_at: a.created_at as string,
   }));
 
@@ -477,7 +499,7 @@ export default async function ClientProfilePage({
         }),
     supabase
       .from("profiles")
-      .select("id, full_name, email")
+      .select("id, full_name, email, role")
       .in("role", ["dev", "admin", "acct_manager", "manager"])
       .eq("is_active", true)
       .order("full_name", { ascending: true }),
@@ -495,11 +517,14 @@ export default async function ClientProfilePage({
       const { data: missingStaff } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, email, is_accounts, is_services"
+          "id, full_name, email, role, is_accounts, is_services"
         )
         .in("id", missingIds);
       if (missingStaff?.length) {
-        staffOptions = [...staffOptions, ...missingStaff];
+        const visibleMissing = missingStaff.filter(
+          (row) => !isHiddenProfile(row, profile.role)
+        );
+        staffOptions = [...staffOptions, ...visibleMissing];
         staffOptions.sort((a, b) =>
           (a.full_name ?? "").localeCompare(b.full_name ?? "")
         );
@@ -507,15 +532,20 @@ export default async function ClientProfilePage({
     }
   }
   const sidebarStaffOptions = (sidebarStaff ?? []).filter(
-    (row) => !isHiddenFromRole(row.email as string | null, profile.role)
+    (row) => !isHiddenProfile({ email: row.email as string | null, role: row.role as string | null }, profile.role)
   );
   const attorneyOptions = attys ?? [];
 
   const assignedUser = c.assigned_user as
-    | { full_name: string | null; role: string | null }
+    | { full_name: string | null; role: string | null; email?: string | null }
     | null
     | undefined;
-  const assigneeName = assignedUser?.full_name?.trim() || null;
+  const assigneeName = isHiddenProfile(
+    { email: assignedUser?.email, role: assignedUser?.role },
+    profile.role
+  )
+    ? null
+    : assignedUser?.full_name?.trim() || null;
   const assigneeRole = (assignedUser?.role as string | null) ?? null;
 
   const servicesAssigneeName = servicesUserForHeader?.full_name?.trim() || null;
@@ -639,6 +669,7 @@ export default async function ClientProfilePage({
 
       <ClientStageHeader
         displayName={displayName}
+        midName={midNameFromEmbed((c as { mids?: unknown }).mids)}
         clientId={clientId}
         stage={(c.stage as string | null) ?? null}
         performerId={user.id}

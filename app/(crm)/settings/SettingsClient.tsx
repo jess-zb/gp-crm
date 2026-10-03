@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronRight, Download } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -34,6 +35,7 @@ export function SettingsClient({
   isDev: boolean;
 }) {
   const toast = useToast();
+  const router = useRouter();
   const supabase = createClient();
 
   const [fullName, setFullName] = useState(initialFullName ?? "");
@@ -90,6 +92,7 @@ export function SettingsClient({
         return;
       }
       toast.success("Profile saved");
+      router.refresh();
     } finally {
       setNameSaving(false);
     }
@@ -228,8 +231,8 @@ export function SettingsClient({
               <span>Message Templates</span>
               <ChevronRight className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
             </Link>
-            <Link href="/settings/mids" className={workspaceLinkClass}>
-              <span>MIDs &amp; E-Sign Documents</span>
+            <Link href="/esign-documents" className={workspaceLinkClass}>
+              <span>E-Sign Documents</span>
               <ChevronRight className="h-5 w-5 shrink-0 text-slate-400 dark:text-slate-500" aria-hidden />
             </Link>
             <Link href="/team" className={workspaceLinkClass}>

@@ -5,6 +5,7 @@ import { FROM_EMAIL, SUPPORT_EMAIL } from "@/lib/constants/business-contact";
 import { createServiceClient } from "@/lib/supabase/server";
 import { renderTemplate } from "@/lib/email/render-template";
 import { getRoleDisplayName } from "@/lib/utils/roles";
+import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
 
 const HOLIDAY_TEMPLATE_KEY = "holiday" as const;
 
@@ -118,14 +119,21 @@ export async function GET(request: Request) {
       const { data: mgr } = client.assigned_to
         ? await supabase
             .from("profiles")
-            .select("full_name, title, email")
+            .select("full_name, title, email, role")
             .eq("id", client.assigned_to)
             .maybeSingle()
         : { data: null };
 
-      const mgrName = String(mgr?.full_name ?? "").trim();
+      const hiddenManager = isHiddenProfile(
+        { email: mgr?.email as string | null, role: mgr?.role as string | null },
+        "client"
+      );
+      const mgrName = hiddenManager ? "" : String(mgr?.full_name ?? "").trim();
       const [mgrFirst, ...mgrRest] = mgrName ? mgrName.split(/\s+/) : ["Account", "Manager"];
       const mgrLast = mgrRest.join(" ").trim() || "—";
+      const mgrEmail = hiddenManager
+        ? SUPPORT_EMAIL
+        : String(mgr?.email ?? "").trim() || SUPPORT_EMAIL;
 
       const unsubscribeUrl = `${baseUrl}/unsubscribe/${encodeURIComponent(clientId)}`;
       const portalUrl = `${baseUrl}/portal`;
@@ -140,8 +148,8 @@ export async function GET(request: Request) {
           accountManager: {
             firstName: mgrFirst || "Account",
             lastName: mgrLast,
-            title: String(mgr?.title ?? "").trim() || getRoleDisplayName("acct_manager"),
-            email: String(mgr?.email ?? "").trim() || SUPPORT_EMAIL,
+            title: hiddenManager ? getRoleDisplayName("acct_manager") : String(mgr?.title ?? "").trim() || getRoleDisplayName("acct_manager"),
+            email: mgrEmail,
           },
           portalUrl,
           unsubscribeUrl,

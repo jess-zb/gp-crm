@@ -60,8 +60,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { midName, templates } = await loadTemplatesForClient(supabase, clientId);
-  return NextResponse.json({ ok: true, midName, templates });
+  const { midId, midName, templates } = await loadTemplatesForClient(supabase, clientId);
+  return NextResponse.json({ ok: true, midId, midName, templates });
 }
 
 /**

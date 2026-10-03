@@ -174,36 +174,6 @@ export function KnowledgeBaseClient({ canEdit }: { canEdit: boolean }) {
     await load();
   }
 
-  async function moveArticle(article: Article, direction: -1 | 1) {
-    const index = articles.findIndex((row) => row.id === article.id);
-    const target = index + direction;
-    if (index < 0 || target < 0 || target >= articles.length) return;
-    const other = articles[target];
-    let movingOrder = other.sort_order;
-    let stayingOrder = article.sort_order;
-    if (movingOrder === stayingOrder) {
-      movingOrder = (target + 1) * 10;
-      stayingOrder = (index + 1) * 10;
-    }
-    setSaving(true);
-    setSaveError(null);
-    const supabase = createClient();
-    const first = await supabase
-      .from("knowledge_base_articles")
-      .update({ sort_order: movingOrder })
-      .eq("id", article.id);
-    const second = await supabase
-      .from("knowledge_base_articles")
-      .update({ sort_order: stayingOrder })
-      .eq("id", other.id);
-    setSaving(false);
-    if (first.error || second.error) {
-      setSaveError(first.error?.message || second.error?.message || "Could not reorder.");
-      return;
-    }
-    await load();
-  }
-
   return (
     <div className="space-y-4">
       <p className="text-[13px] text-slate-600 dark:text-slate-400">
@@ -270,7 +240,7 @@ export function KnowledgeBaseClient({ canEdit }: { canEdit: boolean }) {
               </button>
             ) : null}
             <ul className="space-y-1">
-              {articles.map((article, index) => {
+              {articles.map((article) => {
                 const active = article.id === selectedId && !draft;
                 return (
                   <li key={article.id}>
@@ -288,26 +258,6 @@ export function KnowledgeBaseClient({ canEdit }: { canEdit: boolean }) {
                     >
                       {article.title}
                     </button>
-                    {canEdit && active ? (
-                      <div className="mt-1 flex gap-1 px-1">
-                        <button
-                          type="button"
-                          className="rounded-md px-2 py-1 text-xs text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:text-slate-300 dark:hover:bg-white/5"
-                          disabled={saving || index === 0}
-                          onClick={() => void moveArticle(article, -1)}
-                        >
-                          Move up
-                        </button>
-                        <button
-                          type="button"
-                          className="rounded-md px-2 py-1 text-xs text-slate-600 hover:bg-slate-100 disabled:opacity-40 dark:text-slate-300 dark:hover:bg-white/5"
-                          disabled={saving || index === articles.length - 1}
-                          onClick={() => void moveArticle(article, 1)}
-                        >
-                          Move down
-                        </button>
-                      </div>
-                    ) : null}
                   </li>
                 );
               })}

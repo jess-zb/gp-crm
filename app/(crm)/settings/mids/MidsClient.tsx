@@ -160,7 +160,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                     {!isEditing ? (
                       <div className="flex shrink-0 flex-wrap items-center gap-2">
                         <Link
-                          href={`/settings/mids/${mid.id}`}
+                          href={`/esign-documents/${mid.id}`}
                           className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                         >
                           E-Sign documents

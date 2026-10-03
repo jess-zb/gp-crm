@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2, Shuffle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
 import { ModalOverlay } from "@/app/components/ModalOverlay";
 
 export type AssignmentDepartment = "accounts" | "services";
@@ -16,7 +17,7 @@ export type AssignmentModalProps = {
   onSkip: () => void;
 };
 
-type TeamMember = { id: string; full_name: string | null; email: string | null };
+type TeamMember = { id: string; full_name: string | null; email: string | null; role: string | null };
 
 export function AssignmentModal({
   open,
@@ -37,20 +38,27 @@ export function AssignmentModal({
     }
     const col = department === "accounts" ? "is_accounts" : "is_services";
     const supabase = createClient();
-    void supabase
-      .from("profiles")
-      .select("id, full_name, email")
-      .eq(col, true)
-      .eq("is_active", true)
-      .order("full_name", { ascending: true })
-      .then(({ data, error }) => {
-        if (error) {
-          console.error("[AssignmentModal] profiles:", error.message);
-          setTeamMembers([]);
-          return;
-        }
-        setTeamMembers((data ?? []) as TeamMember[]);
-      });
+    void (async () => {
+      const { data: auth } = await supabase.auth.getUser();
+      const { data: me } = auth.user
+        ? await supabase.from("profiles").select("role").eq("id", auth.user.id).maybeSingle()
+        : { data: null };
+      const viewerRole = (me?.role as string | null) ?? "";
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, email, role")
+        .eq(col, true)
+        .eq("is_active", true)
+        .order("full_name", { ascending: true });
+      if (error) {
+        console.error("[AssignmentModal] profiles:", error.message);
+        setTeamMembers([]);
+        return;
+      }
+      setTeamMembers(
+        ((data ?? []) as TeamMember[]).filter((member) => !isHiddenProfile(member, viewerRole))
+      );
+    })();
   }, [open, department]);
 
   function handleRandom() {

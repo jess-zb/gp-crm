@@ -27,7 +27,13 @@ async function requireMidManager() {
 
 function revalidate() {
   revalidatePath("/settings/mids");
+  revalidatePath("/esign-documents");
   revalidatePath("/clients/new");
+}
+
+function revalidateMid(midId: string) {
+  revalidatePath(`/settings/mids/${midId}`);
+  revalidatePath(`/esign-documents/${midId}`);
 }
 
 export async function createMid(name: string): Promise<MidActionResult> {
@@ -195,7 +201,7 @@ export async function setTemplateActive(
   });
 
   revalidate();
-  revalidatePath(`/settings/mids/${row.mid_id}`);
+  revalidateMid(row.mid_id as string);
   return { ok: true };
 }
 
@@ -233,6 +239,6 @@ export async function deleteTemplate(templateId: string): Promise<MidActionResul
   });
 
   revalidate();
-  revalidatePath(`/settings/mids/${row.mid_id}`);
+  revalidateMid(row.mid_id as string);
   return { ok: true };
 }

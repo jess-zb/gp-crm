@@ -63,6 +63,8 @@ export default function PortalPage() {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
+  const [nameDraft, setNameDraft] = useState("");
+  const [nameSaving, setNameSaving] = useState(false);
   const [notClient, setNotClient] = useState(false);
   const [noAccess, setNoAccess] = useState(false);
   const [client, setClient] = useState<ClientRow | null>(null);
@@ -170,7 +172,9 @@ export default function PortalPage() {
         return;
       }
 
-      setProfileName(prof.full_name?.trim() || null);
+      const loadedName = prof.full_name?.trim() || "";
+      setProfileName(loadedName || null);
+      setNameDraft(loadedName);
       await loadPortalData(user.email);
       if (cancelled) return;
       setLoading(false);
@@ -331,6 +335,56 @@ export default function PortalPage() {
               Help
             </Link>
           </div>
+          <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white">Your name</h2>
+            <p className="mt-1 text-[13px] text-slate-600 dark:text-slate-400">
+              This is the name your team sees. Only you can change it.
+            </p>
+            <form
+              className="mt-3 flex flex-col gap-2 sm:flex-row"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void (async () => {
+                  const name = nameDraft.trim();
+                  if (!name || !userId) {
+                    toast.error("Enter your full name.");
+                    return;
+                  }
+                  setNameSaving(true);
+                  const supabase = createClient();
+                  const { error } = await supabase
+                    .from("profiles")
+                    .update({ full_name: name })
+                    .eq("id", userId);
+                  setNameSaving(false);
+                  if (error) {
+                    toast.error(toUserFacingError(error.message));
+                    return;
+                  }
+                  setProfileName(name);
+                  setNameDraft(name);
+                  toast.success("Name saved");
+                })();
+              }}
+            >
+              <label className="min-w-0 flex-1 text-sm">
+                <span className="sr-only">Full name</span>
+                <input
+                  aria-label="Full name"
+                  value={nameDraft}
+                  onChange={(event) => setNameDraft(event.target.value)}
+                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={nameSaving}
+                className="rounded-lg bg-[#A87830] px-4 py-2 text-sm font-bold text-[#161616] disabled:opacity-60"
+              >
+                {nameSaving ? "Saving…" : "Save name"}
+              </button>
+            </form>
+          </section>
         <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <h2 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
             Your progress
@@ -421,7 +475,7 @@ export default function PortalPage() {
                   }`}
                 >
                   <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                    {m.sender_name?.trim() || "Team"}{" "}
+                    {m.sender_role === "dev" ? "Team" : m.sender_name?.trim() || "Team"}{" "}
                     <span className="font-normal text-slate-400">
                       {m.created_at ? (
                         <ClientFormattedDate

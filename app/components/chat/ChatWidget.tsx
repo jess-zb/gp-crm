@@ -88,6 +88,7 @@ type ChatSender = {
   id: string;
   full_name: string | null;
   email?: string | null;
+  role?: string | null;
 };
 
 type ChatMessageRow = {
@@ -99,11 +100,15 @@ type ChatMessageRow = {
 };
 
 function normalizeSender(
-  raw: ChatMessageRow["sender"]
+  raw: ChatMessageRow["sender"],
+  viewerRole: string
 ): { id: string; full_name: string | null } | null {
   if (!raw) return null;
   const s = Array.isArray(raw) ? raw[0] : raw;
   if (!s?.id) return null;
+  if (viewerRole !== "dev" && (s.role === "dev" || isHiddenFromRole(s.email, viewerRole))) {
+    return { id: s.id, full_name: null };
+  }
   return { id: s.id, full_name: s.full_name ?? null };
 }
 
@@ -312,7 +317,7 @@ export function ChatWidget({
 
     const { data: others, error: pError } = await supabase
       .from("profiles")
-      .select("id, full_name")
+      .select("id, full_name, email, role")
       .in("id", otherIds);
 
     if (pError) {
@@ -323,8 +328,14 @@ export function ChatWidget({
       );
     }
 
+    const viewerRole = userProfile.role ?? "";
     const profileMap: Record<string, string> = Object.fromEntries(
       (others ?? [])
+        .filter(
+          (p) =>
+            viewerRole === "dev" ||
+            ((p.role as string | null) !== "dev" && !isHiddenFromRole(p.email as string | null, viewerRole))
+        )
         .map((p) => [p.id, (p.full_name as string | null)?.trim() ?? ""])
         .filter(([, name]) => name.length > 0)
     );
@@ -622,7 +633,7 @@ export function ChatWidget({
         .select(
           `
           id, body, created_at, edited_at,
-          sender:sender_id(id, full_name, email)
+          sender:sender_id(id, full_name, email, role)
         `
         )
         .eq("channel_id", activeChannel.id)
@@ -669,7 +680,7 @@ export function ChatWidget({
               .select(
                 `
                 id, body, created_at, edited_at,
-                sender:sender_id(id, full_name, email)
+                sender:sender_id(id, full_name, email, role)
               `
               )
               .eq("id", newId)
@@ -984,7 +995,7 @@ export function ChatWidget({
             <>
               <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3">
                 {messages.map((msg) => {
-                  const sender = normalizeSender(msg.sender);
+                  const sender = normalizeSender(msg.sender, userProfile?.role ?? "");
                   const isMe = userProfile ? sender?.id === userProfile.id : false;
                   return (
                     <div key={msg.id} className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>

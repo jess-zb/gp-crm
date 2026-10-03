@@ -5,6 +5,8 @@ import { getProfileForUser } from "@/lib/supabase/profile";
 import { StagePill } from "@/app/components/StagePill";
 import { formatDateTimeOrDash } from "@/lib/utils/date";
 import { isPoaDocumentType } from "@/lib/clients/poa-upload-advance";
+import { midNameFromEmbed } from "@/lib/mids/queries";
+import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
 import { AttorneyCaseStageActions } from "../AttorneyCaseStageActions";
 import {
   AttorneyCaseDocuments,
@@ -89,7 +91,7 @@ export default async function AttorneyCaseDetailPage({
   let clientQuery = supabase
     .from("clients")
     .select(
-      "id, first_name, last_name, email, phone, street_address, city, state, zip_code, stage, case_sent_to_attorney_at, created_at, attorney_id, attorney_portal_assigned_at"
+      "id, first_name, last_name, email, phone, street_address, city, state, zip_code, stage, case_sent_to_attorney_at, created_at, attorney_id, attorney_portal_assigned_at, mids(name)"
     )
     .eq("id", clientId)
     .in("stage", ["case_sent_to_attorneys", "closed"])
@@ -150,7 +152,7 @@ export default async function AttorneyCaseDetailPage({
   if (noteRecorderIds.length > 0) {
     const { data: profilesRaw, error: profilesErr } = await supabase
       .from("profiles")
-      .select("id, full_name")
+      .select("id, full_name, email, role")
       .in("id", noteRecorderIds);
     if (profilesErr) {
       console.error(
@@ -159,6 +161,9 @@ export default async function AttorneyCaseDetailPage({
       );
     } else {
       for (const p of profilesRaw ?? []) {
+        if (isHiddenProfile({ email: p.email as string | null, role: p.role as string | null }, profile.role)) {
+          continue;
+        }
         nameById[p.id as string] = (p.full_name as string | null)?.trim() || "";
       }
     }
@@ -221,6 +226,12 @@ export default async function AttorneyCaseDetailPage({
               <div>
                 <dt className="text-slate-500 dark:text-slate-400">Name</dt>
                 <dd className="font-medium text-slate-900 dark:text-slate-100">{displayName}</dd>
+              </div>
+              <div>
+                <dt className="text-slate-500 dark:text-slate-400">MID</dt>
+                <dd className="font-medium text-slate-900 dark:text-slate-100">
+                  {midNameFromEmbed((client as { mids?: unknown }).mids) ?? "No MID"}
+                </dd>
               </div>
               <div>
                 <dt className="text-slate-500 dark:text-slate-400">Email</dt>

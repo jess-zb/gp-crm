@@ -80,6 +80,7 @@ export type ClientsListItem = {
   assigned_services_id: string | null;
   services_user_name: string | null;
   dnc_reason: string | null;
+  mid_name: string | null;
 };
 
 function listDisplayPhone(c: ClientsListItem): string {
@@ -401,6 +402,9 @@ const ClientCell = memo(({
             </p>
             {searchActive ? searchScopeBadge(client.is_active) : null}
           </div>
+          <p className="truncate text-[11px] text-slate-500 dark:text-slate-400">
+            {client.mid_name?.trim() || "No MID"}
+          </p>
         </td>
       );
     }

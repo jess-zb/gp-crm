@@ -30,7 +30,8 @@ import {
 } from "@/lib/refunds/refunds-query";
 import { RefundsQueueClient } from "./RefundsQueueClient";
 import { toUserFacingError } from "@/lib/user-facing-error";
-import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
+import { midNameFromEmbed } from "@/lib/mids/queries";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 
@@ -291,18 +292,19 @@ export default async function ClientsPage({
       zip_code: (c.zip_code as string | null) ?? null,
       street_address: (c.street_address as string | null) ?? null,
       stage_entered_at: (c.stage_entered_at as string | null) ?? null,
+      mid_name: midNameFromEmbed(c.mids),
     });
 
     const clients = rawRows.map((c) => mapRowToItem(c));
 
     const { data: teamRows } = await supabase
       .from("profiles")
-      .select("id, full_name, email")
+      .select("id, full_name, email, role")
       .in("role", ["dev", "admin", "acct_manager"])
       .order("full_name", { ascending: true });
 
     const staffMembers = (teamRows ?? []).filter(
-      (row) => !isHiddenFromRole(row.email as string | null, profile.role)
+      (row) => !isHiddenProfile(row as { email?: string | null; role?: string | null }, profile.role)
     );
 
     const currentUserName = profile.full_name?.trim() || user.email || "Unknown";

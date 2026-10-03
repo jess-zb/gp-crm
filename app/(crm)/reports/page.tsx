@@ -9,7 +9,7 @@ import {
   computeVelocityFromAudits,
 } from "@/lib/reports/stage-velocity";
 import { canAccessReports, canExportReportsCsv } from "@/lib/roles";
-import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { ReportsClient } from "./ReportsClient";
 
@@ -125,7 +125,7 @@ export default async function ReportsPage() {
 
   const profiles = profilesRes.data ?? [];
   const tableProfiles = profiles.filter(
-    (p) => !isHiddenFromRole(p.email as string | null, profile.role)
+    (p) => !isHiddenProfile({ email: p.email as string | null, role: p.role as string | null }, profile.role)
   );
 
   const assignedByUser: Record<string, number> = {};

@@ -151,6 +151,7 @@ type AssignmentFlowState = {
 
 export function ClientStageHeader({
   displayName,
+  midName = null,
   clientId,
   stage: stageFromServer,
   performerId,
@@ -168,6 +169,7 @@ export function ClientStageHeader({
   refundPrefill,
 }: {
   displayName: string;
+  midName?: string | null;
   clientId: string;
   stage: string | null;
   performerId: string;
@@ -872,6 +874,9 @@ export function ClientStageHeader({
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="crm-page-title text-2xl tracking-tight sm:text-3xl">{displayName}</h1>
         </div>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {midName?.trim() ? `MID · ${midName.trim()}` : "No MID"}
+        </p>
 
         <div className="mt-2 flex items-center gap-0">
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">

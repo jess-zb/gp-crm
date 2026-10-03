@@ -33,7 +33,7 @@ export default async function EsignTemplateEditorPage({
       templateId={template.id}
       templateName={template.name}
       midName={mid?.name ?? "MID"}
-      backHref={`/settings/mids/${template.mid_id}`}
+      backHref={`/esign-documents/${template.mid_id}`}
     />
   );
 }

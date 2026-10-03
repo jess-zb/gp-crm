@@ -39,6 +39,7 @@ export function EsignDocumentBoard({
   signaturePreview,
   placedSignatureIds = [],
   clientSigner = false,
+  readOnly = false,
   openSignatureRequest = 0,
   intentCopy,
   onIntentAccepted,
@@ -54,6 +55,8 @@ export function EsignDocumentBoard({
   signaturePreview?: string | null;
   placedSignatureIds?: string[];
   clientSigner?: boolean;
+  /** Staff preview: show the flattened PDF and signature boxes, without signing. */
+  readOnly?: boolean;
   openSignatureRequest?: number;
   intentCopy?: string;
   onIntentAccepted?: () => void;
@@ -82,7 +85,7 @@ export function EsignDocumentBoard({
   const visibleFields = (pageIndex: number) =>
     fields.filter((f) => {
       if (f.page !== pageIndex) return false;
-      if (clientSigner) return f.bind === "signature";
+      if (clientSigner || readOnly) return f.bind === "signature";
       return true;
     });
 
@@ -96,7 +99,7 @@ export function EsignDocumentBoard({
   }
 
   useEffect(() => {
-    if (!clientSigner || !pages.length || autoOpened.current) return;
+    if (readOnly || !clientSigner || !pages.length || autoOpened.current) return;
     autoOpened.current = true;
     openSignature();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,6 +295,7 @@ export function EsignDocumentBoard({
                       skipClick.current = false;
                       return;
                     }
+                    if (readOnly) return;
                     if (clientSigner && isSig && signaturePreview) {
                       onSignature?.(signaturePreview, field.id);
                       return;

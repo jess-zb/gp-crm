@@ -10,7 +10,7 @@ import {
   GitBranch,
   LogOut,
   BookOpen,
-  Mail,
+  PenLine,
   Scale,
 } from "lucide-react";
 import type { ComponentType } from "react";
@@ -28,7 +28,7 @@ import {
   canAccessReports,
   canAccessTeamPage,
   isCrmStaffRole,
-  isDev,
+  isDevOrAdmin,
 } from "@/lib/roles";
 import { getRoleDisplayName } from "@/lib/utils/roles";
 
@@ -142,7 +142,7 @@ export function Sidebar({
 
   const showReports = canAccessReports(role);
   const showTeam = canAccessTeamPage(role);
-  const showDripBackfill = isDev(role);
+  const showEsignDocuments = isDevOrAdmin(role);
 
   useEffect(() => {
     onMobileClose?.();
@@ -317,12 +317,12 @@ export function Sidebar({
         {showTeam
           ? renderLink("/team", "Team", UsersIcon, isNavActive(pathname, "/team"))
           : null}
-        {showDripBackfill
+        {showEsignDocuments
           ? renderLink(
-              "/admin/drip-backfill",
-              "Drip Backfill",
-              Mail,
-              pathname.startsWith("/admin/drip-backfill"),
+              "/esign-documents",
+              "E-Sign Documents",
+              PenLine,
+              isNavActive(pathname, "/esign-documents"),
               true
             )
           : null}

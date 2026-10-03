@@ -8,6 +8,7 @@ import { AdminDashboard } from "./AdminDashboard";
 import { AccountsDashboard } from "./AccountsDashboard";
 import { ServicesDashboard } from "./ServicesDashboard";
 import { DashboardClientTable } from "./DashboardClientTable";
+import { loadHiddenActors, redactActorName } from "@/lib/auth/hidden-actor";
 import type {
   AlertClientRow,
   DashboardClientRow,
@@ -123,6 +124,7 @@ export default async function DashboardPage() {
         .select(
           `
           action, new_value, created_at,
+          performed_by,
           performed_by_name,
           client:client_id(first_name, last_name)
         `
@@ -155,7 +157,17 @@ export default async function DashboardPage() {
         .limit(5),
     ]);
 
-    teamActivity = asTeamActivity(teamActivityRes.data ?? []);
+    const hiddenActors = await loadHiddenActors(profile.role);
+    teamActivity = asTeamActivity(teamActivityRes.data ?? []).map((row) => {
+      const actorId = (row as { performed_by?: string | null }).performed_by ?? null;
+      return {
+        action: row.action,
+        created_at: row.created_at,
+        new_value: row.new_value,
+        client: row.client,
+        performed_by_name: redactActorName(row.performed_by_name, actorId, hiddenActors),
+      };
+    });
     rnaClients = (rnaRes.data ?? []) as AlertClientRow[];
     stuckClients = (stuckRes.data ?? []) as AlertClientRow[];
     missingPoa = (missingPoaRes.data ?? []) as AlertClientRow[];
