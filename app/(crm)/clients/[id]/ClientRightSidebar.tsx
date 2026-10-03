@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ClientFormattedDate } from "@/app/components/ClientFormattedDate";
 
 import { createClient } from "@/lib/supabase/client";
@@ -56,7 +56,6 @@ export function ClientRightSidebar({
   staffOptions,
   currentUserId,
   currentRole,
-  csChecklistSlot = null,
   className = "",
 }: {
   clientId: string;
@@ -64,12 +63,6 @@ export function ClientRightSidebar({
   clientStage: string | null;
   reminders: ReminderRow[];
   commNotes: SidebarCommNoteRow[];
-  /**
-   * Client Services checklist card. Passed in already rendered so this sidebar
-   * stays unaware of the checklist, and so the page can decide from the
-   * viewer's role and the client's stage whether there is anything to show.
-   */
-  csChecklistSlot?: ReactNode;
   /** Shown on `appointment_completed` audit rows (current viewer). */
   auditPerformedByName: string;
   staffOptions: { id: string; full_name: string | null }[];
@@ -598,8 +591,6 @@ export function ClientRightSidebar({
         </>
         ) : null}
       </section>
-
-      {csChecklistSlot}
 
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-3 flex items-center justify-between gap-2">

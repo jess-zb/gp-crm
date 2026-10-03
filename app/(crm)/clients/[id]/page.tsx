@@ -3,19 +3,13 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import {
-  canAccessPriorityBoard,
   canDeleteDocuments,
   canEditAttorneyAssignment,
   canReassignClient,
   canViewAssignedAttorneyField,
 } from "@/lib/roles";
-import { isPoaDocumentTypeForCs } from "@/lib/clients/cs-checklist";
+import { isPoaDocumentType } from "@/lib/clients/poa-upload-advance";
 import { hasCcAuthorizationOnRecord } from "@/lib/workflow/stage-blockers";
-import {
-  fetchCsChecklistForClient,
-  shouldShowCsChecklistCard,
-} from "@/lib/clients/cs-checklist-query";
-import { CsChecklistCard } from "./CsChecklistCard";
 import { AccountTabForm, type AccountTabClient } from "./AccountTabForm";
 import { BillingTabContent } from "./BillingTabContent";
 import { ClientRightSidebar, type SidebarCommNoteRow } from "./ClientRightSidebar";
@@ -416,12 +410,13 @@ export default async function ClientProfilePage({
 
   const docs = (documents ?? []) as DocRow[];
   const hasPoaDocument = docs.some((d) =>
-    isPoaDocumentTypeForCs(d.document_type)
+    isPoaDocumentType((d.document_type ?? "").trim())
   );
   const hasCcAuthorization = hasCcAuthorizationOnRecord(
     docs.map((d) => d.document_type)
   );
-  const openCcAuthUpload = sp.upload === "cc_authorization";
+  const openUploadType =
+    sp.upload === "cc_authorization" || sp.upload === "poa_document" ? sp.upload : null;
   const documentsForDocumentsTab: DocumentListItem[] = docs.map((d) => ({
     id: d.id,
     file_name: d.file_name,
@@ -439,26 +434,6 @@ export default async function ClientProfilePage({
   for (const id of Array.from(uploaderIds)) {
     uploaderNames[id] = nameById[id] ?? "—";
   }
-
-  /* Client Services checklist for the sidebar, behind the same gate as the
-   * Priority board. POA signals come from the documents already loaded above
-   * rather than a second query. */
-  const csChecklist = canAccessPriorityBoard(
-    profile.role,
-    viewerDeptFlags?.is_services
-  )
-    ? await fetchCsChecklistForClient(supabase, {
-        clientId,
-        poaSignedAt: (c.poa_signed_at as string | null) ?? null,
-        hasPoaDocument,
-      })
-    : null;
-  const showCsChecklist =
-    csChecklist !== null &&
-    shouldShowCsChecklistCard(
-      (c.stage as string | null) ?? null,
-      csChecklist.hasAnyRow
-    );
 
   const [{ data: staff }, { data: attys }, { data: sidebarStaff }] = await Promise.all([
     canReassign
@@ -742,7 +717,7 @@ export default async function ClientProfilePage({
                   />
                 ) : null}
                 <DocumentsTab
-                  openCcAuthUpload={openCcAuthUpload}
+                  openUploadType={openUploadType}
                   key={`${clientId}-docs-${documentsForDocumentsTab.length}-${String(
                     c.updated_at ?? ""
                   )}`}
@@ -839,16 +814,6 @@ export default async function ClientProfilePage({
           commNotes={commNotesForSidebar}
           currentUserId={user.id}
           currentRole={profile.role}
-          csChecklistSlot={
-            showCsChecklist && csChecklist ? (
-              <CsChecklistCard
-                clientId={clientId}
-                items={csChecklist.items}
-                completeCount={csChecklist.completeCount}
-                nextUpLabel={csChecklist.nextUpLabel}
-              />
-            ) : null
-          }
           staffOptions={sidebarStaffOptions.map((m) => ({
             id: m.id as string,
             full_name: m.full_name as string | null,

@@ -11,7 +11,7 @@ export function isPoaDocumentType(documentType: string): boolean {
   return POA_DOCUMENT_TYPES.has(documentType.trim().toLowerCase());
 }
 
-/** Same signal the checklist uses — POA document on file or explicit poa_signed_at. */
+/** POA document on file, or an explicit poa_signed_at. */
 export function hasSignedPoaOnRecord(opts: {
   poaSignedAt?: string | null;
   hasPoaDocument?: boolean;

@@ -97,19 +97,6 @@ export function canSeeAllClientsTab(role: string): boolean {
 }
 
 /**
- * Client Services priority board — leadership plus account managers who are in
- * the Services department (`profiles.is_services`). Account managers outside
- * Services do not see it.
- */
-export function canAccessPriorityBoard(
-  role: string,
-  isServices: boolean | null | undefined
-): boolean {
-  if (role === "dev" || role === "admin") return true;
-  return role === "acct_manager" && isServices === true;
-}
-
-/**
  * Refund queue and Mark Refunded — dev and admin only. Requesting a refund is
  * separate and follows canCancelClientToDnc.
  */

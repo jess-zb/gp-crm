@@ -17,8 +17,6 @@ function countForTab(tab: ClientsPageTab, counts: TabCounts): number | null {
       return counts.active;
     case "archives":
       return counts.archives;
-    case "priority":
-      return counts.priority ?? null;
     case "refunds":
       return counts.refunds ?? null;
     default:
@@ -27,14 +25,13 @@ function countForTab(tab: ClientsPageTab, counts: TabCounts): number | null {
 }
 
 /**
- * The one tab row under Clients, shared by the client list, the Priority board,
- * and the Refunds queue so the three cannot drift out of sync.
+ * The one tab row under Clients, shared by the client list and the Refunds
+ * queue so the two cannot drift out of sync.
  */
 export function ClientsTabRow({
   activeTab,
   counts,
   role,
-  isServices,
   search,
   pageSize,
   sortField,
@@ -45,7 +42,6 @@ export function ClientsTabRow({
   activeTab: ClientsPageTab;
   counts: TabCounts;
   role: string;
-  isServices: boolean;
   search?: string;
   pageSize?: number;
   sortField?: string;
@@ -54,7 +50,7 @@ export function ClientsTabRow({
   suppressActive?: boolean;
   trailing?: ReactNode;
 }) {
-  const tabs = visibleClientsTabs({ role, isServices });
+  const tabs = visibleClientsTabs(role);
 
   // While searching, every tab shows the same cross-tab results, so keeping `q`
   // would make tab clicks look broken. Dropping it turns a tab click into "stop
@@ -67,7 +63,7 @@ export function ClientsTabRow({
         {tabs.map((t, i) => {
           const active = !suppressActive && activeTab === t.id;
           const count = countForTab(t.id, counts);
-          // Separates browsing the client list from the two working views.
+          // Separates browsing the client list from Refunds.
           const startsBoardGroup =
             i > 0 && t.group === "board" && tabs[i - 1].group !== "board";
           return (

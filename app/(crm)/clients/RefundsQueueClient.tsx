@@ -37,13 +37,11 @@ export function RefundsQueueClient({
   queue,
   counts,
   role,
-  isServices,
   isDevViewer,
 }: {
   queue: RefundsQueueResult;
   counts: TabCounts;
   role: string;
-  isServices: boolean;
   /** Dev-only usage panel. */
   isDevViewer: boolean;
 }) {
@@ -147,7 +145,6 @@ export function RefundsQueueClient({
         activeTab={"refunds" as ClientsPageTab}
         counts={counts}
         role={role}
-        isServices={isServices}
       />
 
       <div className="mt-4 flex flex-wrap items-baseline justify-between gap-3">

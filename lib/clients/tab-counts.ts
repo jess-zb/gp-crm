@@ -4,8 +4,6 @@ export type TabCounts = {
   all: number;
   active: number;
   archives: number;
-  /** Active clients in the Client Services stage — what the board lists. */
-  priority?: number;
   /** Refunds requested but not yet marked refunded. */
   refunds?: number;
 };
@@ -20,9 +18,9 @@ const TERMINAL_STAGES = "(dnc,not_interested,dnq,mortgage,closed)";
 export async function fetchTabCounts(
   supabase: SupabaseClient,
   teamUserId: string | null,
-  options: { includeAll?: boolean; includePriority?: boolean } = {}
+  options: { includeAll?: boolean } = {}
 ): Promise<TabCounts> {
-  const { includeAll = true, includePriority = false } = options;
+  const { includeAll = true } = options;
   const startedAt = Date.now();
 
   const { data: rpcRows, error: rpcError } = await supabase.rpc(
@@ -36,7 +34,6 @@ export async function fetchTabCounts(
       all_count?: number | string | null;
       active_count?: number | string | null;
       archives_count?: number | string | null;
-      priority_count?: number | string | null;
     };
     const toN = (v: number | string | null | undefined) => Number(v ?? 0);
     console.info(`[perf] fetchTabCounts rpc ${Date.now() - startedAt}ms`);
@@ -44,7 +41,6 @@ export async function fetchTabCounts(
       all: includeAll ? toN(row.all_count) : 0,
       active: toN(row.active_count),
       archives: toN(row.archives_count),
-      ...(includePriority ? { priority: toN(row.priority_count) } : {}),
     };
   }
 
@@ -60,7 +56,7 @@ export async function fetchTabCounts(
     return q;
   };
 
-  const [allRes, activeRes, archivesRes, priorityRes] = await Promise.all([
+  const [allRes, activeRes, archivesRes] = await Promise.all([
     includeAll
       ? scopedHead().gte("created_at", "2026-06-02T00:00:00+00:00")
       : Promise.resolve({ count: 0 }),
@@ -74,12 +70,6 @@ export async function fetchTabCounts(
       q = q.eq("is_active", false).gte("created_at", "2026-06-02T00:00:00+00:00");
       return q;
     })(),
-    // Deliberately the same filter as fetchPriorityBoard, and deliberately not
-    // "clients with outstanding items": that would mean reading every checklist
-    // row on every Clients page load, where this is one head count.
-    includePriority
-      ? scopedHead().eq("is_active", true).eq("stage", "client_services")
-      : Promise.resolve({ count: 0 }),
   ]);
 
   console.info(`[perf] fetchTabCounts fallback ${Date.now() - startedAt}ms`);
@@ -87,6 +77,5 @@ export async function fetchTabCounts(
     all: allRes.count ?? 0,
     active: activeRes.count ?? 0,
     archives: archivesRes.count ?? 0,
-    ...(includePriority ? { priority: priorityRes.count ?? 0 } : {}),
   };
 }

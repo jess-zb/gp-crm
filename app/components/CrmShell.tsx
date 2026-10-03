@@ -6,6 +6,7 @@ import { CrmProviders } from "@/app/components/CrmProviders";
 import { Sidebar } from "@/app/components/Sidebar";
 import { ChatWidget, type ChatWidgetUserProfile } from "@/app/components/chat/ChatWidget";
 import { AlertNotification } from "@/app/components/AlertNotification";
+import { CommandMenu, CommandMenuTrigger } from "@/app/components/CommandMenu";
 
 const STORAGE_KEY = "gp-sidebar-collapsed";
 
@@ -110,7 +111,20 @@ export function CrmShell({
             <div className="main-content page-transition min-w-0">{children}</div>
           </div>
         </div>
-        {chatProfile ? <ChatWidget userProfile={chatProfile} /> : null}
+        <CommandMenu role={role} />
+        {chatProfile ? (
+          <ChatWidget userProfile={chatProfile} />
+        ) : (
+          <div
+            className="fixed z-50"
+            style={{
+              bottom: "calc(1rem + env(safe-area-inset-bottom, 0px))",
+              right: "calc(1rem + env(safe-area-inset-right, 0px))",
+            }}
+          >
+            <CommandMenuTrigger />
+          </div>
+        )}
       </div>
     </CrmProviders>
   );

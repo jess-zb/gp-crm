@@ -5,17 +5,8 @@ import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
-import { getCurrentProfile } from "@/lib/auth/get-current-profile";
-import {
-  canAccessPriorityBoard,
-  canBulkDeleteClients,
-  isCrmStaffRole,
-} from "@/lib/roles";
+import { canBulkDeleteClients, isCrmStaffRole } from "@/lib/roles";
 import { ALL_STAGE_ORDER, isPipelineStageHidden } from "@/lib/constants/stages";
-import {
-  isCsChecklistItemKey,
-  writeCsChecklistItem,
-} from "@/lib/clients/cs-checklist-write";
 
 const STAGES = new Set<string>(
   [...ALL_STAGE_ORDER].filter((s) => !isPipelineStageHidden(s))
@@ -115,47 +106,6 @@ export async function bulkAssign(
     .update({ assigned_to: assignedTo })
     .in("id", valid);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/clients");
-  return { ok: true };
-}
-
-/**
- * Marks one Client Services checklist item complete across many clients.
- * Access is re-checked here because the hidden Priority tab is not the boundary.
- */
-export async function bulkSetCsChecklistItem(
-  clientIds: string[],
-  itemKey: string
-): Promise<BulkResult> {
-  if (!isCsChecklistItemKey(itemKey)) {
-    return { ok: false, error: "Unknown checklist item." };
-  }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const profile = await getCurrentProfile(supabase);
-  if (!profile) redirect("/login");
-  if (!canAccessPriorityBoard(profile.role, profile.is_services)) {
-    return { ok: false, error: "Not authorized." };
-  }
-
-  const ids = Array.from(new Set(clientIds.filter(Boolean)));
-  if (ids.length === 0) return { ok: false, error: "No clients to update." };
-
-  const result = await writeCsChecklistItem(supabase, {
-    clientIds: ids,
-    itemKey,
-    complete: true,
-    actorId: user.id,
-    actorName: profile.full_name?.trim() || profile.email || "Unknown",
-  });
-
-  if (!result.ok) return { ok: false, error: result.error };
-
   revalidatePath("/clients");
   return { ok: true };
 }

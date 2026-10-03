@@ -39,3 +39,17 @@ Code: `lib/esign/suggest-fields.ts`, `lib/esign/pdf-text.ts`, `app/api/esign/sug
 ### 2026-10-03 — The paused-drip banner lives on Message templates
 
 The "Automated drip emails are paused" notice is on Settings → Message templates, not the dashboard.
+
+### 2026-10-03 — The Clients Priority tab is gone
+
+The Priority board (Client, CS Intro, Tracking Update, and the rest) no longer belongs in this business. Clients now shows All Clients, Active, Archives, and Refunds. A bookmarked `?tab=priority` falls through to the viewer's default list. The profile checklist card mentioned here was removed the same day; see the next entry.
+
+### 2026-10-03 — The Client Services checklist card is gone
+
+The sidebar card on a client profile (CS Intro, Tracking Update, Welcome Packet on file, POA on File) is removed. Entering Client Services no longer writes those checklist rows. A signed POA still gates leaving Client Services for Awaiting Collections. Stored `onboarding_checklist` rows are deleted, and new clients no longer get a hidden set. See `0020_drop_unused_checklist_rows.sql`.
+
+### 2026-10-03 — Missing paperwork is a link, and search is a global jump
+
+There is no progress bar on the client header. The stage dropdown stays. When the next stage is blocked, the header shows “Missing before {next stage}” and the click goes to the missing item: Documents → E-Sign for an unsigned credit card authorization, or the upload form with POA already selected.
+
+The magnifying glass on a client is now a command menu for the whole CRM (`⌘K` / `Ctrl+K`). It jumps to the same pages as the sidebar, gated the same way, and searches clients. Escape or the backdrop closes it. The shortcut sits on a small magnifying-glass control in the bottom-right corner, beside chat. Search covers every client, active or archived, in any stage. A phone typed as digits still matches a formatted number, and a spouse name matches too.

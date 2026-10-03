@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   ChevronRight,
   Loader2,
   PenLine,
-  Search,
   Upload,
   UserCheck,
   X,
@@ -33,7 +33,6 @@ import {
   cancelActiveSequenceEnrollmentsServerAction,
   runStageEntrySideEffectsServerAction,
 } from "./stage-entry-actions";
-import { buildSearchQuery } from "@/lib/clients/client-search";
 import {
   blockAdvanceFromAccountManagerWithoutCcAuth,
   blockAdvanceFromClientServicesWithoutPoa,
@@ -235,20 +234,6 @@ export function ClientStageHeader({
   const [isAssigning, setIsAssigning] = useState(false);
   const [showSelfAssignPrompt, setShowSelfAssignPrompt] = useState(shouldPromptSelfAssign);
   const [profileSelfAssigning, setProfileSelfAssigning] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<
-    {
-      id: string;
-      first_name: string | null;
-      last_name: string | null;
-      stage: string | null;
-      phone_mobile: string | null;
-      email: string | null;
-    }[]
-  >([]);
-  const [searchLoading, setSearchLoading] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [showRetentionExitModal, setShowRetentionExitModal] = useState(false);
   const pendingRetentionExit = useRef<{ stage: string; label: string; selectEl: HTMLSelectElement } | null>(null);
 
@@ -274,53 +259,43 @@ export function ClientStageHeader({
   const showBack = Boolean(prevStage && prevLabel);
   const showForward = Boolean(nextStage && nextLabel);
 
-  useEffect(() => {
-    if (!searchOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSearchOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [searchOpen]);
-
-  useEffect(() => {
-    if (searchOpen) {
-      setTimeout(() => searchInputRef.current?.focus(), 50);
-    } else {
-      setSearchQuery("");
-      setSearchResults([]);
+  const missingBeforeNext = useMemo(() => {
+    if (!nextStage || !nextLabel) return null;
+    const cc = blockAdvanceFromAccountManagerWithoutCcAuth({
+      fromStage: current,
+      toStage: nextStage,
+      hasCcAuthorization: hasCcAuthorization ?? false,
+    });
+    if (cc.blocked) {
+      return {
+        href: `/clients/${clientId}?tab=documents#esign`,
+        title: `Missing before ${nextLabel}`,
+        detail: "Credit card authorization is not signed. Open Documents to send it.",
+      };
     }
-  }, [searchOpen]);
-
-  const runSearch = useCallback(async (q: string) => {
-    if (!q.trim()) {
-      setSearchResults([]);
-      return;
+    const poa = blockAdvanceFromClientServicesWithoutPoa({
+      fromStage: current,
+      toStage: nextStage,
+      poaSignedAt: poaSignedAt ?? null,
+      hasPoaDocument: hasPoaDocument ?? false,
+    });
+    if (poa.blocked) {
+      return {
+        href: `/clients/${clientId}?tab=documents&upload=poa_document`,
+        title: `Missing before ${nextLabel}`,
+        detail: "A signed POA is not on file. Open Documents to upload it.",
+      };
     }
-    const orFragment = buildSearchQuery(q);
-    if (!orFragment) {
-      setSearchResults([]);
-      return;
-    }
-    setSearchLoading(true);
-    try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("clients")
-        .select("id, first_name, last_name, stage, phone_mobile, email")
-        .eq("is_active", true)
-        .or(orFragment)
-        .limit(8);
-      setSearchResults(data ?? []);
-    } finally {
-      setSearchLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    const t = setTimeout(() => void runSearch(searchQuery), 300);
-    return () => clearTimeout(t);
-  }, [searchQuery, runSearch]);
+    return null;
+  }, [
+    clientId,
+    current,
+    hasCcAuthorization,
+    hasPoaDocument,
+    nextLabel,
+    nextStage,
+    poaSignedAt,
+  ]);
 
   async function applyStage(
     newStage: string,
@@ -913,6 +888,19 @@ export function ClientStageHeader({
           </div>
         </div>
 
+        {missingBeforeNext ? (
+          <Link
+            href={missingBeforeNext.href}
+            className="mt-3 inline-flex max-w-xl items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100 dark:hover:bg-amber-950/60"
+          >
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+            <span>
+              <span className="font-semibold">{missingBeforeNext.title}. </span>
+              {missingBeforeNext.detail}
+            </span>
+          </Link>
+        ) : null}
+
       </div>
 
       <div className="flex shrink-0 flex-wrap items-center gap-2 self-start">
@@ -935,15 +923,6 @@ export function ClientStageHeader({
         ) : (
           <StagePill stage={current} />
         )}
-        <button
-          type="button"
-          onClick={() => setSearchOpen(true)}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 transition-colors hover:border-[#A87830] hover:text-[#A87830] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-400 dark:hover:border-[#A87830] dark:hover:text-[#A87830]"
-          title="Search clients"
-          aria-label="Search clients"
-        >
-          <Search className="h-4 w-4" />
-        </button>
         {isClosed ? (
           <span className="inline-flex items-center rounded-full bg-slate-200 px-4 py-2 text-sm font-bold text-slate-800 dark:bg-slate-700 dark:text-slate-100">
             Case Closed
@@ -1379,72 +1358,6 @@ export function ClientStageHeader({
         onAssign={(id, name) => void handleAssignmentModalAssign(id, name)}
         onSkip={() => void handleAssignmentModalSkip()}
       />
-
-      {searchOpen ? (
-        <div
-          className="fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto bg-black/50 px-4 pb-4 pt-24"
-          onClick={() => setSearchOpen(false)}
-        >
-          <div
-            className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-[#1C1C1C]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center gap-2 border-b border-slate-100 p-3 dark:border-[#2E2E2E]">
-              <Search className="h-4 w-4 shrink-0 text-slate-400" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search name, phone, or email…"
-                className="flex-1 bg-transparent text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none dark:text-white"
-              />
-              {searchLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setSearchOpen(false)}
-                  className="rounded p-0.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-                  aria-label="Close search"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-            {searchResults.length > 0 ? (
-              <ul className="max-h-72 divide-y divide-slate-100 overflow-y-auto dark:divide-[#2E2E2E]">
-                {searchResults.map((c) => (
-                  <li key={c.id}>
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-slate-50 dark:hover:bg-[#242424]"
-                      onClick={() => {
-                        if (typeof window !== "undefined") {
-                          sessionStorage.setItem("clientListUrl", window.location.href);
-                        }
-                        setSearchOpen(false);
-                        router.push(`/clients/${c.id}`);
-                      }}
-                    >
-                      <span className="min-w-0 flex-1 truncate pr-2 font-medium text-slate-900 dark:text-white">
-                        {[c.first_name, c.last_name].filter(Boolean).join(" ") || "—"}
-                      </span>
-                      <span className="shrink-0 text-right text-xs text-slate-400">
-                        {c.phone_mobile || c.email || ""}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : searchQuery.trim() && !searchLoading ? (
-              <p className="px-4 py-6 text-center text-sm text-slate-400">
-                No clients found
-              </p>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

@@ -9,7 +9,6 @@ import {
 } from "@/lib/clients/clients-list-query";
 import { fetchTabCounts } from "@/lib/clients/tab-counts";
 import {
-  canAccessPriorityBoard,
   canAccessRefundQueue,
   canExportClientsCsv,
   canSeeAllClientsTab,
@@ -17,13 +16,13 @@ import {
   scopedAssigneeUserId,
 } from "@/lib/roles";
 import {
+  buildClientsHref,
+  defaultClientsTab,
   isClientsListTab,
   parseClientsTab,
   type ClientsPageTab,
 } from "@/lib/clients/clients-tabs";
-import { fetchPriorityBoard } from "@/lib/clients/cs-priority-query";
 import { ClientsListClient, type ClientsListItem } from "./ClientsListClient";
-import { PriorityBoardClient } from "./PriorityBoardClient";
 import {
   fetchPendingRefundCount,
   fetchRefundsQueue,
@@ -115,18 +114,20 @@ export default async function ClientsPage({
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // getCurrentProfile (not getProfileForUser) because the Priority tab gate needs
-  // the is_services department flag. The (crm) layout has already ensured the
-  // profile row exists before this page renders.
+  // The (crm) layout has already ensured the profile row exists before this
+  // page renders.
   const profile = await getCurrentProfile(supabase);
   if (!profile) redirect("/login");
   if (profile.role === "client") redirect("/portal");
   if (profile.role === "attorney") redirect("/attorney/cases");
 
-  const tabAccess = { role: profile.role, isServices: profile.is_services };
+  // The Priority tab is gone. Old bookmarks must not keep a dead query param.
+  if (searchParams.tab === "priority") {
+    redirect(buildClientsHref({ tab: defaultClientsTab(profile.role) }));
+  }
 
   try {
-    const requestedTab: ClientsPageTab = parseClientsTab(searchParams.tab, tabAccess);
+    const requestedTab: ClientsPageTab = parseClientsTab(searchParams.tab, profile.role);
     const search = (searchParams.q ?? "").trim();
     const page = Math.max(1, parseInt(searchParams.page ?? "1", 10) || 1);
     const pageSize = parsePageSize(searchParams.size);
@@ -139,7 +140,6 @@ export default async function ClientsPage({
     // across it; a tab this role cannot open costs no query.
     const countOptions = {
       includeAll: canSeeAllClientsTab(profile.role),
-      includePriority: canAccessPriorityBoard(profile.role, profile.is_services),
     };
 
     if (requestedTab === "refunds") {
@@ -155,7 +155,6 @@ export default async function ClientsPage({
               queue={queue}
               counts={{ ...counts, refunds: queue.pendingCount }}
               role={profile.role}
-              isServices={profile.is_services}
               isDevViewer={isDev(profile.role)}
             />
           </ErrorBoundary>
@@ -168,36 +167,6 @@ export default async function ClientsPage({
     const pendingRefundCount = canAccessRefundQueue(profile.role)
       ? fetchPendingRefundCount(supabase)
       : Promise.resolve(undefined);
-
-    if (requestedTab === "priority") {
-      const [board, counts, refunds] = await Promise.all([
-        fetchPriorityBoard(supabase),
-        fetchTabCounts(supabase, teamUserId, countOptions),
-        pendingRefundCount,
-      ]);
-
-      if (board.error) {
-        return (
-          <ClientsPageShell>
-            <p className="mt-6 text-sm text-red-600">{board.error}</p>
-          </ClientsPageShell>
-        );
-      }
-
-      return (
-        <ClientsPageShell>
-          <ErrorBoundary>
-            <PriorityBoardClient
-              rows={board.rows}
-              truncated={board.truncated}
-              counts={{ ...counts, refunds }}
-              role={profile.role}
-              isServices={profile.is_services}
-            />
-          </ErrorBoundary>
-        </ClientsPageShell>
-      );
-    }
 
     const tab: ClientsListTab = isClientsListTab(requestedTab)
       ? requestedTab
@@ -323,7 +292,6 @@ export default async function ClientsPage({
             clients={clients}
             totalCount={totalCount}
             userRole={profile.role}
-            isServices={profile.is_services}
             staffMembers={staffMembers}
             currentUserName={currentUserName}
             currentUserId={user.id}

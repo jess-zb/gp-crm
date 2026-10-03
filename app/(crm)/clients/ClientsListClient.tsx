@@ -601,8 +601,6 @@ type Props = {
   clients: ClientsListItem[];
   totalCount: number;
   userRole: string;
-  /** profiles.is_services — decides whether the Priority tab is offered. */
-  isServices: boolean;
   staffMembers: { id: string; full_name: string | null; email?: string | null }[];
   currentUserName: string;
   currentUserId: string;
@@ -620,7 +618,6 @@ export function ClientsListClient({
   clients,
   totalCount,
   userRole,
-  isServices,
   staffMembers,
   currentUserName,
   currentUserId,
@@ -1173,7 +1170,6 @@ export function ClientsListClient({
         activeTab={tab as ClientsPageTab}
         counts={tabCounts}
         role={userRole}
-        isServices={isServices}
         search={search}
         pageSize={pageSize}
         sortField={sortField}

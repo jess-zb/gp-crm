@@ -1,19 +1,15 @@
-import {
-  canAccessPriorityBoard,
-  canAccessRefundQueue,
-  canSeeAllClientsTab,
-} from "@/lib/roles";
+import { canAccessRefundQueue, canSeeAllClientsTab } from "@/lib/roles";
 import type { ClientsListTab } from "@/lib/clients/clients-list-query";
 
 /**
- * Tabs under Clients. Three are client lists; Priority and Refunds are separate
- * views that live here so the left sidebar does not grow.
+ * Tabs under Clients. Three are client lists; Refunds is a separate view that
+ * lives here so the left sidebar does not grow.
  */
-export type ClientsPageTab = ClientsListTab | "priority" | "refunds";
+export type ClientsPageTab = ClientsListTab | "refunds";
 
 /**
  * `group` drives the divider in the tab row: the client lists come first, then
- * the two working views. Order here is the order on screen.
+ * Refunds. Order here is the order on screen.
  */
 export type ClientsTabGroup = "list" | "board";
 
@@ -25,46 +21,36 @@ const TAB_DEFS: readonly {
   { id: "all", label: "All Clients", group: "list" },
   { id: "active", label: "Active", group: "list" },
   { id: "archives", label: "Archives", group: "list" },
-  { id: "priority", label: "Priority", group: "board" },
   { id: "refunds", label: "Refunds", group: "board" },
 ] as const;
 
-export type ClientsTabAccess = {
-  role: string;
-  /** profiles.is_services — gates Priority for account managers. */
-  isServices: boolean;
-};
-
 export function visibleClientsTabs(
-  access: ClientsTabAccess
+  role: string
 ): { id: ClientsPageTab; label: string; group: ClientsTabGroup }[] {
   return TAB_DEFS.filter((t) => {
-    if (t.id === "all") return canSeeAllClientsTab(access.role);
-    if (t.id === "priority") {
-      return canAccessPriorityBoard(access.role, access.isServices);
-    }
-    if (t.id === "refunds") return canAccessRefundQueue(access.role);
+    if (t.id === "all") return canSeeAllClientsTab(role);
+    if (t.id === "refunds") return canAccessRefundQueue(role);
     return true;
   }).map((t) => ({ ...t }));
 }
 
-export function defaultClientsTab(access: ClientsTabAccess): ClientsPageTab {
-  return canSeeAllClientsTab(access.role) ? "all" : "active";
+export function defaultClientsTab(role: string): ClientsPageTab {
+  return canSeeAllClientsTab(role) ? "all" : "active";
 }
 
 /**
  * Coerces the `tab` param to something this role may actually open. Hiding the
- * link is not enough on its own — a hand-typed `?tab=all` or `?tab=refunds` has
- * to land somewhere valid too.
+ * link is not enough on its own — a hand-typed `?tab=all`, `?tab=priority`, or
+ * `?tab=refunds` has to land somewhere valid too. `priority` is a retired tab.
  */
 export function parseClientsTab(
   raw: string | undefined,
-  access: ClientsTabAccess
+  role: string
 ): ClientsPageTab {
-  const fallback = defaultClientsTab(access);
+  const fallback = defaultClientsTab(role);
   const normalized =
     raw === "archived" || raw === "inactive" ? "archives" : raw ?? fallback;
-  return visibleClientsTabs(access).some((t) => t.id === normalized)
+  return visibleClientsTabs(role).some((t) => t.id === normalized)
     ? (normalized as ClientsPageTab)
     : fallback;
 }

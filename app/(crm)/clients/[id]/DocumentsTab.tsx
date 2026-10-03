@@ -82,15 +82,15 @@ export function DocumentsTab({
   uploaderNames,
   canDeleteDocs,
   currentUserId,
-  openCcAuthUpload = false,
+  openUploadType = null,
 }: {
   clientId: string;
   initialDocuments: DocumentListItem[];
   uploaderNames: Record<string, string>;
   canDeleteDocs: boolean;
   currentUserId: string;
-  /** Open the upload modal with CC Authorization selected. */
-  openCcAuthUpload?: boolean;
+  /** Open the upload modal with this document type already selected. */
+  openUploadType?: "cc_authorization" | "poa_document" | null;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -114,7 +114,7 @@ export function DocumentsTab({
 
   const [documents, setDocuments] = useState<DocumentListItem[]>(initialDocuments);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const openedCcAuthUpload = useRef(false);
+  const openedUploadFromQuery = useRef(false);
 
   const fetchDocuments = useCallback(async () => {
     const supabase = createClient();
@@ -210,18 +210,18 @@ export function DocumentsTab({
   const closeUploadModal = useCallback(() => {
     setModalOpen(false);
     resetForm();
-    if (openedCcAuthUpload.current) {
-      openedCcAuthUpload.current = false;
+    if (openedUploadFromQuery.current) {
+      openedUploadFromQuery.current = false;
       router.replace(`/clients/${clientId}?tab=documents`);
     }
   }, [resetForm, router, clientId]);
 
   useEffect(() => {
-    if (!openCcAuthUpload || openedCcAuthUpload.current) return;
-    openedCcAuthUpload.current = true;
-    setDocType("cc_authorization");
+    if (!openUploadType || openedUploadFromQuery.current) return;
+    openedUploadFromQuery.current = true;
+    setDocType(openUploadType);
     setModalOpen(true);
-  }, [openCcAuthUpload]);
+  }, [openUploadType]);
 
   useEffect(() => {
     if (!modalOpen) return;

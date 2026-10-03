@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { MessageCircleIcon } from "@/components/ui/message-circle-icon";
+import { CommandMenuTrigger } from "@/app/components/CommandMenu";
 import { createClient } from "@/lib/supabase/client";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 
@@ -1094,19 +1095,22 @@ export function ChatWidget({
         </div>
       ) : null}
 
-      <button
-        type="button"
-        onClick={handleOpen}
-        className="pointer-events-auto relative flex h-16 w-16 items-center justify-center rounded-full bg-[#A87830] text-[#161616] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#8C6428] hover:shadow-xl"
-        aria-label={open ? "Close messages" : "Open messages"}
-      >
-        <MessageCircleIcon className="h-7 w-7 text-white" />
-        {totalUnread > 0 ? (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
-            {totalUnread > 99 ? "99+" : totalUnread}
-          </span>
-        ) : null}
-      </button>
+      <div className="pointer-events-auto flex items-center gap-2">
+        <CommandMenuTrigger />
+        <button
+          type="button"
+          onClick={handleOpen}
+          className="relative flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:border-[#A87830] hover:text-[#A87830] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300 dark:hover:border-[#A87830] dark:hover:text-[#A87830]"
+          aria-label={open ? "Close messages" : "Open messages"}
+        >
+          <MessageCircleIcon size={20} />
+          {totalUnread > 0 ? (
+            <span className="absolute -right-1 -top-1 flex h-5 w-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+              {totalUnread > 99 ? "99+" : totalUnread}
+            </span>
+          ) : null}
+        </button>
+      </div>
     </div>
   );
 }

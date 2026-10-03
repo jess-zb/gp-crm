@@ -3,12 +3,12 @@
 import { Search } from "lucide-react";
 
 /**
- * Search box for the Priority board and Refunds queue.
+ * Search box for the Refunds queue.
  *
  * Deliberately the same markup and position as the client list's search so the
- * top of every Clients tab looks alike. The behaviour differs, though: both of
- * these views already load their whole working set, so this filters what is on
- * screen instead of navigating, and it stays inside the current tab rather than
+ * top of every Clients tab looks alike. The behaviour differs, though: Refunds
+ * already loads its whole working set, so this filters what is on screen
+ * instead of navigating, and it stays inside the current tab rather than
  * spanning every client the way the list's search does.
  */
 export function BoardSearchInput({

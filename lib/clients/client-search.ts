@@ -26,6 +26,17 @@ function digits(s: string): string {
   return s.replace(/\D/g, "");
 }
 
+/**
+ * A phone typed as digits ("9285550148") still has to match a stored value
+ * like "(928) 555-0148". Interleaving wildcards does that. Names are left alone.
+ */
+function phoneDigitPattern(raw: string): string | null {
+  if (/[a-zA-Z]/.test(raw)) return null;
+  const d = digits(raw);
+  if (d.length < 4) return null;
+  return `%${d.split("").join("%")}%`;
+}
+
 function escapeIlikeToken(raw: string): string {
   // Commas and parentheses are PostgREST logic-tree syntax chars — strip them so they
   // don't break the .or() filter string (e.g. searching "(310) 697-9049" would otherwise
@@ -120,7 +131,7 @@ export function buildSearchQuery(q: string): string {
   if (words.length === 1) {
     const w = escapeIlikeToken(words[0]!);
     const p = `%${w}%`;
-    return [
+    const parts = [
       `first_name.ilike.${p}`,
       `last_name.ilike.${p}`,
       `nickname.ilike.${p}`,
@@ -128,6 +139,7 @@ export function buildSearchQuery(q: string): string {
       `email.ilike.${p}`,
       `spouse_first_name.ilike.${p}`,
       `spouse_last_name.ilike.${p}`,
+      `spouse_name.ilike.${p}`,
       `secondary_first_name.ilike.${p}`,
       `phone.ilike.${p}`,
       `phone_work.ilike.${p}`,
@@ -135,7 +147,17 @@ export function buildSearchQuery(q: string): string {
       `city.ilike.${p}`,
       `zip_code.ilike.${p}`,
       `street_address.ilike.${p}`,
-    ].join(",");
+    ];
+    const phonePattern = phoneDigitPattern(trimmed);
+    if (phonePattern) {
+      parts.push(
+        `phone_mobile.ilike.${phonePattern}`,
+        `phone.ilike.${phonePattern}`,
+        `phone_work.ilike.${phonePattern}`,
+        `phone_home.ilike.${phonePattern}`
+      );
+    }
+    return parts.join(",");
   }
 
   const w1 = escapeIlikeToken(words[0]!);
@@ -153,6 +175,7 @@ export function buildSearchQuery(q: string): string {
     `and(spouse_first_name.ilike.${p2},spouse_last_name.ilike.${p1})`,
     `phone_mobile.ilike.${pFull}`,
     `email.ilike.${pFull}`,
+    `spouse_name.ilike.${pFull}`,
   ];
 
   if (words.length > 2) {

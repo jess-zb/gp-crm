@@ -7,7 +7,6 @@ import {
   reactivateOrEnrollSequence,
 } from "@/lib/email/sequence-enrollment";
 import { runCaseSentToAttorneysTriggers } from "@/lib/clients/case-sent-triggers";
-import { ensureCsChecklistItems } from "@/lib/clients/cs-checklist";
 
 function addDaysIso(from: Date, days: number): string {
   return new Date(from.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
@@ -143,10 +142,6 @@ export async function runStageEntrySideEffects(
   }
 
   if (newStage === "client_services") {
-    // Gives the client a full row set on the Priority board immediately, rather
-    // than waiting for the first tick to create rows.
-    await ensureCsChecklistItems(supabase, clientId);
-
     // Client fully enrolled — stop the partial_arc nudge drip
     await cancelSequencesByKeys(supabase, clientId, ["partial_arc"], "client_converted");
     await enrollClientInEmailSequence(supabase, {
