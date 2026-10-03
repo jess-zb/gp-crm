@@ -19,10 +19,9 @@ export const WEBSITE_URL = "https://www.goldenpathway.io";
 
 /**
  * Production CRM origin used by every client-facing link when
- * `NEXT_PUBLIC_APP_URL` is unset. Placeholder until the Golden Pathway
- * deployment exists — update it there and nowhere else.
+ * `NEXT_PUBLIC_APP_URL` is unset. Live host: goldenpathway.vercel.app.
  */
-export const DEFAULT_APP_URL = "https://golden-pathway-crm.example";
+export const DEFAULT_APP_URL = "https://goldenpathway.vercel.app";
 
 /** Client-facing CRM origin for emails and tokenized links. */
 export function publicAppUrl(): string {

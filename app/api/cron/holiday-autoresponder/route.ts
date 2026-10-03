@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { verifyVercelCronRequest } from "@/lib/cron/verify-vercel-cron-request";
-import { FROM_EMAIL, SUPPORT_EMAIL } from "@/lib/constants/business-contact";
+import { FROM_EMAIL, SUPPORT_EMAIL, publicAppUrl } from "@/lib/constants/business-contact";
 import { createServiceClient } from "@/lib/supabase/server";
 import { renderTemplate } from "@/lib/email/render-template";
 import { getRoleDisplayName } from "@/lib/utils/roles";
@@ -24,11 +24,8 @@ const US_HOLIDAYS_PACIFIC = new Set([
   "2026-12-25",
 ]);
 
-function getBaseUrl(request: Request): string {
-  const env = process.env.NEXT_PUBLIC_APP_URL?.trim();
-  if (env) return env.replace(/\/$/, "");
-  const url = new URL(request.url);
-  return `${url.protocol}//${url.host}`;
+function getBaseUrl(): string {
+  return publicAppUrl();
 }
 
 function todayPacificYmd(): string {
@@ -107,7 +104,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ sent: 0, holiday: today });
   }
 
-  const baseUrl = getBaseUrl(request);
+  const baseUrl = getBaseUrl();
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   let sent = 0;

@@ -42,9 +42,9 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 function main() {
-  if (!/^https:\/\/[a-z0-9.-]+$/.test(DEFAULT_APP_URL)) {
+  if (DEFAULT_APP_URL !== "https://goldenpathway.vercel.app") {
     console.error(
-      `DEFAULT_APP_URL must be a bare https origin with no trailing slash (got ${DEFAULT_APP_URL}).`
+      `DEFAULT_APP_URL must be https://goldenpathway.vercel.app (got ${DEFAULT_APP_URL}).`
     );
     process.exit(1);
   }

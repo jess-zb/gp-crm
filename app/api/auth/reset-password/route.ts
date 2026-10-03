@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { BUSINESS_NAME, FROM_EMAIL } from "@/lib/constants/business-contact";
+import { BUSINESS_NAME, DEFAULT_APP_URL, FROM_EMAIL } from "@/lib/constants/business-contact";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,7 @@ function getAppOrigin(): string {
   const raw =
     process.env.NEXT_PUBLIC_APP_URL?.trim() ||
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
-    "http://localhost:3000";
+    DEFAULT_APP_URL;
   return raw.replace(/\/$/, "");
 }
 

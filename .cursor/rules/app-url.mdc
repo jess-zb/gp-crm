@@ -9,9 +9,9 @@ Client-facing links (eSign `/sign/{token}`, portal, unsubscribe, attorney case
 URLs) must use `publicAppUrl()` from `lib/constants/business-contact.ts`.
 
 - Override per environment with `NEXT_PUBLIC_APP_URL` (localhost in dev).
-- `DEFAULT_APP_URL` is the production fallback. **It is still a placeholder** —
-  set it to the real Golden Pathway production origin once the deployment exists,
-  and keep `scripts/check-business-contact.ts` asserting that exact value.
+- **Live host:** `https://goldenpathway.vercel.app` (`DEFAULT_APP_URL`).
+- `NEXT_PUBLIC_SITE_URL` is only a second env override. Its fallback is the same
+  `DEFAULT_APP_URL`. Keep `scripts/check-business-contact.ts` asserting that origin.
 
 Never hardcode an origin in an email template, a route handler, or a migration.
 There is exactly one fallback string; do not invent a second.

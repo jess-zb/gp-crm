@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Barlow } from 'next/font/google'
 import { SonnerToaster } from '@/app/components/SonnerToaster'
 import { ThemeInit } from '@/app/components/ThemeInit'
+import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeInit />
         {children}
         <SonnerToaster />
+        <Analytics />
         <SpeedInsights />
       </body>
     </html>
