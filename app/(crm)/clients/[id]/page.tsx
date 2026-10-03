@@ -119,7 +119,6 @@ const CLIENT_SELECT = [
   "poa_signed_at",
   "collection_letter_received_at",
   "attorney_id",
-  "resend_method",
   "cc_charged_at",
   "reviewed_at",
   "reviewed_by_name",
