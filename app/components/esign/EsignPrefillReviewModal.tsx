@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Loader2, X } from "lucide-react";
-import type { EsignKind } from "@/lib/esign/types";
+import type { EsignTemplateRow } from "@/lib/esign/types";
 import type { EsignClientPrefill } from "@/lib/esign/map-client-prefill";
 import {
   missingRequiredReviewFields,
-  reviewFieldsForKind,
+  reviewFieldsForTemplate,
   reviewValuesFromPrefill,
   snapshotFromReview,
   formatAdvisorNameForEsign,
@@ -16,7 +16,7 @@ import { formatUsd, formatUsdInput, isAmountField, parseUsdNumber } from "@/lib/
 import { ModalOverlay } from "@/app/components/ModalOverlay";
 
 export function EsignPrefillReviewModal({
-  kind,
+  template,
   prefill,
   midOptions,
   advisorOptions = [],
@@ -27,7 +27,7 @@ export function EsignPrefillReviewModal({
   onCancel,
   onConfirm,
 }: {
-  kind: EsignKind;
+  template: Pick<EsignTemplateRow, "fields" | "required_binds">;
   prefill: EsignClientPrefill;
   midOptions: string[];
   advisorOptions?: string[];
@@ -43,7 +43,7 @@ export function EsignPrefillReviewModal({
   const [nudge, setNudge] = useState(false);
   const [locked, setLocked] = useState(false);
   const busy = submitting || locked;
-  const fields = reviewFieldsForKind(kind);
+  const fields = reviewFieldsForTemplate(template);
   const top = fields.filter((f) => f.group !== "card");
   const cards = fields.filter((f) => f.group === "card");
   const advisors = Array.from(
@@ -53,7 +53,7 @@ export function EsignPrefillReviewModal({
         .filter(Boolean)
     )
   );
-  const missingKeys = new Set(missingRequiredReviewFields(kind, values).map((f) => f.key));
+  const missingKeys = new Set(missingRequiredReviewFields(template, values).map((f) => f.key));
   const highlightClass =
     "border-[#8DE3B5] bg-[#8DE3B5]/20 ring-1 ring-[#8DE3B5]/50 focus:border-[#8DE3B5] focus:ring-[#8DE3B5]/40 dark:border-[#8DE3B5] dark:bg-[#8DE3B5]/10";
 

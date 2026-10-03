@@ -4,22 +4,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import { canAccessClientRecord } from "@/lib/roles";
 import { canUseEsignStaffUi, isEsignFeatureEnabled } from "@/lib/esign/config";
-import {
-  canShowEsignActions,
-  esignKindTitle,
-  esignSentAuditAction,
-  isEsignKind,
-  type EsignKind,
-} from "@/lib/esign/types";
+import { canShowEsignActions, esignSentAuditAction } from "@/lib/esign/types";
+import { loadTemplateById, templateBelongsToClient } from "@/lib/esign/templates";
 import { createSignToken, signLinkExpiresAt } from "@/lib/esign/tokens";
 import { sendEsignInviteEmail } from "@/lib/esign/send-invite-email";
 import { publicAppUrl } from "@/lib/constants/business-contact";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { missingRequiredReviewLabels } from "@/lib/esign/review-fields";
-
-function documentTitle(kind: EsignKind): string {
-  return esignKindTitle(kind);
-}
 
 export async function POST(request: Request) {
   if (!isEsignFeatureEnabled()) {
@@ -33,11 +24,15 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { profile } = await getProfileForUser(supabase, user);
-  if (!profile || !canUseEsignStaffUi(profile.role, user.email)) {
+  if (!profile || !canUseEsignStaffUi(profile.role)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  let body: { clientId?: string; kind?: string; prefill?: Record<string, string> };
+  let body: {
+    clientId?: string;
+    templateId?: string;
+    prefill?: Record<string, string>;
+  };
   try {
     body = await request.json();
   } catch {
@@ -45,22 +40,14 @@ export async function POST(request: Request) {
   }
 
   const clientId = String(body.clientId ?? "").trim();
-  const kindRaw = String(body.kind ?? "").trim();
-  if (!clientId || !isEsignKind(kindRaw)) {
-    return NextResponse.json({ error: "Invalid client or document type." }, { status: 400 });
-  }
-  const kind: EsignKind = kindRaw;
-  const missing = missingRequiredReviewLabels(kind, body.prefill ?? {});
-  if (missing.length) {
-    return NextResponse.json(
-      { error: `Fill required fields: ${missing.join(", ")}` },
-      { status: 400 }
-    );
+  const templateId = String(body.templateId ?? "").trim();
+  if (!clientId || !templateId) {
+    return NextResponse.json({ error: "Invalid client or document." }, { status: 400 });
   }
 
   const { data: client, error: clientErr } = await supabase
     .from("clients")
-    .select("id, first_name, last_name, email, stage, assigned_to, attorney_id")
+    .select("id, first_name, last_name, email, stage, assigned_to, attorney_id, mid_id")
     .eq("id", clientId)
     .maybeSingle();
 
@@ -77,18 +64,39 @@ export async function POST(request: Request) {
     );
   }
 
+  // A template may only be sent to a client whose MID owns it.
+  if (!(await templateBelongsToClient(supabase, templateId, clientId))) {
+    return NextResponse.json(
+      { error: "That document does not belong to this client's MID." },
+      { status: 400 }
+    );
+  }
+
+  const template = await loadTemplateById(supabase, templateId);
+  if (!template) {
+    return NextResponse.json({ error: "Document not found" }, { status: 404 });
+  }
+
+  const missing = missingRequiredReviewLabels(template, body.prefill ?? {});
+  if (missing.length) {
+    return NextResponse.json(
+      { error: `Fill required fields: ${missing.join(", ")}` },
+      { status: 400 }
+    );
+  }
+
   const { data: alreadyFiled } = await supabase
     .from("esign_requests")
     .select("id")
     .eq("client_id", clientId)
-    .eq("kind", kind)
+    .eq("template_id", templateId)
     .eq("status", "completed")
     .not("signed_document_id", "is", null)
     .limit(1)
     .maybeSingle();
   if (alreadyFiled?.id) {
     return NextResponse.json(
-      { error: "A signed copy is already on Uploads. Send is locked." },
+      { error: "A signed copy is already on Documents. Send is locked." },
       { status: 400 }
     );
   }
@@ -112,21 +120,26 @@ export async function POST(request: Request) {
     .from("esign_requests")
     .select("id")
     .eq("client_id", clientId)
-    .eq("kind", kind)
+    .eq("template_id", templateId)
     .in("status", ["sent", "viewed", "signed"])
     .limit(20);
   if (pending?.length) {
     await supabase
       .from("esign_requests")
       .update({ status: "superseded" })
-      .in("id", pending.map((row) => row.id));
+      .in(
+        "id",
+        pending.map((row) => row.id)
+      );
   }
 
   const { data: inserted, error: insertErr } = await supabase
     .from("esign_requests")
     .insert({
       client_id: clientId,
-      kind,
+      template_id: templateId,
+      template_name: template.name,
+      behavior: template.behavior,
       status: "sent",
       signer_email: email,
       signer_name: signerName,
@@ -143,14 +156,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not record the request." }, { status: 500 });
   }
 
-  const mailed = await sendEsignInviteEmail({
-    to: email,
-    signerName,
-    kind,
-    documentTitle: documentTitle(kind),
-    signUrl,
-  });
-  if (!mailed.ok) {
+  const emailConfigured = Boolean(process.env.RESEND_API_KEY?.trim());
+  const mailed = emailConfigured
+    ? await sendEsignInviteEmail({
+        to: email,
+        signerName,
+        behavior: template.behavior,
+        documentTitle: template.name,
+        signUrl,
+      })
+    : null;
+  if (mailed && !mailed.ok) {
     await supabase
       .from("esign_requests")
       .update({ status: "failed", last_error: mailed.error })
@@ -161,18 +177,31 @@ export async function POST(request: Request) {
   await createAdminClient().from("esign_events").insert({
     request_id: inserted.id,
     event: "sent",
-    meta: { kind },
+    meta: {
+      template_id: templateId,
+      template_name: template.name,
+      emailed: Boolean(mailed?.ok),
+    },
   });
   await supabase.from("audit_log").insert({
     client_id: clientId,
-    action: esignSentAuditAction(kind),
-    new_value: { request_id: inserted.id, channel: "crm" },
+    action: esignSentAuditAction(template.behavior),
+    new_value: {
+      request_id: inserted.id,
+      template_id: templateId,
+      template_name: template.name,
+      channel: mailed?.ok ? "email" : "link",
+    },
     performed_by: user.id,
     performed_by_name: profile.full_name?.trim() || "Staff",
   });
 
   return NextResponse.json({
     ok: true,
+    emailed: Boolean(mailed?.ok),
+    // Without a mail provider the staff member still needs a way to open the
+    // signing page. Production always emails and omits the link from the response.
+    signUrl: mailed?.ok ? undefined : signUrl,
     requestId: inserted.id,
     status: "sent",
     sentAt: inserted.sent_at,

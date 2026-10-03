@@ -1,5 +1,4 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { esignKindTitle, isEsignKind } from "@/lib/esign/types";
 import { SignDocumentClient } from "./SignDocumentClient";
 import { SignPageShell } from "../SignPageShell";
 
@@ -14,7 +13,7 @@ export default async function SignDocumentPage({
   const admin = createAdminClient();
   const { data } = await admin
     .from("esign_requests")
-    .select("id, kind, status, signer_name, token_expires_at")
+    .select("id, template_name, status, signer_name, token_expires_at")
     .eq("sign_token", token)
     .maybeSingle();
 
@@ -52,7 +51,7 @@ export default async function SignDocumentPage({
     );
   }
 
-  const title = isEsignKind(data.kind) ? esignKindTitle(data.kind) : "Document";
+  const title = String(data.template_name ?? "").trim() || "Document";
 
   return (
     <SignDocumentClient

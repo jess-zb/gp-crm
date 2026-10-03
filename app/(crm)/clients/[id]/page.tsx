@@ -26,11 +26,7 @@ import { ClientViewLogger } from "./ClientViewLogger";
 import { CommunicationsTab } from "./CommunicationsTab";
 import { DocumentsTab, type DocumentListItem } from "./DocumentsTab";
 import { EmailActivityTabClient } from "./EmailActivityTabClient";
-import {
-  canPlaceEsignFields,
-  canUseEsignStaffUi,
-  isEsignFeatureEnabled,
-} from "@/lib/esign/config";
+import { canUseEsignStaffUi, isEsignFeatureEnabled } from "@/lib/esign/config";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
@@ -735,8 +731,7 @@ export default async function ClientProfilePage({
 
             {tab === "packets" ? (
               <div className="space-y-4">
-                {isEsignFeatureEnabled() &&
-                canUseEsignStaffUi(profile.role, user.email) ? (
+                {isEsignFeatureEnabled() && canUseEsignStaffUi(profile.role) ? (
                   <EsignDripSection
                     clientId={clientId}
                     clientFirstName={
@@ -744,7 +739,6 @@ export default async function ClientProfilePage({
                     }
                     clientLastName={String(c.last_name ?? "").trim()}
                     advisorName={assigneeName ?? ""}
-                    canPlaceFields={canPlaceEsignFields(profile.role)}
                     canSend={canShowEsignActions((c.stage as string | null) ?? null)}
                   />
                 ) : null}

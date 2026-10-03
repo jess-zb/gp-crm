@@ -7,7 +7,6 @@ import {
   WEBSITE_URL,
   publicAppUrl,
 } from "@/lib/constants/business-contact";
-import type { EsignKind } from "./types";
 
 const TRANSACTIONAL_HEADERS = {
   "List-Unsubscribe": `<mailto:${SUPPORT_EMAIL}>`,
@@ -16,7 +15,8 @@ const TRANSACTIONAL_HEADERS = {
 export async function sendEsignInviteEmail(args: {
   to: string;
   signerName: string;
-  kind?: EsignKind;
+  /** welcome_packet uses the welcome letter; every other behaviour uses the generic one. */
+  behavior?: string;
   documentTitle: string;
   signUrl: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
@@ -25,7 +25,7 @@ export async function sendEsignInviteEmail(args: {
 
   const logoSrc = `${publicAppUrl()}/logo.png`;
   const html =
-    args.kind === "welcome_packet"
+    args.behavior === "welcome_packet"
       ? welcomePacketInviteHtml({ logoSrc, signUrl: args.signUrl })
       : ccAuthInviteHtml({
           logoSrc,
@@ -34,11 +34,11 @@ export async function sendEsignInviteEmail(args: {
           signUrl: args.signUrl,
         });
   const text =
-    args.kind === "welcome_packet"
+    args.behavior === "welcome_packet"
       ? welcomePacketInviteText(args.signUrl)
       : ccAuthInviteText(args.signerName, args.documentTitle, args.signUrl);
   const subject =
-    args.kind === "welcome_packet"
+    args.behavior === "welcome_packet"
       ? `${BUSINESS_NAME}: your Virtual Welcome Packet is ready`
       : `${BUSINESS_NAME}: your ${args.documentTitle} is ready`;
 

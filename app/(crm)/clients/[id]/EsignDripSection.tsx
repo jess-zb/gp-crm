@@ -1,13 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { Info, Loader2, PenLine } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/app/components/Toast";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { EsignPrefillReviewModal } from "@/app/components/esign/EsignPrefillReviewModal";
-import { isUploadableEsignKind, type EsignKind, type EsignRequestRow, type EsignStatus } from "@/lib/esign/types";
+import {
+  ESIGN_REQUEST_SELECT,
+  type EsignRequestRow,
+  type EsignStatus,
+  type EsignTemplateCard,
+} from "@/lib/esign/types";
 import type { EsignClientPrefill } from "@/lib/esign/map-client-prefill";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -32,82 +36,94 @@ function fmtWhen(iso: string | null) {
   });
 }
 
-function latestForKind(rows: EsignRequestRow[], kind: EsignKind): EsignRequestRow | null {
-  return rows.find((row) => row.kind === kind && row.status !== "superseded") ?? null;
+function latestForTemplate(rows: EsignRequestRow[], templateId: string): EsignRequestRow | null {
+  return rows.find((row) => row.template_id === templateId && row.status !== "superseded") ?? null;
 }
 
-const ESIGN_CARDS: { kind: EsignKind; title: string; hint: string }[] = [
-  {
-    kind: "cc_authorization",
-    title: "CC Auth",
-    hint: "Bank authorization form",
-  },
-  {
-    kind: "welcome_packet",
-    title: "Welcome Packet",
-    hint: "Signed POA — advances the client once signed",
-  },
-];
+type ReviewTarget = {
+  templateId: string;
+  fields: unknown;
+  requiredBinds: string[];
+};
 
 export function EsignDripSection({
   clientId,
   clientFirstName = "",
   clientLastName = "",
   advisorName = "",
-  canPlaceFields = false,
   canSend = true,
 }: {
   clientId: string;
   clientFirstName?: string;
   clientLastName?: string;
   advisorName?: string;
-  canPlaceFields?: boolean;
   canSend?: boolean;
 }) {
   const toast = useToast();
   const [helpOpen, setHelpOpen] = useState(false);
   const [rows, setRows] = useState<EsignRequestRow[]>([]);
-  const [busyKind, setBusyKind] = useState<EsignKind | null>(null);
-  const [reviewKind, setReviewKind] = useState<EsignKind | null>(null);
+  const [templates, setTemplates] = useState<EsignTemplateCard[] | null>(null);
+  const [midName, setMidName] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [review, setReview] = useState<ReviewTarget | null>(null);
   const [reviewPrefill, setReviewPrefill] = useState<EsignClientPrefill | null>(null);
-  const [reviewMids, setReviewMids] = useState<string[]>([]);
   const [reviewAdvisors, setReviewAdvisors] = useState<string[]>([]);
-  const [uploadingKind, setUploadingKind] = useState<EsignKind | null>(null);
 
   const load = useCallback(async () => {
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from("esign_requests")
-      .select(
-        "id, client_id, kind, opensign_document_id, status, signer_email, signer_name, sent_by, sent_at, completed_at, signed_document_id, certificate_document_id, last_error"
-      )
-      .eq("client_id", clientId)
-      .order("sent_at", { ascending: false })
-      .limit(20);
-    if (error) {
-      console.error("[E-Sign] load", error.message);
+    const [requests, templateRes] = await Promise.all([
+      supabase
+        .from("esign_requests")
+        .select(ESIGN_REQUEST_SELECT)
+        .eq("client_id", clientId)
+        .order("sent_at", { ascending: false })
+        .limit(40),
+      fetch(`/api/esign/templates?clientId=${encodeURIComponent(clientId)}`),
+    ]);
+
+    if (requests.error) {
+      console.error("[E-Sign] load", requests.error.message);
+      setLoadError("Could not load e-sign history.");
+    } else {
+      setRows((requests.data ?? []) as EsignRequestRow[]);
+    }
+
+    const json = (await templateRes.json().catch(() => null)) as {
+      error?: string;
+      midName?: string | null;
+      templates?: EsignTemplateCard[];
+    } | null;
+    if (!templateRes.ok || !json?.templates) {
+      setLoadError(toUserFacingError(json?.error || "Could not load this MID's documents."));
+      setTemplates([]);
       return;
     }
-    setRows((data ?? []) as EsignRequestRow[]);
+    setLoadError("");
+    setMidName(json.midName ?? null);
+    setTemplates(json.templates);
   }, [clientId]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  async function openReview(kind: EsignKind) {
+  async function openReview(templateId: string) {
     if (!canSend) {
       toast.error("E-Sign send is available in Account Manager or Client Services.");
       return;
     }
-    setBusyKind(kind);
+    setBusyId(templateId);
     try {
-      const res = await fetch(`/api/esign/prefill?clientId=${encodeURIComponent(clientId)}&kind=${kind}`);
+      const res = await fetch(
+        `/api/esign/prefill?clientId=${encodeURIComponent(clientId)}&templateId=${encodeURIComponent(templateId)}`
+      );
       const json = (await res.json()) as {
         error?: string;
         prefill?: EsignClientPrefill;
-        midOptions?: string[];
         advisorOptions?: string[];
+        fields?: unknown;
+        requiredBinds?: string[];
       };
       if (!res.ok || !json.prefill) {
         toast.error(toUserFacingError(json.error || "Could not load client details"));
@@ -118,97 +134,56 @@ export function EsignDripSection({
       prefill.lastName = String(prefill.lastName ?? "").trim() || clientLastName.trim();
       prefill.advisor = String(prefill.advisor ?? "").trim() || advisorName.trim();
       setReviewPrefill(prefill);
-      setReviewMids(json.midOptions ?? []);
       const advisors = json.advisorOptions ?? [];
       if (prefill.advisor && !advisors.includes(prefill.advisor)) {
         advisors.unshift(prefill.advisor);
       }
       setReviewAdvisors(advisors);
-      setReviewKind(kind);
+      setReview({
+        templateId,
+        fields: json.fields ?? [],
+        requiredBinds: json.requiredBinds ?? [],
+      });
     } catch (err) {
       toast.error(toUserFacingError(err instanceof Error ? err.message : "Could not load client details"));
     } finally {
-      setBusyKind(null);
+      setBusyId(null);
     }
   }
 
-  async function uploadTemplate(kind: EsignKind, file: File) {
-    if (!isUploadableEsignKind(kind)) return;
-    if (!file.name.toLowerCase().endsWith(".pdf")) {
-      toast.error("Upload a PDF.");
-      return;
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      toast.error("PDF must be 8 MB or smaller.");
-      return;
-    }
-    setUploadingKind(kind);
-    try {
-      const initRes = await fetch("/api/esign/template-file", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind, fileName: file.name, fileSize: file.size }),
-      });
-      const initJson = (await initRes.json()) as { error?: string; path?: string; token?: string };
-      if (!initRes.ok || !initJson.path || !initJson.token) {
-        toast.error(toUserFacingError(initJson.error || "Could not start upload"));
-        return;
-      }
-      const supabase = createClient();
-      const { error: uploadErr } = await supabase.storage
-        .from("esign-templates")
-        .uploadToSignedUrl(initJson.path, initJson.token, file, {
-          contentType: "application/pdf",
-          upsert: false,
-        });
-      if (uploadErr) {
-        toast.error(toUserFacingError(uploadErr.message || "Upload failed"));
-        return;
-      }
-      const doneRes = await fetch("/api/esign/template-file/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind, path: initJson.path, fileSize: file.size }),
-      });
-      const doneJson = (await doneRes.json()) as { error?: string };
-      if (!doneRes.ok) {
-        toast.error(toUserFacingError(doneJson.error || "Could not save the PDF"));
-        return;
-      }
-      toast.success("PDF saved. New sends use this file.");
-    } catch (err) {
-      toast.error(toUserFacingError(err instanceof Error ? err.message : "Could not upload"));
-    } finally {
-      setUploadingKind(null);
-    }
-  }
-
-  async function send(kind: EsignKind, prefill: Partial<EsignClientPrefill> & { fullName?: string }) {
-    setBusyKind(kind);
+  async function send(
+    templateId: string,
+    prefill: Partial<EsignClientPrefill> & { fullName?: string }
+  ) {
+    setBusyId(templateId);
     try {
       const res = await fetch("/api/esign/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clientId, kind, prefill }),
+        body: JSON.stringify({ clientId, templateId, prefill }),
       });
-      const json = (await res.json()) as {
-        error?: string;
-        sentAt?: string;
-      };
+      const json = (await res.json()) as { error?: string; signUrl?: string; emailed?: boolean };
       if (!res.ok) {
         toast.error(toUserFacingError(json.error || "Could not send"));
         return;
       }
-      toast.success("Sent to the client");
+      if (json.signUrl && json.emailed === false) {
+        toast.success("Signing link is ready. Email is not configured on this machine.");
+        window.open(json.signUrl, "_blank", "noopener,noreferrer");
+      } else {
+        toast.success("Sent to the client");
+      }
       await load();
     } catch (err) {
       toast.error(toUserFacingError(err instanceof Error ? err.message : "Could not send"));
     } finally {
-      setBusyKind(null);
-      setReviewKind(null);
+      setBusyId(null);
+      setReview(null);
       setReviewPrefill(null);
     }
   }
+
+  const midLabel = midName?.trim() || "this MID";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
@@ -233,58 +208,75 @@ export function EsignDripSection({
               className="absolute left-0 top-6 z-20 w-64 rounded-lg border border-slate-200 bg-white p-3 text-[12px] leading-5 text-slate-600 shadow-lg dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300"
             >
               E-Sign is available when the client is in Account Manager or Client
-              Services.
+              Services. Only documents owned by {midLabel} are listed.
             </div>
           ) : null}
         </div>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {ESIGN_CARDS.map((card) => (
-          <EsignKindCard
-            key={card.kind}
-            title={card.title}
-            hint={card.hint}
-            row={latestForKind(rows, card.kind)}
-            busy={busyKind === card.kind}
-            disabled={busyKind !== null || !canSend}
-            placeHref={canPlaceFields ? `/esign-templates/${card.kind}` : undefined}
-            canUpload={isUploadableEsignKind(card.kind)}
-            uploading={uploadingKind === card.kind}
-            onUpload={(file) => void uploadTemplate(card.kind, file)}
-            onSend={() => void openReview(card.kind)}
-          />
-        ))}
-      </div>
-      {reviewKind && reviewPrefill ? (
+
+      {templates === null ? (
+        <p className="flex items-center gap-2 text-sm text-slate-500">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+          Loading documents…
+        </p>
+      ) : loadError ? (
+        <p className="text-sm text-red-600 dark:text-red-400">{loadError}</p>
+      ) : !midName ? (
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          This client has no MID, so there are no documents to send. Assign a MID
+          on Settings, then come back.
+        </p>
+      ) : templates.length === 0 ? (
+        <p className="text-sm text-slate-600 dark:text-slate-300">
+          {midLabel} has no e-sign documents yet. Add them under Settings → MIDs.
+        </p>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {templates.map((card) => (
+            <EsignTemplateSendCard
+              key={card.id}
+              title={card.name}
+              hint={
+                card.hint?.trim() ||
+                (card.behavior === "welcome_packet"
+                  ? "Signed POA — advances the client once signed"
+                  : "Sends this MID's document")
+              }
+              row={latestForTemplate(rows, card.id)}
+              busy={busyId === card.id}
+              disabled={busyId !== null || !canSend}
+              onSend={() => void openReview(card.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {review && reviewPrefill ? (
         <EsignPrefillReviewModal
-          kind={reviewKind}
+          template={{ fields: review.fields, required_binds: review.requiredBinds }}
           prefill={reviewPrefill}
-          midOptions={reviewMids}
+          midOptions={reviewPrefill.mid ? [reviewPrefill.mid] : []}
           advisorOptions={reviewAdvisors}
           confirmLabel="Send document"
-          submitting={busyKind === reviewKind}
+          submitting={busyId === review.templateId}
           onCancel={() => {
-            if (busyKind) return;
-            setReviewKind(null);
+            if (busyId) return;
+            setReview(null);
             setReviewPrefill(null);
           }}
-          onConfirm={(snapshot) => void send(reviewKind, snapshot)}
+          onConfirm={(snapshot) => void send(review.templateId, snapshot)}
         />
       ) : null}
     </div>
   );
 }
 
-function EsignKindCard({
+function EsignTemplateSendCard({
   title,
   hint,
   row,
   busy,
   disabled,
-  placeHref,
-  canUpload = false,
-  uploading = false,
-  onUpload,
   onSend,
 }: {
   title: string;
@@ -292,10 +284,6 @@ function EsignKindCard({
   row: EsignRequestRow | null;
   busy: boolean;
   disabled: boolean;
-  placeHref?: string;
-  canUpload?: boolean;
-  uploading?: boolean;
-  onUpload?: (file: File) => void;
   onSend: () => void;
 }) {
   const status = row?.status as EsignStatus | undefined;
@@ -315,7 +303,7 @@ function EsignKindCard({
           type="button"
           onClick={onSend}
           disabled={sendLocked}
-          title={fileOnUploads ? "Signed copy is on Uploads. Send is locked." : undefined}
+          title={fileOnUploads ? "Signed copy is filed. Send is locked." : undefined}
           className="crm-btn-primary !px-3 !py-1.5 !text-xs"
         >
           {busy ? (
@@ -329,37 +317,6 @@ function EsignKindCard({
           )}
         </button>
       </div>
-      {placeHref || canUpload ? (
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          {canUpload ? (
-            <label
-              className="cursor-pointer text-[11px] text-[#0A2540] underline dark:text-[#8DE3B5]"
-              title="Replaces this form for every client. New sends use the uploaded PDF."
-            >
-              {uploading ? "Uploading…" : "Upload PDF"}
-              <input
-                type="file"
-                accept="application/pdf,.pdf"
-                className="sr-only"
-                disabled={uploading || busy}
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  event.target.value = "";
-                  if (file) onUpload?.(file);
-                }}
-              />
-            </label>
-          ) : null}
-          {placeHref ? (
-            <Link
-              href={placeHref}
-              className="text-[11px] text-[#0A2540] underline dark:text-[#8DE3B5]"
-            >
-              Place fields
-            </Link>
-          ) : null}
-        </div>
-      ) : null}
       {row ? (
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
           <span
@@ -376,7 +333,7 @@ function EsignKindCard({
             <p className="w-full text-red-500 dark:text-red-400">{row.last_error}</p>
           ) : status === "completed" && !row.signed_document_id ? (
             <p className="w-full text-amber-700 dark:text-amber-400">
-              Signed copy is missing from Uploads.
+              Signed copy is missing from Documents.
             </p>
           ) : null}
         </div>

@@ -6,15 +6,14 @@ import type { EsignClientPrefill } from "@/lib/esign/map-client-prefill";
 import type { EsignBindKey, EsignLayoutField } from "@/lib/esign/layout";
 import { EsignDocumentBoard } from "@/app/components/esign/EsignDocumentBoard";
 import { missingRequiredReviewLabels, reviewValuesFromPrefill } from "@/lib/esign/review-fields";
-import { isEsignKind } from "@/lib/esign/types";
 import { SignPageShell } from "../SignPageShell";
 
 type ContextPayload = {
-  kind: string;
   title: string;
   signerName: string;
   prefill: EsignClientPrefill;
   fields: EsignLayoutField[];
+  requiredBinds?: string[];
   midOptions: string[];
 };
 
@@ -90,8 +89,11 @@ export function SignDocumentClient({
       pullToSignature("Tap each remaining signature box to place your signature.");
       return;
     }
-    if (ctx && isEsignKind(ctx.kind)) {
-      const missing = missingRequiredReviewLabels(ctx.kind, values);
+    if (ctx) {
+      const missing = missingRequiredReviewLabels(
+        { fields: ctx.fields, required_binds: ctx.requiredBinds ?? [] },
+        values
+      );
       if (missing.length) {
         setError(`Fill required fields: ${missing.join(", ")}`);
         return;

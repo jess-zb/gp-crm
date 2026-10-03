@@ -45,7 +45,7 @@ import {
 } from "@/lib/clients/stage-dropdown-options";
 import { AssignmentModal, type AssignmentDepartment } from "./AssignmentModal";
 import { formatMoneyUsdFromCents } from "@/lib/utils/format";
-import { useMerchantOptions } from "@/lib/hooks/use-merchant-options";
+import { useMidNames } from "@/lib/hooks/use-mids";
 import {
   parseRefundAmountCents,
   type RefundPrefill,
@@ -189,7 +189,7 @@ export function ClientStageHeader({
 }) {
   const router = useRouter();
   const toast = useToast();
-  const merchantOptions = useMerchantOptions();
+  const merchantOptions = useMidNames();
   const [stage, setStage] = useState(stageFromServer);
   const [poaSignedAt, setPoaSignedAt] = useState(poaSignedAtFromServer);
   const [hasPoaDocument, setHasPoaDocument] = useState(hasPoaDocumentFromServer);

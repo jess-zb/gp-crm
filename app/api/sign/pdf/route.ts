@@ -2,9 +2,8 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isEsignFeatureEnabled } from "@/lib/esign/config";
 import { loadEsignPrefill, mergeSignerOverrides } from "@/lib/esign/load-prefill";
-import { loadEsignLayout } from "@/lib/esign/load-layout";
 import { flattenSignedPdf } from "@/lib/esign/flatten-signed-pdf";
-import type { EsignKind } from "@/lib/esign/types";
+import { resolveSignToken, signTokenErrorResponse } from "@/lib/esign/resolve-request";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -18,30 +17,21 @@ export async function GET(request: Request) {
 
   try {
     const admin = createAdminClient();
-    const { data } = await admin
-      .from("esign_requests")
-      .select("client_id, kind, status, token_expires_at, prefill_snapshot")
-      .eq("sign_token", token)
-      .maybeSingle();
-    if (!data) return NextResponse.json({ error: "Invalid link" }, { status: 404 });
-    const expires = data.token_expires_at ? new Date(data.token_expires_at) : null;
-    if (expires && expires.getTime() < Date.now()) {
-      return NextResponse.json({ error: "Expired" }, { status: 410 });
+    const resolved = await resolveSignToken(admin, token);
+    if (!resolved.ok) {
+      const { message, status } = signTokenErrorResponse(resolved.error);
+      return NextResponse.json({ error: message }, { status });
     }
-    if (data.status === "superseded" || data.status === "revoked") {
-      return NextResponse.json({ error: "Unavailable" }, { status: 410 });
-    }
+    const { ctx } = resolved;
 
-    const kind = data.kind as EsignKind;
     const prefill = mergeSignerOverrides(
-      await loadEsignPrefill(admin, data.client_id),
-      (data.prefill_snapshot as Record<string, string> | null) ?? null
+      await loadEsignPrefill(admin, ctx.clientId),
+      ctx.prefillSnapshot
     );
-    const fields = await loadEsignLayout(admin, kind);
     const bytes = await flattenSignedPdf({
-      kind,
+      storagePath: ctx.template.storage_path,
       prefill,
-      fields,
+      fields: ctx.fields,
       signedDate: "",
     });
 

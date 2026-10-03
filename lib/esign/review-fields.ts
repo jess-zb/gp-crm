@@ -1,7 +1,8 @@
-import type { EsignKind } from "./types";
 import type { EsignClientPrefill } from "./map-client-prefill";
 import { signerDisplayName } from "./map-client-prefill";
 import { formatUsd, isAmountField, parseUsdNumber } from "./money";
+import { BIND_LABELS, isEsignBindKey, parseLayoutFields, type EsignBindKey } from "./layout";
+import type { EsignTemplateRow } from "./types";
 
 function firstNameOnly(fullName: string | null | undefined): string {
   const trimmed = fullName?.trim() ?? "";
@@ -37,69 +38,93 @@ export function formatAdvisorNameForEsign(raw: string): string {
 }
 
 export type PrefillReviewField = {
-  key: string;
+  key: EsignBindKey;
   label: string;
   kind: "text" | "mid" | "advisor" | "amount";
-  group?: "top" | "card";
-  required?: boolean;
+  group: "top" | "card";
+  required: boolean;
 };
 
-export function reviewFieldsForKind(kind: EsignKind): PrefillReviewField[] {
-  if (kind === "welcome_packet") {
-    return [
-      { key: "fullName", label: "Name", kind: "text", group: "top" },
-      { key: "advisor", label: "Account Manager", kind: "advisor", group: "top" },
-      { key: "mid", label: "MID", kind: "mid", group: "top", required: true },
-    ];
+const CARD_BIND = /^card[1-5](Last4|Amount)$/;
+
+function kindForBind(bind: EsignBindKey): PrefillReviewField["kind"] {
+  if (bind === "mid") return "mid";
+  if (bind === "advisor") return "advisor";
+  if (isAmountField(bind)) return "amount";
+  return "text";
+}
+
+/**
+ * The review form is derived from the fields staff placed on the template, so a
+ * brand-new document gets a correct Confirm Before Sending step with no code
+ * change. `signature` is collected from the signer, never from staff.
+ */
+export function reviewFieldsForTemplate(
+  template: Pick<EsignTemplateRow, "fields" | "required_binds">
+): PrefillReviewField[] {
+  const placed = parseLayoutFields(template.fields) ?? [];
+  const required = new Set(
+    (template.required_binds ?? []).filter((b) => isEsignBindKey(b))
+  );
+
+  const seen = new Set<EsignBindKey>();
+  const out: PrefillReviewField[] = [];
+  for (const field of placed) {
+    if (field.bind === "signature" || field.bind === "signedDate") continue;
+    if (seen.has(field.bind)) continue;
+    seen.add(field.bind);
+    out.push({
+      key: field.bind,
+      label: BIND_LABELS[field.bind],
+      kind: kindForBind(field.bind),
+      group: CARD_BIND.test(field.bind) ? "card" : "top",
+      required: required.has(field.bind),
+    });
   }
-  return [
-    { key: "fullName", label: "Name", kind: "text", group: "top", required: true },
-    { key: "advisor", label: "Account Manager", kind: "advisor", group: "top", required: true },
-    { key: "mid", label: "MID", kind: "mid", group: "top", required: true },
-    { key: "amountAuthorized", label: "Amount authorized", kind: "amount", group: "top" },
-    { key: "card1Last4", label: "Card 1 last 4", kind: "text", group: "card", required: true },
-    { key: "card1Amount", label: "Card 1 amount", kind: "amount", group: "card", required: true },
-    { key: "card2Last4", label: "Card 2 last 4", kind: "text", group: "card" },
-    { key: "card2Amount", label: "Card 2 amount", kind: "amount", group: "card" },
-    { key: "card3Last4", label: "Card 3 last 4", kind: "text", group: "card" },
-    { key: "card3Amount", label: "Card 3 amount", kind: "amount", group: "card" },
-    { key: "card4Last4", label: "Card 4 last 4", kind: "text", group: "card" },
-    { key: "card4Amount", label: "Card 4 amount", kind: "amount", group: "card" },
-    { key: "card5Last4", label: "Card 5 last 4", kind: "text", group: "card" },
-    { key: "card5Amount", label: "Card 5 amount", kind: "amount", group: "card" },
-  ];
+
+  // Stable order: identity first, then money, then the card rows in sequence.
+  const topOrder: EsignBindKey[] = ["fullName", "advisor", "mid", "amountAuthorized"];
+  return out.sort((a, b) => {
+    if (a.group !== b.group) return a.group === "top" ? -1 : 1;
+    if (a.group === "top") {
+      const ai = topOrder.indexOf(a.key);
+      const bi = topOrder.indexOf(b.key);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    }
+    return a.key.localeCompare(b.key);
+  });
 }
 
 function reviewValueFilled(field: PrefillReviewField, raw: string): boolean {
   const value = String(raw ?? "").trim();
   if (!value) return false;
-  if (/last\s*4/i.test(field.key) || /last 4/i.test(field.label)) {
+  if (/Last4$/.test(field.key)) {
     return /^\d{4}$/.test(value.replace(/\D/g, ""));
   }
-  if (field.kind === "amount" || isAmountField(field.key, field.label)) {
-    return parseUsdNumber(value) != null;
-  }
+  if (field.kind === "amount") return parseUsdNumber(value) != null;
   return true;
 }
 
 export function missingRequiredReviewFields(
-  kind: EsignKind,
+  template: Pick<EsignTemplateRow, "fields" | "required_binds">,
   values: Record<string, string | undefined | null>
 ): PrefillReviewField[] {
-  return reviewFieldsForKind(kind).filter(
+  return reviewFieldsForTemplate(template).filter(
     (field) => field.required && !reviewValueFilled(field, String(values[field.key] ?? ""))
   );
 }
 
-/** Labels still empty after staff/signer review — used by the send modal and APIs. */
+/** Labels still empty after staff review — used by the send modal and the API. */
 export function missingRequiredReviewLabels(
-  kind: EsignKind,
+  template: Pick<EsignTemplateRow, "fields" | "required_binds">,
   values: Record<string, string | undefined | null>
 ): string[] {
-  return missingRequiredReviewFields(kind, values).map((field) => field.label);
+  return missingRequiredReviewFields(template, values).map((f) => f.label);
 }
 
-export function reviewValuesFromPrefill(prefill: EsignClientPrefill): Record<string, string> {
+export function reviewValuesFromPrefill(
+  prefill: EsignClientPrefill
+): Record<string, string> {
   return {
     fullName: toTitleCaseName(signerDisplayName(prefill)),
     advisor: formatAdvisorNameForEsign(prefill.advisor),

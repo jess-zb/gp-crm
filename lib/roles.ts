@@ -78,6 +78,11 @@ export function canBulkDeleteClients(role: string): boolean {
   return role === "dev" || role === "admin";
 }
 
+/** MIDs and their e-sign documents — leadership only. */
+export function canManageMids(role: string): boolean {
+  return isOpsLead(role);
+}
+
 export function canAccessTeamPage(role: string): boolean {
   return role === "dev" || role === "admin";
 }
@@ -124,10 +129,6 @@ export function canAccessAttorneyQueue(role: string): boolean {
 /** Activity / audit-style sidebar on client profile: dev and admin only. */
 export function canViewClientActivityLog(role: string): boolean {
   return role === "dev" || role === "admin";
-}
-
-export function canManageRingCentral(role: string): boolean {
-  return role === "dev";
 }
 
 /** Checklist bypass: dev and admin only. */

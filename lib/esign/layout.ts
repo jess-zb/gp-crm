@@ -1,4 +1,3 @@
-import type { EsignKind } from "./types";
 import type { EsignClientPrefill } from "./map-client-prefill";
 import { signerDisplayName } from "./map-client-prefill";
 import { formatUsd, isAmountField } from "./money";
@@ -65,69 +64,6 @@ export function defaultSizeForBind(bind: EsignBindKey): { wPct: number; hPct: nu
   }
   if (bind === "mid") return { wPct: 36, hPct: 2.2 };
   return { wPct: 32, hPct: 2.2 };
-}
-
-function box(
-  id: string,
-  bind: EsignBindKey,
-  page: number,
-  x: number,
-  yTop: number,
-  w: number,
-  h: number,
-  pageW: number,
-  pageH: number
-): EsignLayoutField {
-  return {
-    id,
-    bind,
-    page,
-    xPct: (x / pageW) * 100,
-    yPct: (yTop / pageH) * 100,
-    wPct: (w / pageW) * 100,
-    hPct: (h / pageH) * 100,
-  };
-}
-
-const CC_W = 595.28;
-const CC_H = 841.89;
-const WP_W = 612;
-const WP_H = 792;
-
-export function defaultLayoutForKind(kind: EsignKind): EsignLayoutField[] {
-  if (kind === "welcome_packet") {
-    return [
-      box("wp-name-0", "fullName", 0, 110, 179, 230, 16, WP_W, WP_H),
-      box("wp-am-0", "advisor", 0, 130, 256.5, 160, 16, WP_W, WP_H),
-      box("wp-mid-0", "mid", 0, 205, 426.5, 160, 16, WP_W, WP_H),
-      box("wp-name-1a", "fullName", 1, 300, 227.5, 210, 16, WP_W, WP_H),
-      box("wp-name-1b", "fullName", 1, 210, 551, 180, 16, WP_W, WP_H),
-      box("wp-sig-1", "signature", 1, 180, 548, 250, 22, WP_W, WP_H),
-      box("wp-date-1", "signedDate", 1, 180, 582, 140, 16, WP_W, WP_H),
-      box("wp-name-2a", "fullName", 2, 350, 273.5, 200, 16, WP_W, WP_H),
-      box("wp-name-2b", "fullName", 2, 160, 563.5, 220, 16, WP_W, WP_H),
-      box("wp-sig-2", "signature", 2, 175, 557, 250, 22, WP_W, WP_H),
-      box("wp-date-2", "signedDate", 2, 180, 594.5, 140, 16, WP_W, WP_H),
-      box("wp-name-3a", "fullName", 3, 80, 221.5, 280, 16, WP_W, WP_H),
-      box("wp-name-3b", "fullName", 3, 170, 613, 220, 16, WP_W, WP_H),
-      box("wp-sig-3", "signature", 3, 145, 606, 280, 22, WP_W, WP_H),
-      box("wp-date-3", "signedDate", 3, 110, 644, 140, 16, WP_W, WP_H),
-      box("wp-name-4", "fullName", 4, 160, 539, 220, 16, WP_W, WP_H),
-      box("wp-sig-4", "signature", 4, 140, 533, 280, 22, WP_W, WP_H),
-      box("wp-date-4", "signedDate", 4, 100, 570.5, 140, 16, WP_W, WP_H),
-    ];
-  }
-  return [
-    box("cc-amt", "amountAuthorized", 0, 185, 292.5, 180, 16, CC_W, CC_H),
-    box("cc-c1-4", "card1Last4", 0, 155, 321, 70, 16, CC_W, CC_H),
-    box("cc-c1-a", "card1Amount", 0, 288, 341.5, 90, 16, CC_W, CC_H),
-    box("cc-c2-4", "card2Last4", 0, 155, 350.4, 70, 16, CC_W, CC_H),
-    box("cc-c2-a", "card2Amount", 0, 288, 371, 90, 16, CC_W, CC_H),
-    box("cc-mid", "mid", 0, 62, 514, 280, 16, CC_W, CC_H),
-    box("cc-sig", "signature", 0, 185, 638, 340, 36, CC_W, CC_H),
-    box("cc-name", "fullName", 0, 148, 688.5, 360, 16, CC_W, CC_H),
-    box("cc-date", "signedDate", 0, 100, 724, 180, 16, CC_W, CC_H),
-  ];
 }
 
 export function valueForBind(

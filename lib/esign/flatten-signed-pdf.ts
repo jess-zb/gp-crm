@@ -1,12 +1,6 @@
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
-import {
-  defaultLayoutForKind,
-  valueForBind,
-  type EsignLayoutField,
-} from "./layout";
+import { valueForBind, type EsignLayoutField } from "./layout";
 import type { EsignClientPrefill } from "./map-client-prefill";
-import { readEsignTemplateFile } from "./template-files";
-import type { EsignKind } from "./types";
 import { formatAdvisorNameForEsign, toTitleCaseName } from "./review-fields";
 
 function toWinAnsi(text: string): string {
@@ -51,22 +45,27 @@ function drawFitted(
 }
 
 export async function flattenSignedPdf(args: {
-  kind: EsignKind;
+  /** Storage path of the blank template PDF. */
+  storagePath?: string;
+  /** In-memory PDF for tests. Used instead of storage when present. */
+  sourcePdf?: Uint8Array;
   prefill: EsignClientPrefill;
   signedDate: string;
-  fields?: EsignLayoutField[];
+  fields: EsignLayoutField[];
   /** When omitted, signature boxes are left blank (client preview). */
   signaturePng?: Uint8Array | null;
   /** If set, only these signature field ids receive the PNG. */
   signatureFieldIds?: string[] | null;
 }): Promise<Uint8Array> {
-  const bytes = await readEsignTemplateFile(args.kind);
+  const bytes = args.sourcePdf
+    ? Buffer.from(args.sourcePdf)
+    : await (await import("./template-storage")).readEsignTemplateFile(args.storagePath ?? "");
   const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const sig = args.signaturePng?.length
     ? await doc.embedPng(args.signaturePng)
     : null;
-  const layout = args.fields?.length ? args.fields : defaultLayoutForKind(args.kind);
+  const layout = args.fields;
 
   for (const field of layout) {
     if (field.page < 0 || field.page >= doc.getPageCount()) continue;

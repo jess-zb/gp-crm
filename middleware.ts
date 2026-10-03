@@ -176,7 +176,7 @@ export async function middleware(request: NextRequest) {
     }
 
     /* Dashboard, clients, pipeline, reminders */
-    const corePrefixes = ["/dashboard", "/clients", "/pipeline", "/reminders", "/esign-templates"];
+    const corePrefixes = ["/dashboard", "/clients", "/pipeline", "/reminders"];
     if (corePrefixes.some((p) => matchesPath(pathname, p))) {
       if (!CRM_STAFF.has(role)) {
         return redirectTo(request, "/dashboard");
@@ -188,6 +188,22 @@ export async function middleware(request: NextRequest) {
     if (matchesPath(pathname, "/communications")) {
       if (!COMMS_AND_SETTINGS.has(role)) {
         return redirectTo(request, "/dashboard");
+      }
+      return response;
+    }
+
+    /* Field placement is leadership-only, same as MID administration. */
+    if (matchesPath(pathname, "/esign-templates")) {
+      if (!OPS_LEAD.has(role)) {
+        return redirectTo(request, "/dashboard");
+      }
+      return response;
+    }
+
+    /* MID + e-sign template administration */
+    if (matchesPath(pathname, "/settings/mids")) {
+      if (!OPS_LEAD.has(role)) {
+        return redirectTo(request, "/settings");
       }
       return response;
     }
@@ -208,6 +224,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|esign-templates/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

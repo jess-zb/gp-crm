@@ -15,7 +15,7 @@ import {
   canEditBillingCards,
   isDevOrAdmin,
 } from "@/lib/roles";
-import { useMerchantOptions } from "@/lib/hooks/use-merchant-options";
+import { useMidNames } from "@/lib/hooks/use-mids";
 
 const BUCKET = "client-documents";
 
@@ -103,7 +103,7 @@ export function BillingTabContent({
   const canDeleteCards = canDeleteBillingCards(userRole);
   const showDestructiveBilling = isDevOrAdmin(userRole);
   const showBillingActions = canEditCards || canDeleteCards;
-  const merchantOptions = useMerchantOptions();
+  const merchantOptions = useMidNames();
 
   const [cards, setCards] = useState(initialCards);
   const [editOpen, setEditOpen] = useState(false);

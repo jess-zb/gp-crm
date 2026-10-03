@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import { midNameFromEmbed } from "@/lib/mids/queries";
 import type { EsignClientPrefill } from "./map-client-prefill";
 import { formatUsd } from "./money";
 
@@ -78,7 +79,7 @@ export async function loadEsignPrefill(
   const { data: client } = await admin
     .from("clients")
     .select(
-      "first_name, last_name, nickname, email, phone_mobile, phone, street_address, city, state, zip_code, date_of_birth, spouse_name, spouse_first_name, spouse_last_name, assigned_to"
+      "first_name, last_name, nickname, email, phone_mobile, phone, street_address, city, state, zip_code, date_of_birth, spouse_name, spouse_first_name, spouse_last_name, assigned_to, mids(name)"
     )
     .eq("id", clientId)
     .maybeSingle();
@@ -99,6 +100,8 @@ export async function loadEsignPrefill(
   out.spouseName =
     String(client.spouse_name ?? "").trim() ||
     `${String(client.spouse_first_name ?? "").trim()} ${String(client.spouse_last_name ?? "").trim()}`.trim();
+
+  out.mid = midNameFromEmbed(client.mids) ?? "";
 
   if (client.assigned_to) {
     const { data: am } = await admin

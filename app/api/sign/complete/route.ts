@@ -4,16 +4,16 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isEsignFeatureEnabled } from "@/lib/esign/config";
 import { clientIpFromRequest, userAgentFromRequest } from "@/lib/esign/request-ip";
 import { loadEsignPrefill, mergeSignerOverrides } from "@/lib/esign/load-prefill";
-import { loadEsignLayout } from "@/lib/esign/load-layout";
 import { flattenSignedPdf } from "@/lib/esign/flatten-signed-pdf";
 import { stampSignedFormPages, appendCertificatePages } from "@/lib/esign/stamp-completed";
 import { buildCertificatePdf } from "@/lib/esign/certificate-pdf";
 import { persistCompletedEsignBytes } from "@/lib/esign/persist-completed";
 import { sendEsignCompletedEmail } from "@/lib/esign/send-invite-email";
-import { esignKindTitle, esignSignedFileStem, type EsignKind } from "@/lib/esign/types";
+import { esignSignedFileStem } from "@/lib/esign/types";
 import type { EsignClientPrefill } from "@/lib/esign/map-client-prefill";
 import { signerDisplayName } from "@/lib/esign/map-client-prefill";
 import { missingRequiredReviewLabels } from "@/lib/esign/review-fields";
+import { resolveSignToken, signTokenErrorResponse } from "@/lib/esign/resolve-request";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -61,35 +61,21 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient();
-  const { data: row } = await admin
-    .from("esign_requests")
-    .select(
-      "id, client_id, kind, status, signer_name, signer_email, sent_at, sent_by, token_expires_at, viewed_at, viewed_ip, cert_ref, signed_document_id, prefill_snapshot"
-    )
-    .eq("sign_token", token)
-    .maybeSingle();
-
-  if (!row) return NextResponse.json({ error: "Invalid link" }, { status: 404 });
-  const expires = row.token_expires_at ? new Date(row.token_expires_at) : null;
-  if (expires && expires.getTime() < Date.now()) {
-    return NextResponse.json({ error: "This link has expired." }, { status: 410 });
+  const resolved = await resolveSignToken(admin, token, { allowCompleted: true });
+  if (!resolved.ok) {
+    const { message, status } = signTokenErrorResponse(resolved.error);
+    return NextResponse.json({ error: message }, { status });
   }
-  if (row.status === "superseded" || row.status === "revoked") {
-    return NextResponse.json({ error: "This link was replaced. Use the latest email." }, { status: 410 });
-  }
-  if (row.status === "completed" && row.signed_document_id) {
+  const { ctx } = resolved;
+  if (ctx.status === "completed" && ctx.signedDocumentId) {
     return NextResponse.json({ ok: true, alreadyCompleted: true });
   }
 
-  const kind = row.kind as EsignKind;
   const prefill = mergeSignerOverrides(
-    mergeSignerOverrides(
-      await loadEsignPrefill(admin, row.client_id),
-      (row.prefill_snapshot as Record<string, string> | null) ?? null
-    ),
+    mergeSignerOverrides(await loadEsignPrefill(admin, ctx.clientId), ctx.prefillSnapshot),
     body.fields
   );
-  const missing = missingRequiredReviewLabels(kind, {
+  const missing = missingRequiredReviewLabels(ctx.template, {
     ...prefill,
     fullName: String(body.fields?.fullName ?? "").trim() || signerDisplayName(prefill),
   });
@@ -113,70 +99,72 @@ export async function POST(request: Request) {
       user_agent: userAgent,
       intent_accepted_at: signedAt,
     })
-    .eq("id", row.id);
+    .eq("id", ctx.requestId);
 
   await admin.from("esign_events").insert({
-    request_id: row.id,
+    request_id: ctx.requestId,
     event: "signed",
     ip,
     user_agent: userAgent,
-    meta: { auth: "email_link", cert_ref: row.cert_ref },
+    meta: { auth: "email_link", cert_ref: ctx.certRef },
   });
-  const layout = await loadEsignLayout(admin, kind);
+
+  const layout = ctx.fields;
   const signatureFieldIds = Array.isArray(body.signatureFieldIds)
     ? body.signatureFieldIds.filter((id) => typeof id === "string" && id.trim())
     : layout.filter((f) => f.bind === "signature").map((f) => f.id);
   const signedPdf = await flattenSignedPdf({
-    kind,
+    storagePath: ctx.template.storage_path,
     prefill,
     signaturePng,
     signedDate,
     fields: layout,
     signatureFieldIds,
   });
-  const stampedForm = await stampSignedFormPages(signedPdf, row.cert_ref);
+  const stampedForm = await stampSignedFormPages(signedPdf, ctx.certRef ?? "");
   const sha256 = createHash("sha256").update(stampedForm).digest("hex");
 
   let originatorName = "Staff";
   let originatorEmail = "";
-  if (row.sent_by) {
+  if (ctx.sentBy) {
     const { data: sender } = await admin
       .from("profiles")
       .select("full_name, email")
-      .eq("id", row.sent_by)
+      .eq("id", ctx.sentBy)
       .maybeSingle();
     originatorName = String(sender?.full_name ?? "").trim() || "Staff";
     originatorEmail = String(sender?.email ?? "").trim();
   }
 
-  const documentName = esignKindTitle(kind);
+  const documentName = ctx.templateName || "Document";
   const certificatePdf = await buildCertificatePdf({
-    requestId: row.id,
+    requestId: ctx.requestId,
     documentName,
     sha256,
-    createdAt: row.sent_at,
+    createdAt: ctx.sentAt,
     completedAt: signedAt,
     originatorName,
     originatorEmail,
-    signerName: row.signer_name,
-    signerEmail: row.signer_email,
-    viewedAt: row.viewed_at,
-    viewedIp: row.viewed_ip,
+    signerName: ctx.signerName,
+    signerEmail: ctx.signerEmail,
+    viewedAt: ctx.viewedAt,
+    viewedIp: ctx.viewedIp,
     signedAt,
     signedIp: ip,
-    certRef: row.cert_ref,
+    certRef: ctx.certRef ?? "",
     signaturePng,
   });
   const packetPdf = await appendCertificatePages(stampedForm, certificatePdf);
 
   const saved = await persistCompletedEsignBytes({
     admin,
-    requestId: row.id,
-    clientId: row.client_id,
-    kind,
+    requestId: ctx.requestId,
+    clientId: ctx.clientId,
+    behavior: ctx.behavior,
+    templateName: documentName,
     signedPdf: packetPdf,
     sha256,
-    uploadedBy: row.sent_by,
+    uploadedBy: ctx.sentBy,
   });
 
   if (!saved.signedId) {
@@ -186,10 +174,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const fileName = `${esignSignedFileStem(kind)}-signed.pdf`;
+  const fileName = `${esignSignedFileStem(documentName)}-signed.pdf`;
   const mailed = await sendEsignCompletedEmail({
-    to: row.signer_email,
-    signerName: row.signer_name,
+    to: ctx.signerEmail,
+    signerName: ctx.signerName,
     documentTitle: documentName,
     pdf: packetPdf,
     fileName,
@@ -199,7 +187,7 @@ export async function POST(request: Request) {
   }
 
   await admin.from("esign_events").insert({
-    request_id: row.id,
+    request_id: ctx.requestId,
     event: "completed",
     ip,
     user_agent: userAgent,

@@ -1,16 +1,5 @@
 {
   "buildCommand": "npm run vercel-build",
-  "functions": {
-    "app/api/sign/pdf/route.ts": {
-      "includeFiles": "public/esign-templates/**"
-    },
-    "app/api/sign/complete/route.ts": {
-      "includeFiles": "public/esign-templates/**"
-    },
-    "app/api/esign/template-pdf/route.ts": {
-      "includeFiles": "public/esign-templates/**"
-    }
-  },
   "crons": [
     {
       "path": "/api/cron/dispatch-emails",

@@ -5,20 +5,7 @@ import {
   isPoaDocumentType,
   markPoaSignedOnClient,
 } from "@/lib/clients/poa-upload-advance";
-import { documentTypeForKind, esignSignedFileStem, type EsignKind } from "./types";
-
-/** OpenSign webhook leftover — native complete uses persistCompletedEsignBytes. */
-export async function persistCompletedEsign(_args: {
-  admin: SupabaseClient;
-  requestId: string;
-  clientId: string;
-  kind: EsignKind;
-  signedFileUrl: string | null;
-  certificateUrl: string | null;
-}): Promise<{ signedId: string | null; certificateId: string | null }> {
-  console.warn("[esign persist] OpenSign file URLs are no longer imported");
-  return { signedId: null, certificateId: null };
-}
+import { documentTypeForBehavior, esignSignedFileStem } from "./types";
 
 const BUCKET = "client-documents";
 
@@ -66,7 +53,8 @@ export async function persistCompletedEsignBytes(args: {
   admin: SupabaseClient;
   requestId: string;
   clientId: string;
-  kind: EsignKind;
+  behavior: string;
+  templateName: string;
   signedPdf: Uint8Array;
   sha256: string;
   uploadedBy?: string | null;
@@ -97,9 +85,9 @@ export async function persistCompletedEsignBytes(args: {
     (typeof args.uploadedBy === "string" && args.uploadedBy.trim()) ||
     (existing?.sent_by as string | null) ||
     null;
-  const documentType = documentTypeForKind(args.kind);
+  const documentType = documentTypeForBehavior(args.behavior);
   const stamp = Date.now();
-  const label = esignSignedFileStem(args.kind);
+  const label = esignSignedFileStem(args.templateName);
 
   if (!signedId) {
     signedId = await storePdfBytes({

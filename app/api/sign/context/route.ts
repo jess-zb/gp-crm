@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isEsignFeatureEnabled } from "@/lib/esign/config";
-import { loadEsignPrefill, mergeSignerOverrides, loadAdvisorOptions } from "@/lib/esign/load-prefill";
-import { loadEsignLayout } from "@/lib/esign/load-layout";
-import { loadMerchantExtras, mergeMerchantOptions } from "@/lib/constants/merchants";
-import { esignKindTitle, type EsignKind } from "@/lib/esign/types";
+import {
+  loadEsignPrefill,
+  mergeSignerOverrides,
+  loadAdvisorOptions,
+} from "@/lib/esign/load-prefill";
+import { resolveSignToken, signTokenErrorResponse } from "@/lib/esign/resolve-request";
 
 export async function POST(request: Request) {
   if (!isEsignFeatureEnabled()) {
@@ -20,45 +22,33 @@ export async function POST(request: Request) {
   if (!token) return NextResponse.json({ error: "Missing token" }, { status: 400 });
 
   const admin = createAdminClient();
-  const { data } = await admin
-    .from("esign_requests")
-    .select("id, client_id, kind, status, signer_name, signer_email, cert_ref, token_expires_at, prefill_snapshot")
-    .eq("sign_token", token)
-    .maybeSingle();
-  if (!data) return NextResponse.json({ error: "Invalid link" }, { status: 404 });
-  const expires = data.token_expires_at ? new Date(data.token_expires_at) : null;
-  if (expires && expires.getTime() < Date.now()) {
-    return NextResponse.json({ error: "Expired" }, { status: 410 });
+  const resolved = await resolveSignToken(admin, token);
+  if (!resolved.ok) {
+    const { message, status } = signTokenErrorResponse(resolved.error);
+    return NextResponse.json({ error: message }, { status });
   }
-  if (data.status === "superseded" || data.status === "revoked" || data.status === "completed") {
-    return NextResponse.json({ error: "Unavailable" }, { status: 410 });
-  }
+  const { ctx } = resolved;
 
-  const live = await loadEsignPrefill(admin, data.client_id);
   const prefill = mergeSignerOverrides(
-    live,
-    (data.prefill_snapshot as Record<string, string> | null) ?? null
+    await loadEsignPrefill(admin, ctx.clientId),
+    ctx.prefillSnapshot
   );
-  const kind = data.kind as EsignKind;
-  const fields = await loadEsignLayout(admin, kind);
-  const extras = await loadMerchantExtras(admin);
-  const mids = mergeMerchantOptions([
-    ...extras,
-    ...(prefill.mid ? [prefill.mid] : []),
-  ]);
   const advisorOptions = await loadAdvisorOptions(admin, "acct_manager");
   if (prefill.advisor && !advisorOptions.includes(prefill.advisor)) {
     advisorOptions.unshift(prefill.advisor);
   }
+
   return NextResponse.json({
-    kind,
-    signerName: data.signer_name,
-    signerEmail: data.signer_email,
-    certRef: data.cert_ref,
+    templateId: ctx.template.id,
+    signerName: ctx.signerName,
+    signerEmail: ctx.signerEmail,
+    certRef: ctx.certRef,
     prefill,
-    fields,
-    midOptions: mids,
+    fields: ctx.fields,
+    requiredBinds: ctx.template.required_binds ?? [],
+    // The signer sees the MID their file is enrolled under; they never pick it.
+    midOptions: prefill.mid ? [prefill.mid] : [],
     advisorOptions,
-    title: esignKindTitle(kind),
+    title: ctx.templateName,
   });
 }

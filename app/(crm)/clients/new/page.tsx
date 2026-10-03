@@ -10,6 +10,7 @@ import { AddressFields } from "@/components/AddressFields";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 import { enrollWelcomeLeadForNewClientAction } from "./enroll-actions";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
+import { useMids } from "@/lib/hooks/use-mids";
 
 const BRAND_PRIMARY = "#8DE3B5";
 
@@ -45,6 +46,7 @@ const FIELD_ORDER = [
   "state",
   "zip_code",
   "assigned_to",
+  "mid_id",
   "verbal_password",
 ] as const;
 
@@ -55,6 +57,7 @@ export default function NewClientPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [team, setTeam] = useState<TeamOption[]>([]);
+  const { mids, loading: loadingMids } = useMids();
   const [loadingTeam, setLoadingTeam] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -147,6 +150,9 @@ export default function NewClientPage() {
     if (!state.trim()) errors.state = "State is required.";
     if (!zip.trim()) errors.zip_code = "ZIP code is required.";
     if (!assigned_to) errors.assigned_to = "An Account Manager is required.";
+    if (!String(fd.get("mid_id") ?? "").trim()) {
+      errors.mid_id = "A MID is required.";
+    }
 
     const verbal = formData.verbal_password.trim();
     if (!verbal) errors.verbal_password = "Verbal Password is required";
@@ -199,6 +205,7 @@ export default function NewClientPage() {
         state: state.trim() || null,
         zip_code: zip.trim() || null,
         assigned_to: String(fd.get("assigned_to") ?? "").trim(),
+        mid_id: String(fd.get("mid_id") ?? "").trim(),
         stage: "lead" as const,
         is_active: true,
       };
@@ -520,6 +527,37 @@ export default function NewClientPage() {
                 No active Account Managers found.
               </p>
             ) : null}
+          </label>
+
+          <label className="block text-sm" data-field="mid_id">
+            <span className={labelStrong}>
+              MID <span className="text-red-600">*</span>
+            </span>
+            <select
+              name="mid_id"
+              disabled={loadingMids}
+              onChange={() => clearFieldError("mid_id")}
+              className={inputClass("mid_id", Boolean(fieldErrors.mid_id))}
+            >
+              <option value="">Select…</option>
+              {mids.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+            {fieldErrors.mid_id ? (
+              <p className="mt-1 text-xs text-red-600">{fieldErrors.mid_id}</p>
+            ) : null}
+            {mids.length === 0 && !loadingMids ? (
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                No MIDs yet. Add one in Settings → MIDs.
+              </p>
+            ) : null}
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              The client stays on this MID through to attorney hand-off, and it
+              decides which e-sign documents they receive.
+            </p>
           </label>
         </section>
 

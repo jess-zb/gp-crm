@@ -1,12 +1,3 @@
-import { MERCHANT_OPTIONS } from "@/lib/constants/merchants";
-
-/**
- * Built-in merchant/MID list only. Prefer `useMerchantOptions()` (client) or
- * `loadMerchantOptions()` (server) so Dev-added extras from crm_settings are
- * included and A–Z sorted with the rest of the CRM pickers.
- */
-export const PROCESSOR_MID_OPTIONS = MERCHANT_OPTIONS;
-
 /**
  * Processors sweep everything above this to the operating account at end of day.
  * A refund larger than what is left behind means the company eats a fee unless

@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
-import { canManageRingCentral } from "@/lib/roles";
 import { getRoleDisplayName } from "@/lib/utils/roles";
 import { SettingsClient } from "./SettingsClient";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
@@ -31,7 +30,6 @@ export default async function SettingsPage() {
           email={user.email ?? null}
           roleDisplay={getRoleDisplayName(profile.role)}
           showWorkspace={profile.role === "dev" || profile.role === "admin"}
-          showRingCentralConnect={canManageRingCentral(profile.role)}
           isDev={profile.role === "dev"}
         />
       </main>
