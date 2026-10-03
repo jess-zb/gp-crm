@@ -260,7 +260,7 @@ export function Sidebar({
         >
           <Image
             src="/favicon.png"
-            alt="ZB"
+            alt="Golden Pathway"
             width={28}
             height={28}
             className="object-contain"
@@ -275,7 +275,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={onToggleCollapsed}
-          className="hidden w-full shrink-0 items-center justify-center border-t border-[#161616] py-1.5 text-[#6B9E80] transition-colors duration-200 ease-out hover:bg-[#161616] hover:text-white lg:flex"
+          className="hidden w-full shrink-0 items-center justify-center border-t border-white/10 py-1.5 text-[#C8C2B8] transition-colors duration-200 ease-out hover:bg-white/5 hover:text-white lg:flex"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsed}
