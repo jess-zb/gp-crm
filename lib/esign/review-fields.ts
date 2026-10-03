@@ -1,5 +1,9 @@
 import type { EsignClientPrefill } from "./map-client-prefill";
-import { signerDisplayName } from "./map-client-prefill";
+import {
+  formatCityStateZip,
+  formatFullAddress,
+  signerDisplayName,
+} from "./map-client-prefill";
 import { formatUsd, isAmountField, parseUsdNumber } from "./money";
 import { BIND_LABELS, isEsignBindKey, parseLayoutFields, type EsignBindKey } from "./layout";
 import type { EsignTemplateRow } from "./types";
@@ -83,7 +87,24 @@ export function reviewFieldsForTemplate(
   }
 
   // Stable order: identity first, then money, then the card rows in sequence.
-  const topOrder: EsignBindKey[] = ["fullName", "advisor", "mid", "amountAuthorized"];
+  const topOrder: EsignBindKey[] = [
+    "fullName",
+    "firstName",
+    "lastName",
+    "email",
+    "phone",
+    "address",
+    "street",
+    "city",
+    "state",
+    "zip",
+    "cityStateZip",
+    "dateOfBirth",
+    "spouseName",
+    "advisor",
+    "mid",
+    "amountAuthorized",
+  ];
   return out.sort((a, b) => {
     if (a.group !== b.group) return a.group === "top" ? -1 : 1;
     if (a.group === "top") {
@@ -127,6 +148,18 @@ export function reviewValuesFromPrefill(
 ): Record<string, string> {
   return {
     fullName: toTitleCaseName(signerDisplayName(prefill)),
+    firstName: toTitleCaseName(prefill.firstName),
+    lastName: toTitleCaseName(prefill.lastName),
+    email: prefill.email,
+    phone: prefill.phone,
+    street: prefill.street,
+    address: prefill.address.trim() || formatFullAddress(prefill),
+    city: prefill.city,
+    state: prefill.state,
+    zip: prefill.zip,
+    cityStateZip: prefill.cityStateZip.trim() || formatCityStateZip(prefill),
+    dateOfBirth: prefill.dateOfBirth,
+    spouseName: toTitleCaseName(prefill.spouseName),
     advisor: formatAdvisorNameForEsign(prefill.advisor),
     mid: prefill.mid,
     amountAuthorized: formatUsd(prefill.amountAuthorized),
@@ -143,15 +176,39 @@ export function reviewValuesFromPrefill(
   };
 }
 
+/** "Austin, TX 78701" or "Austin TX 78701". Null when it is not that shape. */
+export function splitCityStateZip(
+  raw: string
+): { city: string; state: string; zip: string } | null {
+  const s = raw.trim().replace(/\s+/g, " ");
+  const match = s.match(/^(.+?),?\s+([A-Za-z]{2}),?\s+(\d{5}(?:-\d{4})?)$/);
+  if (!match) return null;
+  const city = match[1].replace(/,$/, "").trim();
+  if (!city) return null;
+  return { city, state: match[2].toUpperCase(), zip: match[3] };
+}
+
 export function snapshotFromReview(
   values: Record<string, string>
 ): Partial<EsignClientPrefill> & { fullName?: string } {
   const fullName = toTitleCaseName(values.fullName ?? "");
   const parts = fullName.split(/\s+/).filter(Boolean);
+  const firstName = toTitleCaseName(values.firstName ?? "") || parts[0] || "";
+  const lastName = toTitleCaseName(values.lastName ?? "") || parts.slice(1).join(" ");
   return {
     fullName,
-    firstName: parts[0] ?? "",
-    lastName: parts.slice(1).join(" "),
+    firstName,
+    lastName,
+    email: values.email ?? "",
+    phone: values.phone ?? "",
+    street: values.street ?? "",
+    address: values.address ?? "",
+    city: values.city ?? "",
+    state: values.state ?? "",
+    zip: values.zip ?? "",
+    cityStateZip: values.cityStateZip ?? "",
+    dateOfBirth: values.dateOfBirth ?? "",
+    spouseName: toTitleCaseName(values.spouseName ?? ""),
     advisor: formatAdvisorNameForEsign(values.advisor ?? ""),
     mid: values.mid ?? "",
     amountAuthorized: formatUsd(values.amountAuthorized ?? ""),

@@ -9,6 +9,7 @@ export type ClientProfilePatch = {
   stage?: string | null;
   poaSignedAt?: string | null;
   hasPoaDocument?: boolean;
+  hasCcAuthorization?: boolean;
 };
 
 export function emitClientProfilePatch(patch: ClientProfilePatch): void {

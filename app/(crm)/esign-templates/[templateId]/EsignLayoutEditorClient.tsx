@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { EsignDocumentBoard } from "@/app/components/esign/EsignDocumentBoard";
 import { BIND_LABELS, type EsignBindKey, type EsignLayoutField } from "@/lib/esign/layout";
+import { mergeSuggestedFields } from "@/lib/esign/suggest-fields";
 
 export function EsignLayoutEditorClient({
   templateId,
@@ -17,8 +18,10 @@ export function EsignLayoutEditorClient({
   backHref: string;
 }) {
   const [fields, setFields] = useState<EsignLayoutField[]>([]);
+  const [ready, setReady] = useState(false);
   const [required, setRequired] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
+  const [suggesting, setSuggesting] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -28,7 +31,8 @@ export function EsignLayoutEditorClient({
         if (Array.isArray(json.fields)) setFields(json.fields);
         if (Array.isArray(json.requiredBinds)) setRequired(json.requiredBinds.map(String));
       })
-      .catch(() => setMessage("Could not load the current placement."));
+      .catch(() => setMessage("Could not load the current placement."))
+      .finally(() => setReady(true));
   }, [templateId]);
 
   const placedBinds = useMemo(() => {
@@ -44,6 +48,37 @@ export function EsignLayoutEditorClient({
     setRequired((prev) =>
       prev.includes(bind) ? prev.filter((b) => b !== bind) : [...prev, bind]
     );
+  }
+
+  async function suggest() {
+    setSuggesting(true);
+    setMessage("");
+    try {
+      const res = await fetch("/api/esign/suggest-fields", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ templateId }),
+      });
+      const json = (await res.json()) as { error?: string; fields?: EsignLayoutField[] };
+      if (!res.ok || !Array.isArray(json.fields)) {
+        setMessage(json.error || "Could not read labels on this PDF.");
+        return;
+      }
+      const merged = mergeSuggestedFields(fields, json.fields);
+      const added = merged.length - fields.length;
+      setFields(merged);
+      setMessage(
+        added
+          ? `Placed ${added} general field${added === 1 ? "" : "s"}. Move or remove any that landed in the wrong spot, drag on anything else, then save.`
+          : json.fields.length
+            ? "Those general fields are already on the page. Drag on anything else, then save."
+            : "No name, address, or similar labels were found. Drag the fields this document needs, then save."
+      );
+    } catch {
+      setMessage("Could not read labels on this PDF.");
+    } finally {
+      setSuggesting(false);
+    }
   }
 
   async function save() {
@@ -78,10 +113,10 @@ export function EsignLayoutEditorClient({
       </p>
       <h1 className="mt-1 text-2xl font-semibold text-slate-900">Place fields · {templateName}</h1>
       <p className="mt-2 text-sm text-slate-600">
-        Drag Name, Account Manager, MID, card last 4, amounts, signature, and date onto the blank
-        lines. Dropping a field opens a confirm box so you can pick what it fills. Drag a placed
-        box to move it. Drag the bottom-right corner to resize — especially signatures, which
-        stamp at the size of that box. Save, then send a new copy for the size to apply.
+        Name, address, email, phone, date, and signature are placed from labels on the PDF when
+        you upload. Use Suggest general fields to scan again. Drag cards, amounts, and anything
+        the scan missed onto the page. Click a box to change what it fills or remove it. Drag a
+        box to move it, and drag the corner to resize. Save, then send a new copy.
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
         <Link className="text-[#161616] underline" href={backHref}>
@@ -89,8 +124,16 @@ export function EsignLayoutEditorClient({
         </Link>
         <button
           type="button"
+          className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-800 disabled:opacity-60"
+          disabled={busy || suggesting || !ready}
+          onClick={() => void suggest()}
+        >
+          {suggesting ? "Scanning…" : "Suggest general fields"}
+        </button>
+        <button
+          type="button"
           className="rounded-lg bg-[#161616] px-3 py-1.5 text-xs font-semibold text-[#A87830] disabled:opacity-60"
-          disabled={busy}
+          disabled={busy || suggesting}
           onClick={() => void save()}
         >
           {busy ? "Saving…" : "Save placement"}

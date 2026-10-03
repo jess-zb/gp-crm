@@ -1,5 +1,5 @@
 ---
-description: Onboarding stage gates — Welcome Packet, CC auth, POA, audio
+description: Onboarding stage gates — CC auth, POA, audio
 globs: lib/workflow/**/*,lib/reminders/workflow-config.ts,app/(crm)/clients/[id]/ClientStageHeader.tsx,app/(crm)/dashboard/**/*
 alwaysApply: false
 ---
@@ -12,15 +12,16 @@ upload requirements.
 
 ## Policy (do not regress)
 
-### Welcome Packet — gate at Account Manager exit
+### Credit card authorization — gate at Account Manager exit
 
-- `blockAdvanceFromAccountManagerWithoutSignedWelcomePacket` blocks
-  **`account_manager` → anything forward** until the Welcome Packet is signed.
-- The signed copy lands as a POA document (`poa_document` / `poa_signed`) or
-  sets `clients.poa_signed_at`, whether it arrived through e-signature or a
-  manual upload, so **both satisfy the gate**. Use `hasSignedPoaOnRecord()`.
-- Blocked advance opens an error modal that links to **Documents → E-Sign**. It
-  never silently fails and never offers a bypass.
+- `blockAdvanceFromAccountManagerWithoutCcAuth` blocks
+  **`account_manager` → anything forward** until a signed CC authorization is
+  on file.
+- A `cc_authorization` document satisfies the gate, whether it arrived through
+  e-signature or a manual upload. Use `hasCcAuthorizationOnRecord()`.
+- Blocked advance opens a dialog with two links: **Documents → E-Sign**, and
+  **Upload** (opens the upload modal with CC Authorization selected). It never
+  silently fails and never offers a bypass.
 - Cancel / disqualify destinations (`retention`, `dnc`, `not_interested`,
   `dnq`, `mortgage`, `closed`) are **never** gated on paperwork.
 
@@ -28,7 +29,7 @@ upload requirements.
 
 - `blockAdvanceFromClientServicesWithoutPoa` covers
   **`client_services` → `awaiting_collection_letter`** only.
-- Same `hasSignedPoaOnRecord()` signal. Do **not** gate on `poa_signed_at`
+- Use `hasSignedPoaOnRecord()`. Do **not** gate on `poa_signed_at`
   alone.
 - POA upload through Documents must call `markPoaSignedOnClient()` so dashboard
   widgets stay aligned with Uploads.
@@ -43,13 +44,12 @@ upload requirements.
   `blockAdvanceFromAccountManagerWithoutAudio` was removed; do not reintroduce
   it without explicit product sign-off.
 
-### CC authorization — informational only
+### CC authorization — dashboard warning
 
-- `cc_authorization` is the bank-required form. **Not** a stage gate.
-- Dev-only dashboard widget lists active funnel clients with no
-  `cc_authorization` document. The card is a warning. It does not stop a
-  stage change. Leaving Account Manager is still gated on a signed Welcome
-  Packet.
+- The Account Manager exit gate above is the stage block.
+- Dev-only dashboard widget still lists active funnel clients with no
+  `cc_authorization` document. That card is a warning list. It does not itself
+  stop a stage change.
 
 ### Retired appointment type
 

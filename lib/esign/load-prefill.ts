@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 import { midNameFromEmbed } from "@/lib/mids/queries";
 import type { EsignClientPrefill } from "./map-client-prefill";
+import { formatCityStateZip, formatFullAddress } from "./map-client-prefill";
 import { formatUsd } from "./money";
 
 export async function loadAdvisorOptions(
@@ -55,6 +56,8 @@ export function emptyPrefill(): EsignClientPrefill {
     zip: "",
     dateOfBirth: "",
     spouseName: "",
+    address: "",
+    cityStateZip: "",
     advisor: "",
     mid: "",
     amountAuthorized: "",
@@ -97,6 +100,8 @@ export async function loadEsignPrefill(
   out.state = String(client.state ?? "").trim();
   out.zip = String(client.zip_code ?? "").trim();
   out.dateOfBirth = formatDob(client.date_of_birth as string | null);
+  out.address = formatFullAddress(out);
+  out.cityStateZip = formatCityStateZip(out);
   out.spouseName =
     String(client.spouse_name ?? "").trim() ||
     `${String(client.spouse_first_name ?? "").trim()} ${String(client.spouse_last_name ?? "").trim()}`.trim();
@@ -137,6 +142,16 @@ export async function loadEsignPrefill(
 const OVERRIDE_KEYS: (keyof EsignClientPrefill)[] = [
   "firstName",
   "lastName",
+  "email",
+  "phone",
+  "street",
+  "address",
+  "city",
+  "state",
+  "zip",
+  "cityStateZip",
+  "dateOfBirth",
+  "spouseName",
   "advisor",
   "amountAuthorized",
   "card1Last4",

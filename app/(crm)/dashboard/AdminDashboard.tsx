@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { getStageConfig } from "@/lib/constants/stages";
 import { formatRelativeTime } from "@/lib/utils/dates";
 import type { AlertClientRow, TeamActivityRow } from "./dashboard-types";
@@ -45,13 +45,11 @@ export function AdminDashboard({
   rnaClients,
   stuckClients,
   missingPoa,
-  emailDispatchDisabled = false,
 }: {
   teamActivity: TeamActivityRow[];
   rnaClients: AlertClientRow[];
   stuckClients: AlertClientRow[];
   missingPoa: AlertClientRow[];
-  emailDispatchDisabled?: boolean;
 }) {
   const hasAlerts =
     (rnaClients?.length ?? 0) > 0 ||
@@ -59,24 +57,6 @@ export function AdminDashboard({
     (missingPoa?.length ?? 0) > 0;
 
   return (
-    <>
-      {emailDispatchDisabled ? (
-        <Link
-          href="/settings"
-          className="mb-4 flex items-start gap-3 rounded-lg border border-red-300 bg-red-50 p-4 transition-colors hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/30 dark:hover:bg-red-950/50"
-        >
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-400" />
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-red-800 dark:text-red-200">
-              Automated drip emails are paused
-            </p>
-            <p className="mt-0.5 text-xs text-red-700 dark:text-red-300">
-              No sequence emails will be sent until re-enabled. Click to open Settings.
-            </p>
-          </div>
-          <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
-        </Link>
-      ) : null}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div className="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="border-b border-slate-100 px-4 py-3 dark:border-[#2E2E2E]">
@@ -161,6 +141,5 @@ export function AdminDashboard({
         </div>
       </div>
       </div>
-    </>
   );
 }

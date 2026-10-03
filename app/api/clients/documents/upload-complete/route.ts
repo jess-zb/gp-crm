@@ -160,7 +160,12 @@ export async function POST(request: Request) {
 
     let successMessage: string | undefined;
     let clientPatch:
-      | { stage: string | null; poaSignedAt: string | null; hasPoaDocument: boolean }
+      | {
+          stage?: string | null;
+          poaSignedAt?: string | null;
+          hasPoaDocument?: boolean;
+          hasCcAuthorization?: boolean;
+        }
       | undefined;
 
     if (isPoaDocumentType(documentType)) {
@@ -201,6 +206,10 @@ export async function POST(request: Request) {
         poaSignedAt,
         hasPoaDocument: true,
       };
+    }
+
+    if (documentType === "cc_authorization") {
+      clientPatch = { ...clientPatch, hasCcAuthorization: true };
     }
 
     if (isCollection) {

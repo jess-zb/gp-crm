@@ -1,9 +1,25 @@
 import type { EsignClientPrefill } from "./map-client-prefill";
-import { signerDisplayName } from "./map-client-prefill";
+import {
+  formatCityStateZip,
+  formatFullAddress,
+  signerDisplayName,
+} from "./map-client-prefill";
 import { formatUsd, isAmountField } from "./money";
 
 export const ESIGN_BIND_KEYS = [
   "fullName",
+  "firstName",
+  "lastName",
+  "email",
+  "phone",
+  "address",
+  "street",
+  "city",
+  "state",
+  "zip",
+  "cityStateZip",
+  "dateOfBirth",
+  "spouseName",
   "advisor",
   "mid",
   "amountAuthorized",
@@ -35,6 +51,18 @@ export type EsignLayoutField = {
 
 export const BIND_LABELS: Record<EsignBindKey, string> = {
   fullName: "Name",
+  firstName: "First name",
+  lastName: "Last name",
+  email: "Email",
+  phone: "Phone",
+  address: "Address",
+  street: "Street",
+  city: "City",
+  state: "State",
+  zip: "ZIP",
+  cityStateZip: "City, State, ZIP",
+  dateOfBirth: "Date of birth",
+  spouseName: "Spouse",
   advisor: "Account Manager",
   mid: "MID",
   amountAuthorized: "Amount authorized",
@@ -59,9 +87,17 @@ export function isEsignBindKey(value: string): value is EsignBindKey {
 export function defaultSizeForBind(bind: EsignBindKey): { wPct: number; hPct: number } {
   if (bind === "signature") return { wPct: 40, hPct: 2.8 };
   if (bind.endsWith("Last4")) return { wPct: 12, hPct: 2.1 };
-  if (bind.endsWith("Amount") || bind === "signedDate") {
+  if (bind === "state") return { wPct: 10, hPct: 2.1 };
+  if (bind === "zip") return { wPct: 14, hPct: 2.1 };
+  if (bind.endsWith("Amount") || bind === "signedDate" || bind === "dateOfBirth") {
     return { wPct: 16, hPct: 2.1 };
   }
+  if (bind === "phone") return { wPct: 22, hPct: 2.2 };
+  if (bind === "city") return { wPct: 18, hPct: 2.2 };
+  if (bind === "address" || bind === "cityStateZip" || bind === "email") {
+    return { wPct: 42, hPct: 2.2 };
+  }
+  if (bind === "street") return { wPct: 40, hPct: 2.2 };
   if (bind === "mid") return { wPct: 36, hPct: 2.2 };
   return { wPct: 32, hPct: 2.2 };
 }
@@ -72,6 +108,10 @@ export function valueForBind(
   signedDate: string
 ): string {
   if (bind === "fullName") return signerDisplayName(prefill);
+  if (bind === "firstName") return prefill.firstName;
+  if (bind === "lastName") return prefill.lastName;
+  if (bind === "address") return prefill.address.trim() || formatFullAddress(prefill);
+  if (bind === "cityStateZip") return prefill.cityStateZip.trim() || formatCityStateZip(prefill);
   if (bind === "signedDate") return signedDate;
   if (bind === "signature") return "";
   const raw = String((prefill as Record<string, string>)[bind] ?? "").trim();

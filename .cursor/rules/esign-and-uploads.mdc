@@ -31,7 +31,11 @@ alwaysApply: false
   rasterising. There is no third-party e-sign provider.
 - Field placement is data-driven: percent-based boxes with a `bind` key from
   `ESIGN_BIND_KEYS`, placed by drag-and-drop in `EsignDocumentBoard` (mode
-  `edit`) and saved as JSON. Never go back to absolute-point field maps.
+  `edit`) and saved as JSON. On upload, general labels (name, address, email,
+  phone, date, signature, and similar) are suggested from the PDF text and
+  saved as the starting placement. Staff still move, remove, and add the rest
+  in the editor. Never go back to absolute-point field maps or a per-document
+  hardcoded layout.
 - `pdfjs-dist` is pinned to `3.11.174` with `canvas: false` aliased in
   `next.config.mjs`. Do not bump it opportunistically.
 - Client `/sign/[token]` and `/api/sign/*` stay public (tokenised). Middleware
@@ -42,9 +46,10 @@ alwaysApply: false
 - Keep `send-invite-email.ts` spam-resistant: plain text + HTML, `reply_to`
   support, brand in the subject, no emojis or all-caps CTAs, visible site and
   full link.
-- The signed Welcome Packet is stored as `poa_signed`, which both satisfies the
-  Account Manager stage gate and drives POA auto-advance. CC Auth must **not**
-  auto-stage. See `.cursor/rules/onboarding-stage-gates.mdc`.
+- The signed Welcome Packet is stored as `poa_signed` and drives POA
+  auto-advance. A signed CC authorization is what gates leaving Account
+  Manager. CC Auth must **not** auto-stage. See
+  `.cursor/rules/onboarding-stage-gates.mdc`.
 - Confirm Before Sending is derived from the fields placed on that template
   intersected with `required_binds`. Empty required fields highlight. Client
   name stamps in Title Case. Account Manager is **first name only**, Title Case.

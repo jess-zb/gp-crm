@@ -11,10 +11,27 @@ import { formatUsd, isAmountField } from "@/lib/esign/money";
 import { usePdfPageImages } from "./usePdfPageImages";
 import { EsignFieldConfirmModal } from "./EsignFieldConfirmModal";
 
-const PALETTE: EsignBindKey[] = [
+const GENERAL_PALETTE: EsignBindKey[] = [
   "fullName",
+  "firstName",
+  "lastName",
+  "email",
+  "phone",
+  "address",
+  "street",
+  "city",
+  "state",
+  "zip",
+  "cityStateZip",
+  "dateOfBirth",
+  "spouseName",
   "advisor",
   "mid",
+  "signedDate",
+  "signature",
+];
+
+const EXTRA_PALETTE: EsignBindKey[] = [
   "amountAuthorized",
   "card1Last4",
   "card1Amount",
@@ -26,9 +43,23 @@ const PALETTE: EsignBindKey[] = [
   "card4Amount",
   "card5Last4",
   "card5Amount",
-  "signedDate",
-  "signature",
 ];
+
+function FieldChip({ bind }: { bind: EsignBindKey }) {
+  return (
+    <button
+      type="button"
+      draggable
+      onDragStart={(e) => {
+        e.dataTransfer.setData("text/esign-bind", bind);
+        e.dataTransfer.effectAllowed = "copy";
+      }}
+      className="rounded-full border border-[#161616]/20 bg-white px-3 py-1 text-xs font-medium text-[#161616]"
+    >
+      {BIND_LABELS[bind]}
+    </button>
+  );
+}
 
 export function EsignDocumentBoard({
   pdfUrl,
@@ -181,19 +212,13 @@ export function EsignDocumentBoard({
           <p className="w-full text-[11px] font-semibold uppercase tracking-wide text-slate-500">
             Drag a field onto the page
           </p>
-          {PALETTE.map((bind) => (
-            <button
-              key={bind}
-              type="button"
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.setData("text/esign-bind", bind);
-                e.dataTransfer.effectAllowed = "copy";
-              }}
-              className="rounded-full border border-[#161616]/20 bg-white px-3 py-1 text-xs font-medium text-[#161616]"
-            >
-              {BIND_LABELS[bind]}
-            </button>
+          <p className="w-full text-[11px] text-slate-500">General</p>
+          {GENERAL_PALETTE.map((bind) => (
+            <FieldChip key={bind} bind={bind} />
+          ))}
+          <p className="w-full text-[11px] text-slate-500">Cards and amounts</p>
+          {EXTRA_PALETTE.map((bind) => (
+            <FieldChip key={bind} bind={bind} />
           ))}
         </div>
       ) : null}

@@ -41,21 +41,28 @@ export function blockAdvanceFromClientServicesWithoutPoa(opts: {
   return { blocked: false };
 }
 
-export const WELCOME_PACKET_GATE_TITLE = "Welcome Packet not signed yet";
+export const CC_AUTH_GATE_TITLE = "Credit card authorization not signed yet";
 
-export const WELCOME_PACKET_GATE_REASON =
-  "This client has not signed the Welcome Packet. Send it for e-signature from Documents, or upload the signed copy there, before moving them out of Account Manager.";
+export const CC_AUTH_GATE_REASON =
+  "This client has not signed the credit card authorization. Send it for e-signature from Documents, or upload the signed copy there, before moving them out of Account Manager.";
+
+/** A filed `cc_authorization` — e-sign completion or a direct upload — satisfies the gate. */
+export function hasCcAuthorizationOnRecord(
+  documentTypes: Iterable<string | null | undefined>
+): boolean {
+  return Array.from(documentTypes).some(
+    (raw) => (raw ?? "").trim().toLowerCase() === "cc_authorization"
+  );
+}
 
 /**
- * Cannot leave Account Manager until the Welcome Packet is signed. The signed
- * copy lands as a POA document (or sets `poa_signed_at`), whether it arrived
- * through e-signature or a manual upload, so both satisfy the gate.
+ * Cannot leave Account Manager for a later pipeline stage until a signed credit
+ * card authorization is on file. Cancel and disqualify destinations stay open.
  */
-export function blockAdvanceFromAccountManagerWithoutSignedWelcomePacket(opts: {
+export function blockAdvanceFromAccountManagerWithoutCcAuth(opts: {
   fromStage: string;
   toStage: string;
-  poaSignedAt?: string | null;
-  hasPoaDocument?: boolean;
+  hasCcAuthorization?: boolean;
 }): StageAdvanceBlock {
   const from = opts.fromStage.trim();
   const to = opts.toStage.trim();
@@ -64,12 +71,9 @@ export function blockAdvanceFromAccountManagerWithoutSignedWelcomePacket(opts: {
     from === "account_manager" &&
     to !== "account_manager" &&
     !isExitFromPipeline(to) &&
-    !hasSignedPoaOnRecord({
-      poaSignedAt: opts.poaSignedAt,
-      hasPoaDocument: opts.hasPoaDocument,
-    })
+    !opts.hasCcAuthorization
   ) {
-    return { blocked: true, reason: WELCOME_PACKET_GATE_REASON };
+    return { blocked: true, reason: CC_AUTH_GATE_REASON };
   }
 
   return { blocked: false };

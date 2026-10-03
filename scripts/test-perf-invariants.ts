@@ -96,9 +96,9 @@ assert.match(persistEsign, /advanceClientAfterPoaUpload/);
 console.log("  ✓ signed Welcome Packet still advances stage and files no shipment");
 
 const stageBlockers = read("lib/workflow/stage-blockers.ts");
-assert.match(stageBlockers, /blockAdvanceFromAccountManagerWithoutSignedWelcomePacket/);
-assert.match(stageHeader, /blockAdvanceFromAccountManagerWithoutSignedWelcomePacket/);
-console.log("  ✓ Account Manager exit is gated on a signed Welcome Packet");
+assert.match(stageBlockers, /blockAdvanceFromAccountManagerWithoutCcAuth/);
+assert.match(stageHeader, /blockAdvanceFromAccountManagerWithoutCcAuth/);
+console.log("  ✓ Account Manager exit is gated on a signed credit card authorization");
 
 assert.match(listQuery, /count:\s*["']exact["']/);
 assert.match(

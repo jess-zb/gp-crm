@@ -13,6 +13,7 @@ import {
   documentTypeForBehavior,
   isEsignBehavior,
 } from "@/lib/esign/types";
+import { suggestFieldsFromPdf } from "@/lib/esign/suggest-template-fields";
 import {
   ESIGN_TEMPLATE_BUCKET,
   ESIGN_TEMPLATE_MAX_BYTES,
@@ -66,7 +67,8 @@ export async function GET(request: Request) {
 
 /**
  * Turn a staged PDF into a document owned by a MID. This is the no-code path:
- * name, behaviour, file. Field placement happens afterwards in the editor.
+ * name, behaviour, file. General labels on the PDF become the starting field
+ * placement; staff finish the rest in the editor.
  */
 export async function POST(request: Request) {
   if (!isEsignFeatureEnabled()) {
@@ -136,6 +138,7 @@ export async function POST(request: Request) {
   }
 
   let pageCount: number | null = null;
+  const suggestBytes = new Uint8Array(bytes);
   try {
     const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
     pageCount = doc.getPageCount();
@@ -143,6 +146,8 @@ export async function POST(request: Request) {
     await bucket.remove([path]);
     return NextResponse.json({ error: "That PDF could not be read." }, { status: 400 });
   }
+
+  const fields = await suggestFieldsFromPdf(suggestBytes);
 
   const templateId = crypto.randomUUID();
   const storagePath = templateStoragePath(mid.slug, templateId);
@@ -160,7 +165,7 @@ export async function POST(request: Request) {
     document_type: documentTypeForBehavior(behavior),
     storage_path: storagePath,
     page_count: pageCount,
-    fields: [],
+    fields,
     required_binds: defaultRequiredBinds(behavior),
     created_by: user.id,
   });
@@ -179,10 +184,16 @@ export async function POST(request: Request) {
 
   await admin.from("audit_log").insert({
     action: "esign_template_created",
-    new_value: { template_id: templateId, mid_id: midId, name, behavior },
+    new_value: {
+      template_id: templateId,
+      mid_id: midId,
+      name,
+      behavior,
+      suggested_fields: fields.length,
+    },
     performed_by: user.id,
     performed_by_name: profile.full_name?.trim() || "Staff",
   });
 
-  return NextResponse.json({ ok: true, templateId });
+  return NextResponse.json({ ok: true, templateId, suggestedCount: fields.length });
 }

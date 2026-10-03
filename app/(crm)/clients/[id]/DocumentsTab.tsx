@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { File, FileImage, FileText, Loader2, Mic, Pencil, Video, X } from "lucide-react";
 import { deleteOwnClientDocument, editClientDocumentNotes } from "./actions";
@@ -82,12 +82,15 @@ export function DocumentsTab({
   uploaderNames,
   canDeleteDocs,
   currentUserId,
+  openCcAuthUpload = false,
 }: {
   clientId: string;
   initialDocuments: DocumentListItem[];
   uploaderNames: Record<string, string>;
   canDeleteDocs: boolean;
   currentUserId: string;
+  /** Open the upload modal with CC Authorization selected. */
+  openCcAuthUpload?: boolean;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -111,6 +114,7 @@ export function DocumentsTab({
 
   const [documents, setDocuments] = useState<DocumentListItem[]>(initialDocuments);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const openedCcAuthUpload = useRef(false);
 
   const fetchDocuments = useCallback(async () => {
     const supabase = createClient();
@@ -206,7 +210,18 @@ export function DocumentsTab({
   const closeUploadModal = useCallback(() => {
     setModalOpen(false);
     resetForm();
-  }, [resetForm]);
+    if (openedCcAuthUpload.current) {
+      openedCcAuthUpload.current = false;
+      router.replace(`/clients/${clientId}?tab=documents`);
+    }
+  }, [resetForm, router, clientId]);
+
+  useEffect(() => {
+    if (!openCcAuthUpload || openedCcAuthUpload.current) return;
+    openedCcAuthUpload.current = true;
+    setDocType("cc_authorization");
+    setModalOpen(true);
+  }, [openCcAuthUpload]);
 
   useEffect(() => {
     if (!modalOpen) return;
@@ -259,7 +274,7 @@ export function DocumentsTab({
       if (effectiveType === "collection_letter") {
         await fetchDocuments();
         router.refresh();
-      } else if (isPoaDocumentType(effectiveType) && clientPatch) {
+      } else if (clientPatch && (isPoaDocumentType(effectiveType) || effectiveType === "cc_authorization")) {
         emitClientProfilePatch({ clientId, ...clientPatch });
       }
     } catch (e) {
@@ -628,10 +643,7 @@ export function DocumentsTab({
                 <button
                   type="button"
                   disabled={uploading}
-                  onClick={() => {
-                    setModalOpen(false);
-                    resetForm();
-                  }}
+                  onClick={closeUploadModal}
                   className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
                 >
                   Cancel

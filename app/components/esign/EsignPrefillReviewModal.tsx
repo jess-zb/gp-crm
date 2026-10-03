@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { Loader2, X } from "lucide-react";
 import type { EsignTemplateRow } from "@/lib/esign/types";
 import type { EsignClientPrefill } from "@/lib/esign/map-client-prefill";
+import { formatCityStateZip, formatFullAddress } from "@/lib/esign/map-client-prefill";
 import {
   missingRequiredReviewFields,
   reviewFieldsForTemplate,
   reviewValuesFromPrefill,
   snapshotFromReview,
+  splitCityStateZip,
   formatAdvisorNameForEsign,
   toTitleCaseName,
 } from "@/lib/esign/review-fields";
@@ -79,6 +81,23 @@ export function EsignPrefillReviewModal({
   function setField(key: string, value: string) {
     setValues((prev) => {
       const next = { ...prev, [key]: value };
+      if (key === "fullName") {
+        const parts = value.trim().split(/\s+/).filter(Boolean);
+        next.firstName = parts[0] ?? "";
+        next.lastName = parts.slice(1).join(" ");
+      } else if (key === "firstName" || key === "lastName") {
+        next.fullName = `${next.firstName} ${next.lastName}`.replace(/\s+/g, " ").trim();
+      }
+      if (key === "street" || key === "city" || key === "state" || key === "zip") {
+        const parts = {
+          street: next.street ?? "",
+          city: next.city ?? "",
+          state: next.state ?? "",
+          zip: next.zip ?? "",
+        };
+        next.cityStateZip = formatCityStateZip(parts);
+        next.address = formatFullAddress(parts);
+      }
       if (isAmountField(key)) {
         const total = [1, 2, 3, 4, 5]
           .map((n) => parseUsdNumber(next[`card${n}Amount`] || "") || 0)
@@ -167,7 +186,32 @@ export function EsignPrefillReviewModal({
         value={value}
         onChange={(e) => setField(field.key, e.target.value)}
         onBlur={(e) => {
-          if (field.key === "fullName") setField(field.key, toTitleCaseName(e.target.value));
+          if (
+            field.key === "fullName" ||
+            field.key === "firstName" ||
+            field.key === "lastName" ||
+            field.key === "spouseName"
+          ) {
+            setField(field.key, toTitleCaseName(e.target.value));
+          }
+          if (field.key === "cityStateZip") {
+            const parsed = splitCityStateZip(e.target.value);
+            if (!parsed) return;
+            setValues((prev) => {
+              const parts = {
+                street: prev.street ?? "",
+                city: parsed.city,
+                state: parsed.state,
+                zip: parsed.zip,
+              };
+              return {
+                ...prev,
+                ...parts,
+                cityStateZip: formatCityStateZip(parts),
+                address: formatFullAddress(parts),
+              };
+            });
+          }
         }}
       />
     );

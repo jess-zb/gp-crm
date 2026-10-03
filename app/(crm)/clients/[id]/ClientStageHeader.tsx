@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -9,6 +8,7 @@ import {
   Loader2,
   PenLine,
   Search,
+  Upload,
   UserCheck,
   X,
 } from "lucide-react";
@@ -35,9 +35,9 @@ import {
 } from "./stage-entry-actions";
 import { buildSearchQuery } from "@/lib/clients/client-search";
 import {
-  blockAdvanceFromAccountManagerWithoutSignedWelcomePacket,
+  blockAdvanceFromAccountManagerWithoutCcAuth,
   blockAdvanceFromClientServicesWithoutPoa,
-  WELCOME_PACKET_GATE_TITLE,
+  CC_AUTH_GATE_TITLE,
 } from "@/lib/workflow/stage-blockers";
 import {
   getStageDropdownOptionLabel,
@@ -166,6 +166,7 @@ export function ClientStageHeader({
   viewerDept,
   poaSignedAt: poaSignedAtFromServer,
   hasPoaDocument: hasPoaDocumentFromServer,
+  hasCcAuthorization: hasCcAuthorizationFromServer,
   refundPrefill,
 }: {
   displayName: string;
@@ -186,6 +187,8 @@ export function ClientStageHeader({
   poaSignedAt?: string | null;
   /** POA document already on file (Uploads tab) */
   hasPoaDocument?: boolean;
+  /** Signed CC authorization on file (e-sign or a direct upload) */
+  hasCcAuthorization?: boolean;
   /** Starting values for the Refund Requested fields, derived from the client's cards. */
   refundPrefill?: RefundPrefill;
 }) {
@@ -195,23 +198,26 @@ export function ClientStageHeader({
   const [stage, setStage] = useState(stageFromServer);
   const [poaSignedAt, setPoaSignedAt] = useState(poaSignedAtFromServer);
   const [hasPoaDocument, setHasPoaDocument] = useState(hasPoaDocumentFromServer);
+  const [hasCcAuthorization, setHasCcAuthorization] = useState(hasCcAuthorizationFromServer);
 
   useEffect(() => {
     setStage(stageFromServer);
     setPoaSignedAt(poaSignedAtFromServer);
     setHasPoaDocument(hasPoaDocumentFromServer);
-  }, [stageFromServer, poaSignedAtFromServer, hasPoaDocumentFromServer]);
+    setHasCcAuthorization(hasCcAuthorizationFromServer);
+  }, [stageFromServer, poaSignedAtFromServer, hasPoaDocumentFromServer, hasCcAuthorizationFromServer]);
 
   useEffect(() => {
     return subscribeClientProfilePatch(clientId, (patch) => {
       if (patch.stage !== undefined) setStage(patch.stage);
       if (patch.poaSignedAt !== undefined) setPoaSignedAt(patch.poaSignedAt);
       if (patch.hasPoaDocument !== undefined) setHasPoaDocument(patch.hasPoaDocument);
+      if (patch.hasCcAuthorization !== undefined) setHasCcAuthorization(patch.hasCcAuthorization);
     });
   }, [clientId]);
   const suppressDropdownRevert = useRef(false);
   const [loading, setLoading] = useState<"advance" | "back" | null>(null);
-  const [welcomePacketGate, setWelcomePacketGate] = useState<string | null>(null);
+  const [ccAuthGate, setCcAuthGate] = useState<string | null>(null);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [showCancelReasonModal, setShowCancelReasonModal] = useState(false);
   const [cancelReasonBackToConfirm, setCancelReasonBackToConfirm] =
@@ -341,14 +347,13 @@ export function ClientStageHeader({
     }
 
     if (forward) {
-      const gate = blockAdvanceFromAccountManagerWithoutSignedWelcomePacket({
+      const gate = blockAdvanceFromAccountManagerWithoutCcAuth({
         fromStage: oldS,
         toStage: newStage,
-        poaSignedAt: poaSignedAt ?? null,
-        hasPoaDocument: hasPoaDocument ?? false,
+        hasCcAuthorization: hasCcAuthorization ?? false,
       });
       if (gate.blocked) {
-        setWelcomePacketGate(gate.reason ?? null);
+        setCcAuthGate(gate.reason ?? null);
         suppressDropdownRevert.current = false;
         return false;
       }
@@ -1195,11 +1200,11 @@ export function ClientStageHeader({
         </ModalOverlay>
       ) : null}
 
-      {welcomePacketGate ? (
+      {ccAuthGate ? (
         <ModalOverlay
-          labelledBy="welcome-packet-gate-title"
+          labelledBy="cc-auth-gate-title"
           className="z-[200] bg-black/40"
-          onBackdropClick={() => setWelcomePacketGate(null)}
+          onBackdropClick={() => setCcAuthGate(null)}
         >
           <div className="crm-modal-panel w-full max-w-sm">
             <div className="mb-2 flex items-start gap-2">
@@ -1208,31 +1213,47 @@ export function ClientStageHeader({
                 aria-hidden
               />
               <h3
-                id="welcome-packet-gate-title"
+                id="cc-auth-gate-title"
                 className="text-lg font-bold text-gray-900 dark:text-white"
               >
-                {WELCOME_PACKET_GATE_TITLE}
+                {CC_AUTH_GATE_TITLE}
               </h3>
             </div>
             <p className="mb-6 text-sm text-gray-500 dark:text-slate-400">
-              {welcomePacketGate}
+              {ccAuthGate}
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-2">
               <button
                 type="button"
-                onClick={() => setWelcomePacketGate(null)}
-                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
+                onClick={() => {
+                  setCcAuthGate(null);
+                  router.push(`/clients/${clientId}?tab=documents#esign`);
+                }}
+                className="flex items-center justify-center gap-2 rounded-lg bg-[#A87830] py-2.5 text-sm font-medium text-[#161616] hover:bg-[#8C6428]"
+              >
+                <PenLine className="h-4 w-4" aria-hidden />
+                Documents → E-Sign
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCcAuthGate(null);
+                  router.push(
+                    `/clients/${clientId}?tab=documents&upload=cc_authorization`
+                  );
+                }}
+                className="flex items-center justify-center gap-2 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
+              >
+                <Upload className="h-4 w-4" aria-hidden />
+                Upload CC Authorization
+              </button>
+              <button
+                type="button"
+                onClick={() => setCcAuthGate(null)}
+                className="rounded-lg py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
               >
                 Close
               </button>
-              <Link
-                href={`/clients/${clientId}?tab=documents`}
-                onClick={() => setWelcomePacketGate(null)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#A87830] py-2.5 text-sm font-medium text-[#161616] hover:bg-[#8C6428]"
-              >
-                <PenLine className="h-4 w-4" aria-hidden />
-                Go to E-Sign
-              </Link>
             </div>
           </div>
         </ModalOverlay>

@@ -21,9 +21,10 @@ export type UploadClientDocumentResult = {
   warning?: string;
   successMessage?: string;
   clientPatch?: {
-    stage: string | null;
-    poaSignedAt: string | null;
-    hasPoaDocument: boolean;
+    stage?: string | null;
+    poaSignedAt?: string | null;
+    hasPoaDocument?: boolean;
+    hasCcAuthorization?: boolean;
   };
 };
 

@@ -30,7 +30,7 @@
 
 import { PIPELINE_STAGE_ORDER } from "@/lib/constants/stages";
 import {
-  blockAdvanceFromAccountManagerWithoutSignedWelcomePacket,
+  blockAdvanceFromAccountManagerWithoutCcAuth,
   blockAdvanceFromClientServicesWithoutPoa,
 } from "@/lib/workflow/stage-blockers";
 
@@ -603,6 +603,7 @@ export function shouldAutoCompleteTask(
 export type StageAdvanceClient = {
   poa_signed_at?: string | null;
   hasPoaDocument?: boolean;
+  hasCcAuthorization?: boolean;
 };
 
 /**
@@ -622,14 +623,13 @@ export function canAdvanceStage(
   });
   if (poa.blocked) return { ok: false, reason: poa.reason };
 
-  const welcomePacket = blockAdvanceFromAccountManagerWithoutSignedWelcomePacket({
+  const ccAuth = blockAdvanceFromAccountManagerWithoutCcAuth({
     fromStage,
     toStage,
-    poaSignedAt: client.poa_signed_at,
-    hasPoaDocument: client.hasPoaDocument,
+    hasCcAuthorization: client.hasCcAuthorization,
   });
-  if (welcomePacket.blocked) {
-    return { ok: false, reason: welcomePacket.reason };
+  if (ccAuth.blocked) {
+    return { ok: false, reason: ccAuth.reason };
   }
 
   // Future: scan open reminders with blocksStageAdvance for this client (requires query layer).

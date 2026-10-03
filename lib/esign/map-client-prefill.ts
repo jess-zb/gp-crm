@@ -11,6 +11,10 @@ export type EsignClientPrefill = {
   zip: string;
   dateOfBirth: string;
   spouseName: string;
+  /** One-line mailing address. Filled from street, city, state, and ZIP. */
+  address: string;
+  /** "City, ST ZIP". Filled from those three parts. */
+  cityStateZip: string;
   advisor: string;
   mid: string;
   amountAuthorized: string;
@@ -30,11 +34,32 @@ export function signerDisplayName(client: EsignClientPrefill): string {
   return `${client.firstName} ${client.lastName}`.trim();
 }
 
+export function formatCityStateZip(client: {
+  city: string;
+  state: string;
+  zip: string;
+}): string {
+  const city = client.city.trim();
+  const state = client.state.trim();
+  const zip = client.zip.trim();
+  const tail = [state, zip].filter(Boolean).join(" ");
+  return [city, tail].filter(Boolean).join(", ");
+}
+
+/** "1 Main St, Austin, TX 78701" */
+export function formatFullAddress(client: {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+}): string {
+  const street = client.street.trim();
+  const cityLine = formatCityStateZip(client);
+  return [street, cityLine].filter(Boolean).join(", ");
+}
+
 function fullAddress(client: EsignClientPrefill): string {
-  return [client.street, client.city, client.state, client.zip]
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .join(", ");
+  return formatFullAddress(client);
 }
 
 function norm(name: string): string {

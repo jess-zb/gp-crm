@@ -95,7 +95,10 @@ export async function flattenSignedPdf(args: {
     const stamped =
       field.bind === "advisor"
         ? formatAdvisorNameForEsign(raw)
-        : field.bind === "fullName"
+        : field.bind === "fullName" ||
+            field.bind === "firstName" ||
+            field.bind === "lastName" ||
+            field.bind === "spouseName"
           ? toTitleCaseName(raw)
           : raw;
     drawFitted(

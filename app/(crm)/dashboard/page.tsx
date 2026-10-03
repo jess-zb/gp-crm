@@ -102,7 +102,6 @@ export default async function DashboardPage() {
   let rnaClients: AlertClientRow[] = [];
   let stuckClients: AlertClientRow[] = [];
   let missingPoa: AlertClientRow[] = [];
-  let emailDispatchDisabled = false;
 
   let missingCcAuth: DashboardClientRow[] = [];
 
@@ -171,13 +170,6 @@ export default async function DashboardPage() {
     rnaClients = (rnaRes.data ?? []) as AlertClientRow[];
     stuckClients = (stuckRes.data ?? []) as AlertClientRow[];
     missingPoa = (missingPoaRes.data ?? []) as AlertClientRow[];
-
-    const { data: dispatchSetting } = await admin
-      .from("crm_settings")
-      .select("value")
-      .eq("key", "email_sequences_enabled")
-      .maybeSingle();
-    emailDispatchDisabled = dispatchSetting?.value !== "true";
   }
 
   if (isDev) {
@@ -301,7 +293,6 @@ export default async function DashboardPage() {
             rnaClients={rnaClients}
             stuckClients={stuckClients}
             missingPoa={missingPoa}
-            emailDispatchDisabled={emailDispatchDisabled}
           />
         ) : null}
 

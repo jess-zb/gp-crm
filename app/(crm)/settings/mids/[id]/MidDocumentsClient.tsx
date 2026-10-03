@@ -108,17 +108,23 @@ export function MidDocumentsClient({
           fileSize: file.size,
         }),
       });
-      const doneJson = (await doneRes.json()) as { error?: string; templateId?: string };
+      const doneJson = (await doneRes.json()) as {
+        error?: string;
+        templateId?: string;
+        suggestedCount?: number;
+      };
       if (!doneRes.ok || !doneJson.templateId) {
         toast.error(toUserFacingError(doneJson.error || "Could not save the document"));
         return;
       }
 
-      toast.success(`${cleanName} added`);
-      setName("");
-      setHint("");
-      setFile(null);
-      router.refresh();
+      const placed = doneJson.suggestedCount ?? 0;
+      toast.success(
+        placed > 0
+          ? `${cleanName} added. ${placed} general field${placed === 1 ? "" : "s"} placed — adjust them, then save.`
+          : `${cleanName} added. Drag on the fields this document needs, then save.`
+      );
+      router.push(`/esign-templates/${doneJson.templateId}`);
     } catch (err) {
       toast.error(toUserFacingError(err instanceof Error ? err.message : "Could not upload"));
     } finally {
@@ -135,8 +141,9 @@ export function MidDocumentsClient({
           Add a document
         </h2>
         <p className="mt-1 text-[13px] text-slate-600 dark:text-slate-400">
-          {midName} clients will see this document and no others. Place the fields
-          after the PDF is saved.
+          {midName} clients will see this document and no others. Name, address, and
+          similar labels are placed automatically. You can move those and add anything
+          else after the PDF is saved.
         </p>
         <form onSubmit={(e) => void onAdd(e)} className="mt-3 space-y-3">
           <label className="block text-sm">

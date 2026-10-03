@@ -1,0 +1,12 @@
+---
+description: Read and update the CRM product memory in BRAIN.md
+alwaysApply: true
+---
+
+# CRM memory
+
+Product decisions live in `BRAIN.md` at the repo root.
+
+- Read it before changing stage gates, e-sign, documents, or client-facing behavior.
+- When a decision is settled, append a short dated entry. Do not delete earlier entries; mark one superseded if it changes.
+- Files in `.cursor/rules/` enforce the locked invariants. `BRAIN.md` records why, and anything newer that those rules do not cover yet.

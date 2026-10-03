@@ -3,7 +3,11 @@
  * Run: npm run test:stage-poa-gate
  */
 import assert from "node:assert/strict";
-import { blockAdvanceFromClientServicesWithoutPoa } from "../lib/workflow/stage-blockers";
+import {
+  blockAdvanceFromAccountManagerWithoutCcAuth,
+  blockAdvanceFromClientServicesWithoutPoa,
+  hasCcAuthorizationOnRecord,
+} from "../lib/workflow/stage-blockers";
 import {
   hasSignedPoaOnRecord,
   poaAdvanceAlreadyApplied,
@@ -76,5 +80,49 @@ assert.equal(shouldAttemptPoaAdvance("account_manager"), true);
 assert.equal(shouldAttemptPoaAdvance("client_services"), true);
 assert.equal(shouldAttemptPoaAdvance("awaiting_collection_letter"), false);
 console.log("  ✓ POA auto-advance helpers only cover AM + CS");
+
+assert.equal(hasCcAuthorizationOnRecord(["upload", "cc_authorization"]), true);
+assert.equal(hasCcAuthorizationOnRecord(["poa_signed"]), false);
+assert.equal(
+  blockAdvanceFromAccountManagerWithoutCcAuth({
+    fromStage: "account_manager",
+    toStage: "client_services",
+    hasCcAuthorization: false,
+  }).blocked,
+  true
+);
+assert.equal(
+  blockAdvanceFromAccountManagerWithoutCcAuth({
+    fromStage: "account_manager",
+    toStage: "awaiting_collection_letter",
+    hasCcAuthorization: false,
+  }).blocked,
+  true
+);
+assert.equal(
+  blockAdvanceFromAccountManagerWithoutCcAuth({
+    fromStage: "account_manager",
+    toStage: "client_services",
+    hasCcAuthorization: true,
+  }).blocked,
+  false
+);
+assert.equal(
+  blockAdvanceFromAccountManagerWithoutCcAuth({
+    fromStage: "account_manager",
+    toStage: "dnc",
+    hasCcAuthorization: false,
+  }).blocked,
+  false
+);
+assert.equal(
+  blockAdvanceFromAccountManagerWithoutCcAuth({
+    fromStage: "client_services",
+    toStage: "awaiting_collection_letter",
+    hasCcAuthorization: false,
+  }).blocked,
+  false
+);
+console.log("  ✓ Account Manager exit requires a signed CC authorization");
 
 console.log("\nAll POA stage gate checks passed.");

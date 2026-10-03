@@ -10,6 +10,7 @@ import {
   canViewAssignedAttorneyField,
 } from "@/lib/roles";
 import { isPoaDocumentTypeForCs } from "@/lib/clients/cs-checklist";
+import { hasCcAuthorizationOnRecord } from "@/lib/workflow/stage-blockers";
 import {
   fetchCsChecklistForClient,
   shouldShowCsChecklistCard,
@@ -131,7 +132,7 @@ const CLIENT_SELECT = [
 type ClientPageProps = {
   /** Next.js 15 may pass Promises for dynamic segment props. */
   params: Promise<{ id: string }> | { id: string };
-  searchParams: Promise<{ tab?: string }> | { tab?: string };
+  searchParams: Promise<{ tab?: string; upload?: string }> | { tab?: string; upload?: string };
 };
 
 export default async function ClientProfilePage({
@@ -417,6 +418,10 @@ export default async function ClientProfilePage({
   const hasPoaDocument = docs.some((d) =>
     isPoaDocumentTypeForCs(d.document_type)
   );
+  const hasCcAuthorization = hasCcAuthorizationOnRecord(
+    docs.map((d) => d.document_type)
+  );
+  const openCcAuthUpload = sp.upload === "cc_authorization";
   const documentsForDocumentsTab: DocumentListItem[] = docs.map((d) => ({
     id: d.id,
     file_name: d.file_name,
@@ -687,6 +692,7 @@ export default async function ClientProfilePage({
         }}
         poaSignedAt={(c.poa_signed_at as string | null) ?? null}
         hasPoaDocument={hasPoaDocument}
+        hasCcAuthorization={hasCcAuthorization}
         refundPrefill={refundPrefillFromCards(
           (cardsRaw ?? []) as {
             charge_amount_cents?: number | null;
@@ -736,6 +742,7 @@ export default async function ClientProfilePage({
                   />
                 ) : null}
                 <DocumentsTab
+                  openCcAuthUpload={openCcAuthUpload}
                   key={`${clientId}-docs-${documentsForDocumentsTab.length}-${String(
                     c.updated_at ?? ""
                   )}`}

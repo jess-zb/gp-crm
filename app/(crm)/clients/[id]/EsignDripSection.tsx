@@ -220,7 +220,10 @@ export function EsignDripSection({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+    <div
+      id="esign"
+      className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
+    >
       <div className="mb-3 flex items-center gap-2">
         <PenLine className="h-3.5 w-3.5 text-[#A87830]" aria-hidden />
         <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
