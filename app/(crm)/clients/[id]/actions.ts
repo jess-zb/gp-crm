@@ -48,7 +48,7 @@ export type ClientActionResult =
   | { ok: false; error: string };
 
 const ESIGN_FILE_DELETE_ERROR =
-  "This is a signed eSign file. Send a new copy from Packets if you need to replace it.";
+  "This is a signed e-sign file. Send a new copy from Documents if you need to replace it.";
 
 async function isEsignProtectedDocument(docId: string): Promise<boolean> {
   const admin = createAdminClient();

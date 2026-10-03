@@ -172,7 +172,7 @@ You''re about a month in—great job staying consistent.
 Remember:
 - Ignore phone calls from creditors (don''t engage).
 - Forward any emails, texts, or letters to me.
-- Your Welcome packet may take up to 10 days (if you haven''t received it, call (888) 807-4221).
+- If you still need to sign your Welcome Packet, use the link we emailed you (or call 928-433-8408).
 
 Need anything right now? Hit reply—we''re here.
 

@@ -7,7 +7,7 @@ Custom case management system for Zero Balance, LLC — debt invalidation and ve
 - **Frontend**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
 - **Database + Auth**: Hosted Postgres with authenticated API access
 - **Hosting**: Your chosen Node-compatible host
-- **Integrations**: DocuSign, FedEx, RingCentral
+- **Integrations**: email via Resend. E-sign is built into the CRM.
 
 ---
 
@@ -145,7 +145,7 @@ useful for spotting drift.
 
 1. **Lead** — initial intake
 2. **Compliance Verification** — collecting ID, client information, recordings
-3. **Account Manager** — follow up appointments and adding to FedEx list
+3. **Account Manager** — follow up appointments and sending the Welcome Packet to sign
 4. **Client Services** — assigned CSR, agreement signed
 5. **Awaiting Collection Letter** — client uploads evidence
 6. **Case Sent to Attorneys** — auto-triggered on collection letter upload

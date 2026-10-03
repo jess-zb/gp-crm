@@ -20,7 +20,7 @@ export default function Active4Email({ client, accountManager, portalUrl, unsubs
         Remember:
         <br />- Ignore phone calls from creditors (don't engage).
         <br />- Forward any emails, texts, or letters to me.
-        <br />- Your Welcome packet may take up to 10 days (if you haven't received it, call {SUPPORT_PHONE}).
+        <br />- If you still need to sign your Welcome Packet, use the link we emailed you (or call {SUPPORT_PHONE}).
       </Text>
 
       <Text>Need anything right now? Hit reply—we're here.</Text>

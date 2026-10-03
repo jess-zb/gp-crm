@@ -13,7 +13,7 @@ in the add-appointment UI for **manual** use. Templates stay in
 ## Auto-create that stays on
 
 - **CS Intro Call** when the client enters Client Services
-- **POA Follow Up** when FedEx marks the packet delivered
+- **POA Follow Up** is a manual appointment type. Nothing creates it from a delivery scan.
 
 ## Off (flags / inactive templates, not deleted)
 

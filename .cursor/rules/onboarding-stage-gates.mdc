@@ -19,7 +19,7 @@ upload requirements.
 - The signed copy lands as a POA document (`poa_document` / `poa_signed`) or
   sets `clients.poa_signed_at`, whether it arrived through e-signature or a
   manual upload, so **both satisfy the gate**. Use `hasSignedPoaOnRecord()`.
-- Blocked advance opens an error modal that links to **Packets → E-Sign**. It
+- Blocked advance opens an error modal that links to **Documents → E-Sign**. It
   never silently fails and never offers a bypass.
 - Cancel / disqualify destinations (`retention`, `dnc`, `not_interested`,
   `dnq`, `mortgage`, `closed`) are **never** gated on paperwork.
@@ -47,7 +47,9 @@ upload requirements.
 
 - `cc_authorization` is the bank-required form. **Not** a stage gate.
 - Dev-only dashboard widget lists active funnel clients with no
-  `cc_authorization` document — tracking only.
+  `cc_authorization` document. The card is a warning. It does not stop a
+  stage change. Leaving Account Manager is still gated on a signed Welcome
+  Packet.
 
 ### Retired appointment type
 

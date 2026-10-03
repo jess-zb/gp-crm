@@ -296,7 +296,7 @@ export default async function DashboardPage() {
         {isDev ? (
           <DashboardClientTable
             title="Missing CC Authorization"
-            subtitle="Informational only — does not block packet send or stage advance"
+            subtitle="A warning only. A missing card authorization does not stop a stage change. Leaving Account Manager still requires a signed Welcome Packet."
             clients={missingCcAuth}
             emptyMessage="All active funnel clients have CC authorization on file ✓"
             columns={["name", "phone", "days_in_stage"]}
