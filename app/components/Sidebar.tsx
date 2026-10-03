@@ -9,6 +9,7 @@ import {
   ChevronRight,
   GitBranch,
   LogOut,
+  BookOpen,
   Mail,
   Scale,
 } from "lucide-react";
@@ -322,6 +323,15 @@ export function Sidebar({
               "Drip Backfill",
               Mail,
               pathname.startsWith("/admin/drip-backfill"),
+              true
+            )
+          : null}
+        {role !== "attorney"
+          ? renderLink(
+              "/knowledge-base",
+              "Knowledge Base",
+              BookOpen,
+              isNavActive(pathname, "/knowledge-base"),
               true
             )
           : null}
