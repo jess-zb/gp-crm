@@ -136,7 +136,7 @@ BEGIN
 
     FOR seq IN
       SELECT * FROM email_sequences
-      WHERE trigger_status = NEW.stage
+      WHERE trigger_status = NEW.stage::text
         AND trigger_type = 'status'
         AND is_active = true
     LOOP
