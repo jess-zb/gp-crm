@@ -4,13 +4,15 @@ globs: lib/esign/**/*,app/api/esign/**/*,app/api/sign/**/*,app/sign/**/*,app/(cr
 alwaysApply: false
 ---
 
-# Uploads, locked files, and e-sign
+# Documents tab, locked files, and e-sign
 
-## Uploads
+## Documents
 
-- There is no Letters tab. Collection letters live on **Uploads**, grouped by
-  type (`collection_letter` or `is_collection_letter`).
-- `?tab=letters` must keep redirecting to Uploads.
+- Uploads and Packets are one tab named **Documents**. E-Sign is the first
+  section; uploaded files are the section under it. Collection letters stay in
+  the uploads section, grouped by type (`collection_letter` or
+  `is_collection_letter`).
+- `?tab=letters` and `?tab=packets` both redirect to `?tab=documents`.
 
 ## Delete lock
 
@@ -43,22 +45,15 @@ alwaysApply: false
 - The signed Welcome Packet is stored as `poa_signed`, which both satisfies the
   Account Manager stage gate and drives POA auto-advance. CC Auth must **not**
   auto-stage. See `.cursor/rules/onboarding-stage-gates.mdc`.
-- Required review fields (`lib/esign/review-fields.ts`): CC Auth — Name,
-  Account Manager, MID, Card 1 last 4, Card 1 amount. Amount authorized stays
-  optional (it totals from the card amounts). Welcome Packet — MID only.
-  Cards 2–5 stay optional. Empty required fields highlight when Confirm Before
-  Sending opens. Client name stamps in Title Case. Account Manager is **first
-  name only**, Title Case.
-
-### Planned: MID-scoped templates
-
-Documents are being moved from the hardcoded `EsignKind` union to rows in
-`esign_templates`, owned by a MID. The hard requirement is that adding a MID and
-its documents stays **fully no-code**: an admin enters a MID name, uploads PDFs,
-and places fields in the existing editor. When that lands, delete the `EsignKind`
-union, `defaultLayoutForKind`, the bundled PDFs under `lib/esign/templates/` and
-`public/esign-templates/`, and the matching `next.config.mjs` /`vercel.json`
-bundling entries. Do not add a new hardcoded kind in the meantime.
+- Confirm Before Sending is derived from the fields placed on that template
+  intersected with `required_binds`. Empty required fields highlight. Client
+  name stamps in Title Case. Account Manager is **first name only**, Title Case.
+- A document is a row in `esign_templates`, owned by a MID. A client profile
+  lists only that client's MID. Adding a MID and its PDFs is no-code: Settings
+  → MIDs, upload, then place fields. Do not add a hardcoded document kind.
+- Template PDFs live in the `esign-templates` storage bucket at
+  `{midSlug}/{templateId}.pdf`. Nothing is bundled into the serverless
+  functions. `lib/esign/templates/*.pdf` is only the Golden Pathway seed source.
 
 ## Attorney portal
 

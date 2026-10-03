@@ -18,7 +18,7 @@ export default function ClientProfileLoading() {
 
         {/* Tabs */}
         <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-[#1a3550]">
-          {["Account", "Uploads", "Packets", "Activity", "Drips"].map((tab) => (
+          {["Account", "Documents", "Activity", "Drips"].map((tab) => (
             <div
               key={tab}
               className="h-10 w-20 animate-pulse rounded-t-lg bg-gray-200 dark:bg-[#1a3550]"

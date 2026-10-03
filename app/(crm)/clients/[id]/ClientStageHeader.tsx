@@ -1221,7 +1221,7 @@ export function ClientStageHeader({
                 Close
               </button>
               <Link
-                href={`/clients/${clientId}?tab=packets`}
+                href={`/clients/${clientId}?tab=documents`}
                 onClick={() => setWelcomePacketGate(null)}
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#8DE3B5] py-2.5 text-sm font-medium text-[#0A2540] hover:bg-[#6BC99A]"
               >

@@ -44,7 +44,7 @@ export function blockAdvanceFromClientServicesWithoutPoa(opts: {
 export const WELCOME_PACKET_GATE_TITLE = "Welcome Packet not signed yet";
 
 export const WELCOME_PACKET_GATE_REASON =
-  "This client has not signed the Welcome Packet. Send it for e-signature from Packets \u2192 E-Sign, or upload the signed copy in Uploads, before moving them out of Account Manager.";
+  "This client has not signed the Welcome Packet. Send it for e-signature from Documents, or upload the signed copy there, before moving them out of Account Manager.";
 
 /**
  * Cannot leave Account Manager until the Welcome Packet is signed. The signed

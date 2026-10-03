@@ -38,8 +38,7 @@ import { canShowEsignActions } from "@/lib/esign/types";
 const MAIN_TABS_ALL = [
   { id: "account", label: "Account" },
   { id: "billing", label: "Cards" },
-  { id: "documents", label: "Uploads" },
-  { id: "packets", label: "Packets" },
+  { id: "documents", label: "Documents" },
   { id: "communications", label: "Activity" },
   { id: "campaigns", label: "Drips" },
   { id: "portal", label: "Portal Messages" },
@@ -162,7 +161,11 @@ export default async function ClientProfilePage({
 
   const tabRaw = sp.tab ?? "account";
   const tabNormalized =
-    tabRaw === "email" ? "campaigns" : tabRaw === "letters" ? "documents" : tabRaw;
+    tabRaw === "email"
+      ? "campaigns"
+      : tabRaw === "letters" || tabRaw === "packets"
+        ? "documents"
+        : tabRaw;
   const tab: MainTab = MAIN_TABS.some((t) => t.id === tabNormalized)
     ? (tabNormalized as MainTab)
     : "account";
@@ -690,16 +693,29 @@ export default async function ClientProfilePage({
             ) : null}
 
             {tab === "documents" ? (
-              <DocumentsTab
-                key={`${clientId}-docs-${documentsForDocumentsTab.length}-${String(
-                  c.updated_at ?? ""
-                )}`}
-                clientId={clientId}
-                initialDocuments={documentsForDocumentsTab}
-                uploaderNames={uploaderNames}
-                canDeleteDocs={canDeleteDocs}
-                currentUserId={user.id}
-              />
+              <div className="space-y-4">
+                {isEsignFeatureEnabled() && canUseEsignStaffUi(profile.role) ? (
+                  <EsignDripSection
+                    clientId={clientId}
+                    clientFirstName={
+                      String(c.first_name ?? "").trim() || String(c.nickname ?? "").trim()
+                    }
+                    clientLastName={String(c.last_name ?? "").trim()}
+                    advisorName={assigneeName ?? ""}
+                    canSend={canShowEsignActions((c.stage as string | null) ?? null)}
+                  />
+                ) : null}
+                <DocumentsTab
+                  key={`${clientId}-docs-${documentsForDocumentsTab.length}-${String(
+                    c.updated_at ?? ""
+                  )}`}
+                  clientId={clientId}
+                  initialDocuments={documentsForDocumentsTab}
+                  uploaderNames={uploaderNames}
+                  canDeleteDocs={canDeleteDocs}
+                  currentUserId={user.id}
+                />
+              </div>
             ) : null}
 
             {tab === "campaigns" ? (
@@ -727,22 +743,6 @@ export default async function ClientProfilePage({
                 currentUserId={user.id}
                 isAdminOrDev={profile.role === "dev" || profile.role === "admin"}
               />
-            ) : null}
-
-            {tab === "packets" ? (
-              <div className="space-y-4">
-                {isEsignFeatureEnabled() && canUseEsignStaffUi(profile.role) ? (
-                  <EsignDripSection
-                    clientId={clientId}
-                    clientFirstName={
-                      String(c.first_name ?? "").trim() || String(c.nickname ?? "").trim()
-                    }
-                    clientLastName={String(c.last_name ?? "").trim()}
-                    advisorName={assigneeName ?? ""}
-                    canSend={canShowEsignActions((c.stage as string | null) ?? null)}
-                  />
-                ) : null}
-              </div>
             ) : null}
 
             {tab === "billing" ? (
