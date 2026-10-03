@@ -48,11 +48,11 @@ INSERT INTO public.email_sequences (id, key, name, trigger_status, trigger_type,
 ON CONFLICT DO NOTHING;
 
 -- email_sequence_steps (16 rows)
-INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('4884b5ff-f133-4f09-a5ac-aa0655860b67', '1e077c18-79a5-40d6-9dff-1d4639da708d', 1, 0, 'welcome_lead', 'Welcome to Zero Balance!')
+INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('4884b5ff-f133-4f09-a5ac-aa0655860b67', '1e077c18-79a5-40d6-9dff-1d4639da708d', 1, 0, 'welcome_lead', 'Welcome to Golden Pathway!')
 ON CONFLICT DO NOTHING;
-INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('10c68fb8-6b03-49f5-ba16-3251fc5092b7', 'd1daf6d0-eae7-4078-ad52-af253b1f6391', 1, 0, 'welcome_cs', 'Welcome to Your Next Step with Zero Balance!')
+INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('10c68fb8-6b03-49f5-ba16-3251fc5092b7', 'd1daf6d0-eae7-4078-ad52-af253b1f6391', 1, 0, 'welcome_cs', 'Welcome to Your Next Step with Golden Pathway!')
 ON CONFLICT DO NOTHING;
-INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('711d24c9-6b4a-43bc-a9ed-8b79fe6ba79b', '4e1fd47e-9d0c-49e9-a584-22d8b1884c23', 7, 90, 'active_7', '90 Days Strong—Thank You for Trusting Zero Balance')
+INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('711d24c9-6b4a-43bc-a9ed-8b79fe6ba79b', '4e1fd47e-9d0c-49e9-a584-22d8b1884c23', 7, 90, 'active_7', '90 Days Strong—Thank You for Trusting Golden Pathway')
 ON CONFLICT DO NOTHING;
 INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset, template_key, subject) VALUES ('fd966369-ebe9-4c67-bf2b-cedb83d30c03', '4e1fd47e-9d0c-49e9-a584-22d8b1884c23', 6, 60, 'active_6', 'Halfway Through—Keeping You on Track')
 ON CONFLICT DO NOTHING;
@@ -82,13 +82,13 @@ INSERT INTO public.email_sequence_steps (id, sequence_id, step_order, day_offset
 ON CONFLICT DO NOTHING;
 
 -- email_message_templates (17 rows)
-INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('81fbab8c-e31d-407e-aff0-8b342b90659a', 'welcome_lead', 'Welcome – Lead', 'welcome_lead', 1, 0, 'Welcome to Zero Balance!', 'Hi {client.firstName},
+INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('81fbab8c-e31d-407e-aff0-8b342b90659a', 'welcome_lead', 'Welcome – Lead', 'welcome_lead', 1, 0, 'Welcome to Golden Pathway!', 'Hi {client.firstName},
 
-Welcome to Zero Balance! Thank you for your authorization, we''re excited to have you with us and to help you take this important step toward financial independence.
+Welcome to Golden Pathway! Thank you for your authorization, we''re excited to have you with us and to help you take this important step toward financial independence.
 
 Our team works with a nationwide network of experienced attorneys who are dedicated to protecting your rights and helping you resolve your enrolled accounts. We are here to make sure you feel supported every step of the way.
 
-You can learn more about us and our process anytime at https://zerobalance.info/
+You can learn more about us and our process anytime at https://www.goldenpathway.io
 
 Thank you again for trusting us to help you through this journey. We look forward to working with you and celebrating your progress along the way.
 
@@ -104,9 +104,9 @@ Please give us a call at (888) 807-4221 or reply to this email to pick a new tim
 Warm regards,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'follow_up', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
 ON CONFLICT DO NOTHING;
-INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('db7c9595-c1a2-4b22-98b0-cdf1ff796643', 'welcome_cs', 'Welcome – Client Services', 'welcome_cs', 1, 0, 'Welcome to Your Next Step with Zero Balance!', 'Hi {client.firstName},
+INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('db7c9595-c1a2-4b22-98b0-cdf1ff796643', 'welcome_cs', 'Welcome – Client Services', 'welcome_cs', 1, 0, 'Welcome to Your Next Step with Golden Pathway!', 'Hi {client.firstName},
 
-It was great speaking with you today! I want to officially welcome you to the next phase of your program with Zero Balance. My name is Emile Points, and I''m the Manager of the Client Services Department.
+It was great speaking with you today! I want to officially welcome you to the next phase of your program with Golden Pathway. The Client Services team will take it from here.
 
 From this point forward, Client Services will be your main point of contact throughout the next stage of your program. While you will always have access to your Account Manager, our team will now handle your ongoing communication, progress updates, and any creditor correspondence related to your enrolled accounts.
 
@@ -115,9 +115,8 @@ Over the next 90 days, my team and I will be helping to organize and prepare you
 You may hear from me directly or another member of my team — but rest assured, we all work closely together and share the same goal. Keeping your case on track to make this process as smooth and successful as possible.
 
 Here''s how to reach us anytime:
-📞 Client Services Department: 888-807-4221
-📞 Direct Line (Emile Points, Manager): 520-689-8843
-📧 Email: emile@zerobalance.info
+📞 928-433-8408
+📧 support@goldenpathway.io
 
 What to expect next:
 - Continue to forward any emails, letters, or text messages you receive from your creditors.
@@ -127,12 +126,11 @@ What to expect next:
 We''re honored to be part of your journey toward financial freedom, and we''ll be in touch often to make sure everything stays on track. If you ever have questions, please don''t hesitate to reach out — we''re here for you every step of the way.
 
 Warm regards,
-Emile Points
-Manager, Client Services', NULL, NULL, false, '{client.firstName}', 'cs_active', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
+The Golden Pathway Client Services Team', NULL, NULL, false, '{client.firstName}', 'cs_active', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
 ON CONFLICT DO NOTHING;
 INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('a235fb7a-54ba-4e8c-8d48-1c42782ab283', 'active_1', 'Active 1–7 — Day 0', 'active_arc', 1, 0, 'Welcome—Here''s What Happens Next', 'Hi {client.firstName},
 
-Welcome again to Zero Balance—we''re excited to support you.
+Welcome again to Golden Pathway—we''re excited to support you.
 
 What we''ve completed:
 - Your accounts are officially enrolled.
@@ -140,7 +138,7 @@ What we''ve completed:
 - We reviewed your goals and we''re focused on helping you accomplish all of them.
 
 What to expect next:
-- Welcome packet: arriving by mail (up to 10 days).
+- Welcome packet: we email you a link to review and sign it.
 - Creditor communications: If you receive emails, texts, or letters, forward them to me. For mail, snap a photo and email/text it to me. Our nationwide network of attorneys uses this information to help challenge and invalidate debts.
 
 Your main contacts are me (your Account Manager) and our Client Services team. We''ll check in regularly and keep you updated.
@@ -160,7 +158,7 @@ Warmly,
 ON CONFLICT DO NOTHING;
 INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('f99d254e-7537-4eda-841d-7bc8646b1b2b', 'active_3', 'Active 1–7 — Day 21', 'active_arc', 3, 21, 'Why You MUST Forward Creditor Mail', 'Hi {client.firstName},
 
-A quick reminder: forward any creditor emails, texts, snap a photo of any mail and send it over to support@zerobalance.info. Our nationwide network of attorneys relies on this information to challenge and invalidate the enrolled debts.
+A quick reminder: forward any creditor emails, texts, snap a photo of any mail and send it over to support@goldenpathway.io. Our nationwide network of attorneys relies on this information to challenge and invalidate the enrolled debts.
 
 Thanks for staying on top of it—this is a big help.
 
@@ -200,7 +198,7 @@ You''re making solid progress. Thank you for forwarding communications and stick
 Proud to be on your team,
 {accountManager.firstName} {accountManager.lastName}', NULL, NULL, false, '{client.firstName,accountManager.firstName,accountManager.lastName,unsubscribeUrl}', 'cs_active', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
 ON CONFLICT DO NOTHING;
-INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('7fefa520-27b4-4e24-aa69-90c10714973c', 'active_7', 'Active 1–7 — Day 90', 'active_arc', 7, 90, '90 Days Strong—Thank You for Trusting Zero Balance', 'Hi {client.firstName},
+INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('7fefa520-27b4-4e24-aa69-90c10714973c', 'active_7', 'Active 1–7 — Day 90', 'active_arc', 7, 90, '90 Days Strong—Thank You for Trusting Golden Pathway', 'Hi {client.firstName},
 
 You''ve been steady for 90 days—great work. Keep forwarding any emails, texts, or letters you receive. Your consistency helps our nationwide network of attorneys continue challenging the enrolled debts.
 
@@ -255,7 +253,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 Congratulations—your program is fully active and your file has been referred to our nationwide network of attorneys for ongoing work on your behalf.
 
-At Zero Balance, your Account Manager remains the same and our Client Services department too. If you receive emails, texts, or letters from any creditors, continue to forward them to us right away.
+At Golden Pathway, your Account Manager remains the same and our Client Services department too. If you receive emails, texts, or letters from any creditors, continue to forward them to us right away.
 
 We''re here for you—reply to this email or call (888) 807-4221 with any questions.
 
@@ -271,11 +269,11 @@ We appreciate your patience and apologize for any inconvenience this temporary c
 Thank you for your continued partnership and support.
 
 Sincerely,
-The Zero Balance Team', NULL, NULL, false, '{client.firstName}', 'holiday', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
+The Golden Pathway Team', NULL, NULL, false, '{client.firstName}', 'holiday', true, NULL, NULL, '2026-10-02 21:33:26.131365+00')
 ON CONFLICT DO NOTHING;
-INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('685ab7d9-f8d5-4aa1-a6ef-1f1a80fdf52a', 'attorney_portal_assignment', 'Attorney Portal — New Case Assigned', NULL, NULL, NULL, 'New Case Assigned — DebtSupportPros Attorney Portal', 'Hi {attorney.firstName},
+INSERT INTO public.email_message_templates (id, template_key, name, sequence_key, step_order, day_offset, default_subject, default_body, subject_override, body_override, is_overridden, required_variables, category, is_active, last_edited_by, last_edited_at, created_at) VALUES ('685ab7d9-f8d5-4aa1-a6ef-1f1a80fdf52a', 'attorney_portal_assignment', 'Attorney Portal — New Case Assigned', NULL, NULL, NULL, 'New Case Assigned — Golden Pathway Attorney Portal', 'Hi {attorney.firstName},
 
-A new case has been assigned to you in the DebtSupportPros attorney portal.
+A new case has been assigned to you in the Golden Pathway attorney portal.
 
 Sign in with your attorney CRM credentials to review client contact info, signed POA, and collection letters.', NULL, NULL, false, '{attorney.firstName,casesUrl,clients}', 'staff', true, NULL, NULL, '2026-10-02 21:33:27.311617+00')
 ON CONFLICT DO NOTHING;

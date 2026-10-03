@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       subject: `Reset your ${BUSINESS_NAME} CRM password`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#f8fafc;">
-          <div style="background:#0A2540;border-radius:10px;padding:28px 32px;text-align:center;margin-bottom:24px;">
+          <div style="background:#161616;border-radius:10px;padding:28px 32px;text-align:center;margin-bottom:24px;">
             <h1 style="color:#ffffff;font-size:20px;font-weight:700;margin:0;">${BUSINESS_NAME} CRM</h1>
           </div>
           <div style="background:#ffffff;border-radius:10px;padding:32px;border:1px solid #e2e8f0;">
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
               We received a request to reset the password for your account. Click the button below to set a new password.
             </p>
             <a href="${actionLink}"
-               style="display:inline-block;background:#8DE3B5;color:#0A2540;font-size:14px;font-weight:700;text-decoration:none;padding:12px 28px;border-radius:8px;">
+               style="display:inline-block;background:#A87830;color:#161616;font-size:14px;font-weight:700;text-decoration:none;padding:12px 28px;border-radius:8px;">
               Reset password
             </a>
             <p style="color:#94a3b8;font-size:12px;margin:24px 0 0;">

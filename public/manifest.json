@@ -1,11 +1,11 @@
 {
-  "name": "DebtSupportPros CRM",
-  "short_name": "DSP CRM",
-  "description": "DebtSupportPros Client Management",
+  "name": "Golden Pathway CRM",
+  "short_name": "GP CRM",
+  "description": "Golden Pathway Client Management",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#0A2540",
-  "theme_color": "#0A2540",
+  "background_color": "#161616",
+  "theme_color": "#161616",
   "orientation": "portrait-primary",
   "icons": [
     {

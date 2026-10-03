@@ -5,23 +5,23 @@ export default function ClientProfileLoading() {
       <div className="flex-1">
         {/* Header */}
         <div className="mb-6 flex items-center gap-3">
-          <div className="h-8 w-48 animate-pulse rounded-lg bg-gray-200 dark:bg-[#1a3550]" />
-          <div className="h-6 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-[#1a3550]" />
+          <div className="h-8 w-48 animate-pulse rounded-lg bg-gray-200 dark:bg-[#2E2E2E]" />
+          <div className="h-6 w-24 animate-pulse rounded-full bg-gray-200 dark:bg-[#2E2E2E]" />
         </div>
 
         {/* Stage buttons */}
         <div className="mb-6 flex gap-3">
-          <div className="h-9 w-28 animate-pulse rounded-lg bg-gray-200 dark:bg-[#1a3550]" />
-          <div className="h-9 w-8 animate-pulse rounded-lg bg-gray-200 dark:bg-[#1a3550]" />
-          <div className="h-9 w-32 animate-pulse rounded-lg bg-gray-200 dark:bg-[#1a3550]" />
+          <div className="h-9 w-28 animate-pulse rounded-lg bg-gray-200 dark:bg-[#2E2E2E]" />
+          <div className="h-9 w-8 animate-pulse rounded-lg bg-gray-200 dark:bg-[#2E2E2E]" />
+          <div className="h-9 w-32 animate-pulse rounded-lg bg-gray-200 dark:bg-[#2E2E2E]" />
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-[#1a3550]">
+        <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-[#2E2E2E]">
           {["Account", "Documents", "Activity", "Drips"].map((tab) => (
             <div
               key={tab}
-              className="h-10 w-20 animate-pulse rounded-t-lg bg-gray-200 dark:bg-[#1a3550]"
+              className="h-10 w-20 animate-pulse rounded-t-lg bg-gray-200 dark:bg-[#2E2E2E]"
             />
           ))}
         </div>
@@ -30,7 +30,7 @@ export default function ClientProfileLoading() {
         <div className="space-y-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex gap-4">
-              <div className="h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-[#1a3550]" />
+              <div className="h-4 w-32 animate-pulse rounded bg-gray-200 dark:bg-[#2E2E2E]" />
               <div className="h-4 flex-1 animate-pulse rounded bg-gray-100 dark:bg-[#223a24]" />
             </div>
           ))}
@@ -42,9 +42,9 @@ export default function ClientProfileLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-lg border border-gray-200 bg-white p-4 dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="rounded-lg border border-gray-200 bg-white p-4 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
           >
-            <div className="mb-3 h-5 w-24 animate-pulse rounded bg-gray-200 dark:bg-[#1a3550]" />
+            <div className="mb-3 h-5 w-24 animate-pulse rounded bg-gray-200 dark:bg-[#2E2E2E]" />
             <div className="space-y-2">
               {Array.from({ length: 3 }).map((_, j) => (
                 <div key={j} className="h-4 animate-pulse rounded bg-gray-100 dark:bg-[#223a24]" />

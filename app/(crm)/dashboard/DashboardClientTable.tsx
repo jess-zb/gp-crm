@@ -5,7 +5,7 @@ import type { DashboardClientRow } from "./dashboard-types";
 function DaysInStageBadge({ date }: { date: string | null | undefined }) {
   if (!date) {
     return (
-      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs tabular-nums text-slate-600 dark:bg-[#102840] dark:text-slate-400">
+      <span className="rounded bg-slate-100 px-2 py-0.5 text-xs tabular-nums text-slate-600 dark:bg-[#242424] dark:text-slate-400">
         —
       </span>
     );
@@ -20,7 +20,7 @@ function DaysInStageBadge({ date }: { date: string | null | undefined }) {
           ? "bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300"
           : days > 3
             ? "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300"
-            : "bg-slate-100 text-slate-600 dark:bg-[#102840] dark:text-slate-400"
+            : "bg-slate-100 text-slate-600 dark:bg-[#242424] dark:text-slate-400"
       }`}
     >
       {days}d
@@ -45,8 +45,8 @@ export function DashboardClientTable({
   stageColor?: string;
 }) {
   return (
-    <div className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#1a3550] dark:bg-[#0d2035]">
-      <div className="border-b border-slate-100 px-4 py-3 dark:border-[#1a3550]">
+    <div className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+      <div className="border-b border-slate-100 px-4 py-3 dark:border-[#2E2E2E]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
@@ -65,7 +65,7 @@ export function DashboardClientTable({
                   ? "bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300"
                   : alertColor === "amber"
                     ? "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300"
-                    : "bg-slate-100 text-slate-600 dark:bg-[#102840] dark:text-slate-400"
+                    : "bg-slate-100 text-slate-600 dark:bg-[#242424] dark:text-slate-400"
               }`}
             >
               {clients.length}
@@ -79,12 +79,12 @@ export function DashboardClientTable({
           {emptyMessage}
         </p>
       ) : (
-        <div className="divide-y divide-slate-50 dark:divide-[#1a3550]">
+        <div className="divide-y divide-slate-50 dark:divide-[#2E2E2E]">
           {clients.slice(0, 8).map((c) => (
             <Link
               key={c.id}
               href={`/clients/${c.id}`}
-              className="flex items-center justify-between px-4 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-[#102840]/40"
+              className="flex items-center justify-between px-4 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-[#242424]/40"
             >
               <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
@@ -124,7 +124,7 @@ export function DashboardClientTable({
             <div className="px-4 py-2.5 text-center">
               <Link
                 href="/clients"
-                className="text-xs text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+                className="text-xs text-[#A87830] hover:underline dark:text-[#A87830]"
               >
                 +{clients.length - 8} more →
               </Link>

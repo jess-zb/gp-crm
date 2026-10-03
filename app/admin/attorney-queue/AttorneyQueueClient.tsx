@@ -117,7 +117,7 @@ export function AttorneyQueueClient({
 
   return (
     <div className="space-y-8">
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035] sm:p-5">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C] sm:p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-base font-semibold text-slate-900 dark:text-white">
@@ -133,7 +133,7 @@ export function AttorneyQueueClient({
               type="button"
               onClick={toggleAllClients}
               disabled={clients.length === 0 || pending}
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
             >
               {selectedClients.size === clients.length && clients.length > 0
                 ? "Clear selection"
@@ -143,7 +143,7 @@ export function AttorneyQueueClient({
               type="button"
               onClick={onAssign}
               disabled={selectedCount === 0 || !attorneyId || pending}
-              className="rounded-lg bg-[#8DE3B5] px-4 py-1.5 text-xs font-semibold text-[#0A2540] disabled:opacity-50"
+              className="rounded-lg bg-[#A87830] px-4 py-1.5 text-xs font-semibold text-[#161616] disabled:opacity-50"
             >
               {pending
                 ? "Assigning…"
@@ -161,7 +161,7 @@ export function AttorneyQueueClient({
               value={attorneyId}
               onChange={(e) => setAttorneyId(e.target.value)}
               disabled={attorneys.length === 0 || pending}
-              className="w-full max-w-md rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-[#1a3550] dark:bg-[#0a1a2a] dark:text-[#E8EAEE]"
+              className="w-full max-w-md rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-[#2E2E2E] dark:bg-[#0a1a2a] dark:text-[#E8EAEE]"
             >
               {attorneys.length === 0 ? (
                 <option value="">No active attorneys</option>
@@ -197,8 +197,8 @@ export function AttorneyQueueClient({
             No clients waiting in the attorney queue.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#1a3550]">
-            <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#1a3550]">
+          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#2E2E2E]">
+            <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#2E2E2E]">
               <thead className="bg-slate-50 dark:bg-[#0a1a2a]/80">
                 <tr>
                   <th className="w-10 px-3 py-2" />
@@ -216,7 +216,7 @@ export function AttorneyQueueClient({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                 {clients.map((c) => {
                   const name = clientName(c);
                   const isSelected = selectedClients.has(c.id);
@@ -239,7 +239,7 @@ export function AttorneyQueueClient({
                       <td className="px-3 py-3">
                         <Link
                           href={`/clients/${c.id}`}
-                          className="font-medium text-[#0A2540] hover:underline dark:text-[#8DE3B5]"
+                          className="font-medium text-[#161616] hover:underline dark:text-[#A87830]"
                         >
                           {name}
                         </Link>
@@ -276,7 +276,7 @@ export function AttorneyQueueClient({
         )}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035] sm:p-5">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C] sm:p-5">
         <h2 className="mb-1 text-base font-semibold text-slate-900 dark:text-white">
           Recent assignments
         </h2>
@@ -289,8 +289,8 @@ export function AttorneyQueueClient({
             No portal assignments yet.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#1a3550]">
-            <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#1a3550]">
+          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#2E2E2E]">
+            <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#2E2E2E]">
               <thead className="bg-slate-50 dark:bg-[#0a1a2a]/80">
                 <tr>
                   <th className="px-3 py-2 font-semibold text-slate-700 dark:text-slate-200">
@@ -307,7 +307,7 @@ export function AttorneyQueueClient({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                 {initialHistory.map((row) => {
                   const name = clientName(row);
                   return (
@@ -318,7 +318,7 @@ export function AttorneyQueueClient({
                       <td className="px-3 py-3">
                         <Link
                           href={`/clients/${row.id}`}
-                          className="font-medium text-[#0A2540] hover:underline dark:text-[#8DE3B5]"
+                          className="font-medium text-[#161616] hover:underline dark:text-[#A87830]"
                         >
                           {name}
                         </Link>

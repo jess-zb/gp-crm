@@ -44,7 +44,7 @@ export default async function AttorneyCommunicationsPage() {
       </h1>
       <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
         Portal messages with clients you represent.{" "}
-        <Link href="/attorney/cases" className="font-medium text-[#8DE3B5] hover:underline">
+        <Link href="/attorney/cases" className="font-medium text-[#A87830] hover:underline">
           View cases
         </Link>
       </p>

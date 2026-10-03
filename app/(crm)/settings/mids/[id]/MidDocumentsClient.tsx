@@ -145,7 +145,7 @@ export function MidDocumentsClient({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Credit card authorization"
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
             />
           </label>
           <label className="block text-sm">
@@ -153,7 +153,7 @@ export function MidDocumentsClient({
             <select
               value={behavior}
               onChange={(e) => setBehavior(e.target.value as EsignBehavior)}
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
             >
               {ESIGN_BEHAVIORS.map((value) => (
                 <option key={value} value={value}>
@@ -170,7 +170,7 @@ export function MidDocumentsClient({
               value={hint}
               onChange={(e) => setHint(e.target.value)}
               placeholder="Shown under the name on the client profile"
-              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+              className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
             />
           </label>
           <label className="block text-sm">
@@ -179,7 +179,7 @@ export function MidDocumentsClient({
               type="file"
               accept="application/pdf,.pdf"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="mt-1 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium dark:text-slate-300 dark:file:bg-[#102840] dark:file:text-slate-200"
+              className="mt-1 block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium dark:text-slate-300 dark:file:bg-[#242424] dark:file:text-slate-200"
             />
           </label>
           <button
@@ -207,7 +207,7 @@ export function MidDocumentsClient({
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+          <ul className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
             {templates.map((template) => (
               <li key={template.id} className="flex flex-wrap items-center gap-3 px-5 py-4">
                 <div className="min-w-0 flex-1">
@@ -216,7 +216,7 @@ export function MidDocumentsClient({
                       {template.name}
                     </p>
                     {!template.is_active ? (
-                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-[#102840] dark:text-slate-300">
+                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-[#242424] dark:text-slate-300">
                         Inactive
                       </span>
                     ) : null}
@@ -229,7 +229,7 @@ export function MidDocumentsClient({
                 <div className="flex shrink-0 flex-wrap items-center gap-2">
                   <Link
                     href={`/esign-templates/${template.id}`}
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                   >
                     Place fields
                   </Link>
@@ -242,7 +242,7 @@ export function MidDocumentsClient({
                         template.is_active ? "Document deactivated" : "Document activated"
                       )
                     }
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#102840]"
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:bg-[#242424]"
                   >
                     {template.is_active ? "Deactivate" : "Activate"}
                   </button>

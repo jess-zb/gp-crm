@@ -228,7 +228,7 @@ export default function AddressAutocomplete({
   };
 
   const defaultClass =
-    "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#8DE3B5] focus:outline-none focus:ring-1 focus:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:text-white dark:placeholder:text-slate-500";
+    "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-[#A87830] focus:outline-none focus:ring-1 focus:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white dark:placeholder:text-slate-500";
 
   return (
     <div ref={wrapperRef} className="relative w-full min-w-0">
@@ -248,7 +248,7 @@ export default function AddressAutocomplete({
         </div>
       ) : null}
       {showDropdown && suggestions.length > 0 ? (
-        <ul className="absolute z-50 mt-1 max-h-56 w-full min-w-0 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <ul className="absolute z-50 mt-1 max-h-56 w-full min-w-0 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           {suggestions.map((item, i) => {
             const addr = item.address ?? {};
             const street = [addr.houseNumber, addr.street].filter(Boolean).join(" ");
@@ -258,10 +258,10 @@ export default function AddressAutocomplete({
               <li
                 key={item.id || String(i)}
                 onMouseDown={() => void handleSelect(item)}
-                className={`cursor-pointer border-b border-gray-100 px-4 py-2.5 text-sm last:border-0 dark:border-[#1a3550] ${
+                className={`cursor-pointer border-b border-gray-100 px-4 py-2.5 text-sm last:border-0 dark:border-[#2E2E2E] ${
                   i === activeIndex
                     ? "bg-green-100 text-green-900 dark:bg-emerald-900/50 dark:text-emerald-100"
-                    : "hover:bg-green-50 dark:hover:bg-[#102840]"
+                    : "hover:bg-green-50 dark:hover:bg-[#242424]"
                 }`}
               >
                 <div className="font-medium text-gray-900 dark:text-slate-100">

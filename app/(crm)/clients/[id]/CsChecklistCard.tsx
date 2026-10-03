@@ -83,13 +83,13 @@ export function CsChecklistCard({
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+    <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
       <div className="mb-3 flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
           aria-expanded={open}
-          className="flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-white dark:hover:text-slate-200"
+          className="flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-white dark:hover:text-slate-200"
         >
           <ChevronDown
             className={`h-3.5 w-3.5 transition-transform ${open ? "" : "-rotate-90"}`}
@@ -163,7 +163,7 @@ export function CsChecklistCard({
                             ? `${item.label} — complete, click to undo`
                             : `${item.label} — outstanding, click to complete`
                         }
-                        className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md ring-1 ring-inset transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] ${squareClass} ${
+                        className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md ring-1 ring-inset transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${squareClass} ${
                           busy ? "opacity-60" : ""
                         }`}
                       >
@@ -197,14 +197,14 @@ export function CsChecklistCard({
                           <button
                             type="button"
                             onClick={() => void apply(item.key, false)}
-                            className="rounded border border-amber-300 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-amber-700 dark:text-amber-200 dark:hover:bg-amber-950/40"
+                            className="rounded border border-amber-300 px-1.5 py-0.5 text-[11px] font-semibold text-amber-800 hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-amber-700 dark:text-amber-200 dark:hover:bg-amber-950/40"
                           >
                             Undo
                           </button>
                           <button
                             type="button"
                             onClick={() => setConfirmKey(null)}
-                            className="rounded px-1 py-0.5 text-[11px] text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-400 dark:hover:text-slate-200"
+                            className="rounded px-1 py-0.5 text-[11px] text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:text-slate-200"
                           >
                             Cancel
                           </button>
@@ -239,12 +239,12 @@ export function CsChecklistCard({
             })}
           </ul>
 
-          <p className="mt-3 border-t border-gray-100 pt-3 text-[11px] text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+          <p className="mt-3 border-t border-gray-100 pt-3 text-[11px] text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
             POA on File fills in on its own from the signed POA, so it is not
             clickable here.{" "}
             <Link
               href="/clients?tab=priority"
-              className="font-semibold text-[#8DE3B5] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+              className="font-semibold text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
             >
               Priority board
             </Link>

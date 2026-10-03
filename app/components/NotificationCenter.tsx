@@ -269,7 +269,7 @@ export function NotificationBell({
   );
 
   const bellButtonClass = sidebarDark
-    ? "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13px] font-medium text-[#A8C5B5] transition-colors hover:bg-[#0A2540] hover:text-white"
+    ? "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13px] font-medium text-[#C8C2B8] transition-colors hover:bg-[#161616] hover:text-white"
     : "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-[13px] font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100";
 
   return (
@@ -283,7 +283,7 @@ export function NotificationBell({
         >
           <div className="relative shrink-0">
             <Bell
-              className={`h-4 w-4 ${sidebarDark ? "text-[#9DB89A]" : ""}`}
+              className={`h-4 w-4 ${sidebarDark ? "text-[#C8C2B8]" : ""}`}
               strokeWidth={2}
               aria-hidden
             />
@@ -295,7 +295,7 @@ export function NotificationBell({
           </div>
           {!navCollapsed ? (
             <span
-              className={`text-[13px] font-medium ${sidebarDark ? "text-[#A8C5B5]" : ""}`}
+              className={`text-[13px] font-medium ${sidebarDark ? "text-[#C8C2B8]" : ""}`}
             >
               Notifications
             </span>
@@ -307,9 +307,9 @@ export function NotificationBell({
         {showNotifications ? (
           <div
             ref={panelRef}
-            className="absolute bottom-12 left-2 right-2 z-50 flex max-h-[28rem] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="absolute bottom-12 left-2 right-2 z-50 flex max-h-[28rem] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
           >
-            <div className="flex shrink-0 items-center justify-center gap-1 border-b border-gray-100 py-2.5 text-xs font-semibold text-gray-700 dark:border-[#1a3550] dark:text-slate-200">
+            <div className="flex shrink-0 items-center justify-center gap-1 border-b border-gray-100 py-2.5 text-xs font-semibold text-gray-700 dark:border-[#2E2E2E] dark:text-slate-200">
               Notifications
               {unreadCount > 0 ? (
                 <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
@@ -319,11 +319,11 @@ export function NotificationBell({
             </div>
 
             {unreadCount > 0 ? (
-              <div className="flex justify-end border-b border-gray-50 px-4 py-1.5 dark:border-[#1a3550]">
+              <div className="flex justify-end border-b border-gray-50 px-4 py-1.5 dark:border-[#2E2E2E]">
                 <button
                   type="button"
                   onClick={() => void markAllRead()}
-                  className="text-xs text-[#8DE3B5] hover:underline"
+                  className="text-xs text-[#A87830] hover:underline"
                 >
                   Mark all read
                 </button>
@@ -378,15 +378,15 @@ export function NotificationBell({
                               ? "bg-purple-100 dark:bg-purple-950/50"
                               : notif.type === "collection_letter"
                                 ? "bg-emerald-100 dark:bg-emerald-950/50"
-                                : "bg-gray-100 dark:bg-[#1a3550]";
+                                : "bg-gray-100 dark:bg-[#2E2E2E]";
 
                   return (
                     <button
                       key={notif.id}
                       type="button"
                       onClick={() => handleNotificationClick(notif)}
-                      className={`flex w-full gap-3 border-b border-gray-50 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:border-[#1a3550] dark:hover:bg-[#102840] ${
-                        !notif.read ? "bg-green-50/40 dark:bg-[#102840]/60" : ""
+                      className={`flex w-full gap-3 border-b border-gray-50 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:border-[#2E2E2E] dark:hover:bg-[#242424] ${
+                        !notif.read ? "bg-green-50/40 dark:bg-[#242424]/60" : ""
                       }`}
                     >
                       <div
@@ -406,7 +406,7 @@ export function NotificationBell({
                         </p>
                       </div>
                       {!notif.read ? (
-                        <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#8DE3B5]" />
+                        <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#A87830]" />
                       ) : null}
                     </button>
                   );
@@ -424,7 +424,7 @@ export function NotificationBell({
         {macToasts.map(({ dismissId, notif }) => (
           <div
             key={dismissId}
-            className="pointer-events-auto zb-mac-notif-enter flex max-w-sm gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="pointer-events-auto zb-mac-notif-enter flex max-w-sm gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
           >
             <button
               type="button"
@@ -440,7 +440,7 @@ export function NotificationBell({
             >
               <div
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                style={{ backgroundColor: "#0A2540" }}
+                style={{ backgroundColor: "#161616" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/favicon.png" alt="" className="h-6 w-6 object-contain" />

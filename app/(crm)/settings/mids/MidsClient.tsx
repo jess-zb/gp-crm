@@ -63,7 +63,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
             onChange={(e) => setNewName(e.target.value)}
             placeholder="e.g. PostLogic"
             aria-label="MID name"
-            className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+            className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
           />
           <button
             type="submit"
@@ -92,7 +92,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+          <ul className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
             {mids.map((mid) => {
               const isEditing = editingId === mid.id;
               return (
@@ -118,7 +118,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                             onChange={(e) => setEditName(e.target.value)}
                             aria-label={`Rename ${mid.name}`}
                             autoFocus
-                            className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                            className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                           />
                           <button
                             type="submit"
@@ -130,7 +130,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                           <button
                             type="button"
                             onClick={() => setEditingId(null)}
-                            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 dark:border-[#1a3550] dark:text-slate-300"
+                            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 dark:border-[#2E2E2E] dark:text-slate-300"
                           >
                             Cancel
                           </button>
@@ -142,7 +142,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                               {mid.name}
                             </p>
                             {!mid.is_active ? (
-                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-[#102840] dark:text-slate-300">
+                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:bg-[#242424] dark:text-slate-300">
                                 Inactive
                               </span>
                             ) : null}
@@ -161,7 +161,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                       <div className="flex shrink-0 flex-wrap items-center gap-2">
                         <Link
                           href={`/settings/mids/${mid.id}`}
-                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                         >
                           E-Sign documents
                           <ChevronRight className="h-3.5 w-3.5" aria-hidden />
@@ -172,7 +172,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                             setEditingId(mid.id);
                             setEditName(mid.name);
                           }}
-                          className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#102840]"
+                          className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:bg-[#242424]"
                         >
                           Rename
                         </button>
@@ -185,7 +185,7 @@ export function MidsClient({ mids }: { mids: MidListRow[] }) {
                               mid.is_active ? "MID deactivated" : "MID activated"
                             )
                           }
-                          className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#102840]"
+                          className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:bg-[#242424]"
                         >
                           {mid.is_active ? "Deactivate" : "Activate"}
                         </button>

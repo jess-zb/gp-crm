@@ -54,7 +54,7 @@ export function PortalAccessControls({ clientId }: { clientId: string }) {
         <button
           type="button"
           onClick={() => setShowModal(true)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#8DE3B5] shadow-sm hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929] dark:hover:bg-[#102840]"
+          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#A87830] shadow-sm hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212] dark:hover:bg-[#242424]"
         >
           Copy portal setup link
         </button>
@@ -74,7 +74,7 @@ export function PortalAccessControls({ clientId }: { clientId: string }) {
             if (e.target === e.currentTarget) setShowModal(false);
           }}
         >
-          <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]">
+          <div className="w-full max-w-lg rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <h4
               id="portal-invite-title"
               className="text-base font-bold text-slate-900 dark:text-white"
@@ -84,7 +84,7 @@ export function PortalAccessControls({ clientId }: { clientId: string }) {
             {loading ? (
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Generating link…</p>
             ) : inviteUrl ? (
-              <p className="mt-3 break-all rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-800 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]">
+              <p className="mt-3 break-all rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-800 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]">
                 {inviteUrl}
               </p>
             ) : (
@@ -101,14 +101,14 @@ export function PortalAccessControls({ clientId }: { clientId: string }) {
                   void navigator.clipboard.writeText(inviteUrl);
                   toast.success("Link copied");
                 }}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200"
+                className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
               >
                 Copy
               </button>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-bold text-[#0A2540] shadow hover:opacity-95"
+                className="rounded-lg bg-[#A87830] px-4 py-2 text-sm font-bold text-[#161616] shadow hover:opacity-95"
               >
                 Close
               </button>

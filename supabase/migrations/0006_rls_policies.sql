@@ -179,15 +179,9 @@ CREATE POLICY "Staff can view reminders" ON public.reminders FOR SELECT USING ((
 
 CREATE POLICY "Staff insert checklists" ON public.onboarding_checklist FOR INSERT WITH CHECK ((public.current_user_role() = ANY (ARRAY['dev'::public.user_role, 'admin'::public.user_role, 'acct_manager'::public.user_role])));
 
-CREATE POLICY "Staff manage esign_requests" ON public.esign_requests TO authenticated USING (((public.current_user_role() = 'dev'::public.user_role) OR (lower(TRIM(BOTH FROM ( SELECT p.email
-   FROM public.profiles p
-  WHERE (p.id = auth.uid())))) = ANY (ARRAY['cs@debtsupportpros.com'::text, 'jessica@debtsupportpros.com'::text, 'daniel@stellari.io'::text, 'dev@debtsupportpros.com'::text])))) WITH CHECK (((public.current_user_role() = 'dev'::public.user_role) OR (lower(TRIM(BOTH FROM ( SELECT p.email
-   FROM public.profiles p
-  WHERE (p.id = auth.uid())))) = ANY (ARRAY['cs@debtsupportpros.com'::text, 'jessica@debtsupportpros.com'::text, 'daniel@stellari.io'::text, 'dev@debtsupportpros.com'::text]))));
+CREATE POLICY "Staff manage esign_requests" ON public.esign_requests TO authenticated USING ((public.current_user_role() = ANY (ARRAY['dev'::public.user_role, 'admin'::public.user_role, 'acct_manager'::public.user_role]))) WITH CHECK ((public.current_user_role() = ANY (ARRAY['dev'::public.user_role, 'admin'::public.user_role, 'acct_manager'::public.user_role])));
 
-CREATE POLICY "Staff read esign_events" ON public.esign_events FOR SELECT TO authenticated USING (((public.current_user_role() = 'dev'::public.user_role) OR (lower(TRIM(BOTH FROM ( SELECT p.email
-   FROM public.profiles p
-  WHERE (p.id = auth.uid())))) = ANY (ARRAY['cs@debtsupportpros.com'::text, 'jessica@debtsupportpros.com'::text, 'daniel@stellari.io'::text, 'dev@debtsupportpros.com'::text]))));
+CREATE POLICY "Staff read esign_events" ON public.esign_events FOR SELECT TO authenticated USING ((public.current_user_role() = ANY (ARRAY['dev'::public.user_role, 'admin'::public.user_role, 'acct_manager'::public.user_role])));
 
 CREATE POLICY "Staff read esign_layouts" ON public.esign_layouts FOR SELECT TO authenticated USING ((public.current_user_role() = 'dev'::public.user_role));
 

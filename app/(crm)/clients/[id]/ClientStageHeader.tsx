@@ -887,7 +887,7 @@ export function ClientStageHeader({
             </span>
           </div>
 
-          <div className="mx-4 h-8 w-px shrink-0 bg-gray-200 dark:bg-[#1a3550]" />
+          <div className="mx-4 h-8 w-px shrink-0 bg-gray-200 dark:bg-[#2E2E2E]" />
 
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
@@ -913,7 +913,7 @@ export function ClientStageHeader({
               void handleDropdownStageChange(e.target.value, e.currentTarget)
             }
             disabled={loading !== null}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 focus:border-[#8DE3B5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200"
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
             aria-label="Client stage"
           >
             {stageDropdownOpts.map((opt) => (
@@ -928,7 +928,7 @@ export function ClientStageHeader({
         <button
           type="button"
           onClick={() => setSearchOpen(true)}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 transition-colors hover:border-[#8DE3B5] hover:text-[#8DE3B5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-400 dark:hover:border-[#8DE3B5] dark:hover:text-[#8DE3B5]"
+          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 transition-colors hover:border-[#A87830] hover:text-[#A87830] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-400 dark:hover:border-[#A87830] dark:hover:text-[#A87830]"
           title="Search clients"
           aria-label="Search clients"
         >
@@ -953,7 +953,7 @@ export function ClientStageHeader({
                 disabled={
                   loading !== null || cancelling || movingToRetention
                 }
-                className="flex items-center gap-2 rounded-lg border border-red-400 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] disabled:opacity-50 dark:hover:bg-red-950/30"
+                className="flex items-center gap-2 rounded-lg border border-red-400 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] disabled:opacity-50 dark:hover:bg-red-950/30"
                 title="Cancel client"
                 aria-label="Cancel client"
               >
@@ -976,7 +976,7 @@ export function ClientStageHeader({
             if (!movingToRetention) setShowCancelConfirmModal(false);
           }}
         >
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-[#0d2035] dark:shadow-xl">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-[#1C1C1C] dark:shadow-xl">
             <div className="mb-4 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 dark:bg-red-950/40">
                 <AlertTriangle className="h-5 w-5 text-red-500" />
@@ -1058,7 +1058,7 @@ export function ClientStageHeader({
            * height with the reasons scrolling inside it. Back and Confirm sit
            * outside that scroll area and stay put.
            */}
-          <div className="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-lg bg-white shadow-lg dark:bg-[#0d2035] dark:shadow-xl">
+          <div className="flex max-h-[calc(100vh-2rem)] w-full max-w-md flex-col overflow-hidden rounded-lg bg-white shadow-lg dark:bg-[#1C1C1C] dark:shadow-xl">
             <div className="overflow-y-auto p-6">
               <h3
                 id="cancel-reason-title"
@@ -1081,7 +1081,7 @@ export function ClientStageHeader({
                     className={`w-full rounded-lg border px-4 py-3 text-left transition-colors ${
                       selectedCancelReason === reason.value
                         ? "border-red-400 bg-red-50 dark:border-red-500 dark:bg-red-950/30"
-                        : "border-slate-200 hover:border-slate-300 dark:border-[#1a3550] dark:hover:border-slate-500"
+                        : "border-slate-200 hover:border-slate-300 dark:border-[#2E2E2E] dark:hover:border-slate-500"
                     }`}
                   >
                     <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
@@ -1154,7 +1154,7 @@ export function ClientStageHeader({
               />
             </div>
 
-            <div className="flex gap-3 border-t border-slate-100 px-6 py-4 dark:border-[#1a3550]">
+            <div className="flex gap-3 border-t border-slate-100 px-6 py-4 dark:border-[#2E2E2E]">
               <button
                 type="button"
                 onClick={() => {
@@ -1216,14 +1216,14 @@ export function ClientStageHeader({
               <button
                 type="button"
                 onClick={() => setWelcomePacketGate(null)}
-                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
               >
                 Close
               </button>
               <Link
                 href={`/clients/${clientId}?tab=documents`}
                 onClick={() => setWelcomePacketGate(null)}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#8DE3B5] py-2.5 text-sm font-medium text-[#0A2540] hover:bg-[#6BC99A]"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#A87830] py-2.5 text-sm font-medium text-[#161616] hover:bg-[#8C6428]"
               >
                 <PenLine className="h-4 w-4" aria-hidden />
                 Go to E-Sign
@@ -1244,7 +1244,7 @@ export function ClientStageHeader({
             }
           }}
         >
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-[#0d2035] dark:shadow-xl">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg dark:bg-[#1C1C1C] dark:shadow-xl">
             <h3
               id="retention-exit-title"
               className="mb-1 text-base font-semibold text-slate-900 dark:text-white"
@@ -1271,7 +1271,7 @@ export function ClientStageHeader({
                   pendingRetentionExit.current = null;
                   setShowRetentionExitModal(false);
                 }}
-                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
               >
                 Cancel
               </button>
@@ -1289,7 +1289,7 @@ export function ClientStageHeader({
                   if (!ok) pending.selectEl.value = "retention";
                   pendingRetentionExit.current = null;
                 }}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#8DE3B5] py-2.5 text-sm font-medium text-[#0A2540] hover:bg-[#6BC99A] disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[#A87830] py-2.5 text-sm font-medium text-[#161616] hover:bg-[#8C6428] disabled:opacity-50"
               >
                 {loading !== null ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -1321,7 +1321,7 @@ export function ClientStageHeader({
               <button
                 type="button"
                 onClick={() => setShowSelfAssignPrompt(false)}
-                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#102840]"
+                className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:bg-[#242424]"
               >
                 Not now
               </button>
@@ -1329,7 +1329,7 @@ export function ClientStageHeader({
                 type="button"
                 disabled={profileSelfAssigning}
                 onClick={() => void handleProfileSelfAssignConfirm()}
-                className="flex-1 rounded-lg bg-[#8DE3B5] py-2.5 text-sm font-medium text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:opacity-40 flex items-center justify-center gap-2"
+                className="flex-1 rounded-lg bg-[#A87830] py-2.5 text-sm font-medium text-[#161616] transition-colors hover:bg-[#8C6428] disabled:opacity-40 flex items-center justify-center gap-2"
               >
                 {profileSelfAssigning ? (
                   <>
@@ -1360,10 +1360,10 @@ export function ClientStageHeader({
           onClick={() => setSearchOpen(false)}
         >
           <div
-            className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-[#0d2035]"
+            className="w-full max-w-lg overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-2 border-b border-slate-100 p-3 dark:border-[#1a3550]">
+            <div className="flex items-center gap-2 border-b border-slate-100 p-3 dark:border-[#2E2E2E]">
               <Search className="h-4 w-4 shrink-0 text-slate-400" />
               <input
                 ref={searchInputRef}
@@ -1387,12 +1387,12 @@ export function ClientStageHeader({
               )}
             </div>
             {searchResults.length > 0 ? (
-              <ul className="max-h-72 divide-y divide-slate-100 overflow-y-auto dark:divide-[#1a3550]">
+              <ul className="max-h-72 divide-y divide-slate-100 overflow-y-auto dark:divide-[#2E2E2E]">
                 {searchResults.map((c) => (
                   <li key={c.id}>
                     <button
                       type="button"
-                      className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-slate-50 dark:hover:bg-[#102840]"
+                      className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-slate-50 dark:hover:bg-[#242424]"
                       onClick={() => {
                         if (typeof window !== "undefined") {
                           sessionStorage.setItem("clientListUrl", window.location.href);

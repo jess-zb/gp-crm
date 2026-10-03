@@ -50,8 +50,8 @@ export async function sendAttorneyPortalAssignmentEmail(
     `Hi ${params.attorneyName},`,
     "",
     count === 1
-      ? "A new case has been assigned to you in the DebtSupportPros attorney portal."
-      : `${count} new cases have been assigned to you in the DebtSupportPros attorney portal.`,
+      ? "A new case has been assigned to you in the Golden Pathway attorney portal."
+      : `${count} new cases have been assigned to you in the Golden Pathway attorney portal.`,
     "",
     clientLines,
     "",
@@ -150,32 +150,8 @@ export async function sendAttorneyCollectionLetterNotification(params: {
   clientId: string;
 }): Promise<{ ok: true } | { ok: false; error: string }> {
   void params.documentId;
-  const url = process.env.ATTORNEY_NOTIFY_WEBHOOK_URL?.trim();
-  if (url) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(params),
-      });
-      if (!res.ok) {
-        const text = (await res.text()).trim();
-        return {
-          ok: false,
-          error: text.slice(0, 300) || `HTTP ${res.status}`,
-        };
-      }
-      return { ok: true };
-    } catch (e) {
-      return {
-        ok: false,
-        error: e instanceof Error ? e.message : "Notification request failed.",
-      };
-    }
-  }
   return {
     ok: false,
-    error:
-      "Attorney email requires RESEND_API_KEY (or ATTORNEY_NOTIFY_WEBHOOK_URL).",
+    error: "Attorney email requires RESEND_API_KEY.",
   };
 }

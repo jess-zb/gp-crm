@@ -351,7 +351,7 @@ export function DocumentsTab({
   const empty = documents.length === 0;
 
   return (
-    <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+    <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -364,7 +364,7 @@ export function DocumentsTab({
         <button
           type="button"
           onClick={() => setModalOpen(true)}
-          className="rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-bold text-[#0A2540] shadow-md transition hover:opacity-95"
+          className="rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-bold text-[#161616] shadow-md transition hover:opacity-95"
         >
           Upload +
         </button>
@@ -377,7 +377,7 @@ export function DocumentsTab({
       ) : null}
 
       {empty ? (
-        <div className="rounded-lg border border-dashed border-slate-200 px-4 py-12 text-center dark:border-[#1a3550]">
+        <div className="rounded-lg border border-dashed border-slate-200 px-4 py-12 text-center dark:border-[#2E2E2E]">
           <p className="text-base font-medium text-slate-700 dark:text-slate-300">
             No documents uploaded yet
           </p>
@@ -389,12 +389,12 @@ export function DocumentsTab({
         <div className="space-y-8">
           {grouped.map((group) => (
             <div key={group.type}>
-              <h4 className="mb-3 border-b border-slate-200 pb-2 text-sm font-bold uppercase tracking-wide text-slate-800 dark:border-[#1a3550] dark:text-slate-200">
+              <h4 className="mb-3 border-b border-slate-200 pb-2 text-sm font-bold uppercase tracking-wide text-slate-800 dark:border-[#2E2E2E] dark:text-slate-200">
                 {group.label}
               </h4>
-              <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#1a3550]">
+              <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#2E2E2E]">
                 <table className="w-full min-w-[640px] text-left text-sm">
-                  <thead className="bg-slate-50 dark:bg-[#0d2035]/80">
+                  <thead className="bg-slate-50 dark:bg-[#1C1C1C]/80">
                     <tr>
                       <th className="px-3 py-2 font-semibold text-slate-700 dark:text-slate-200">
                         &nbsp;
@@ -423,7 +423,7 @@ export function DocumentsTab({
                     {group.items.map((row) => (
                       <tr
                         key={row.id}
-                        className="border-t border-slate-100 dark:border-[#1a3550]"
+                        className="border-t border-slate-100 dark:border-[#2E2E2E]"
                       >
                         <td className="whitespace-nowrap px-3 py-2 align-middle">
                           {getFileIcon(row.mime_type, row.file_name)}
@@ -433,7 +433,7 @@ export function DocumentsTab({
                             type="button"
                             onClick={() => void openPreview(row)}
                             disabled={previewLoadingId === row.id}
-                            className="max-w-[200px] truncate text-left text-sm font-medium text-[#8DE3B5] hover:underline disabled:opacity-50 dark:text-[#7fbf6f]"
+                            className="max-w-[200px] truncate text-left text-sm font-medium text-[#A87830] hover:underline disabled:opacity-50 dark:text-[#7fbf6f]"
                             title={row.file_name}
                           >
                             {previewLoadingId === row.id ? "Opening…" : row.file_name}
@@ -457,7 +457,7 @@ export function DocumentsTab({
                                 type="button"
                                 disabled={editNotesSaving}
                                 onClick={() => void onSaveNotes(row)}
-                                className="shrink-0 rounded bg-[#8DE3B5] px-2 py-1 text-xs font-semibold text-[#0A2540] hover:bg-[#6BC99A] disabled:opacity-50"
+                                className="shrink-0 rounded bg-[#A87830] px-2 py-1 text-xs font-semibold text-[#161616] hover:bg-[#8C6428] disabled:opacity-50"
                               >
                                 {editNotesSaving ? "…" : "Save"}
                               </button>
@@ -508,7 +508,7 @@ export function DocumentsTab({
                           <button
                             type="button"
                             onClick={() => void onDownload(row)}
-                            className="mr-2 text-xs font-semibold text-[#8DE3B5] hover:underline"
+                            className="mr-2 text-xs font-semibold text-[#A87830] hover:underline"
                           >
                             Download
                           </button>
@@ -558,7 +558,7 @@ export function DocumentsTab({
           }}
         >
           <div
-            className="w-full max-w-lg rounded-lg border border-slate-200 bg-white p-6 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="w-full max-w-lg rounded-lg border border-slate-200 bg-white p-6 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-start justify-between gap-3">
@@ -572,7 +572,7 @@ export function DocumentsTab({
                 type="button"
                 disabled={uploading}
                 onClick={closeUploadModal}
-                className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 dark:hover:bg-[#102840]"
+                className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 dark:hover:bg-[#242424]"
                 aria-label="Close upload modal"
               >
                 <X className="h-5 w-5" />
@@ -587,7 +587,7 @@ export function DocumentsTab({
                   required
                   value={docType}
                   onChange={(e) => setDocType(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                 >
                   <option value="">Select a file type</option>
                   {DOCUMENT_TAB_TYPE_OPTIONS.map((o) => (
@@ -606,7 +606,7 @@ export function DocumentsTab({
                   type="file"
                   accept="audio/*,video/*,image/*,.pdf,.txt,text/plain,.doc,.docx"
                   onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                  className="mt-1 block w-full text-sm text-slate-600 file:mr-3 file:rounded file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-semibold dark:text-slate-300 dark:file:bg-[#1a3550]"
+                  className="mt-1 block w-full text-sm text-slate-600 file:mr-3 file:rounded file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-semibold dark:text-slate-300 dark:file:bg-[#2E2E2E]"
                 />
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   PDF, TXT, images, audio (MP3/WAV/M4A), video, and Word documents.
@@ -620,7 +620,7 @@ export function DocumentsTab({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                   placeholder="Internal notes…"
                 />
               </label>
@@ -632,14 +632,14 @@ export function DocumentsTab({
                     setModalOpen(false);
                     resetForm();
                   }}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200"
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={uploading}
-                  className="rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-bold text-[#0A2540] shadow hover:opacity-95 disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="rounded-lg bg-[#A87830] px-4 py-2 text-sm font-bold text-[#161616] shadow hover:opacity-95 disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {uploading ? (
                     <>

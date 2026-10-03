@@ -319,7 +319,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
         />
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-y-1 border-b border-slate-200 dark:border-[#1a3550]">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-y-1 border-b border-slate-200 dark:border-[#2E2E2E]">
         <div className="flex min-w-0 flex-1 flex-wrap gap-1">
           {activeTabs.map((tab) => {
             const count = stageCounts[tab.id] ?? 0;
@@ -363,7 +363,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
             Columns
           </button>
           {showColumnPicker ? (
-            <div className="absolute right-0 top-10 z-20 w-52 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+            <div className="absolute right-0 top-10 z-20 w-52 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
                 Show columns
               </p>
@@ -382,7 +382,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
                           : [...prev, col.id]
                       );
                     }}
-                    className="rounded accent-[#8DE3B5]"
+                    className="rounded accent-[#A87830]"
                   />
                   <span className="text-sm text-gray-700 dark:text-slate-200">{col.label}</span>
                   {"required" in col && col.required ? (
@@ -396,7 +396,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
       </div>
 
       <div className="crm-table-wrap">
-        <table className="w-full min-w-[640px] table-fixed border-collapse text-left dark:divide-[#1a3550]">
+        <table className="w-full min-w-[640px] table-fixed border-collapse text-left dark:divide-[#2E2E2E]">
           <thead>
             <tr className="crm-table-head-row">
               {orderedVisibleColumns.map((colId) => {

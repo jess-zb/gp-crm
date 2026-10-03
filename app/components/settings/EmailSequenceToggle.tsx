@@ -85,7 +85,7 @@ export function EmailSequenceToggle() {
           onClick={() => void toggle()}
           aria-pressed={enabled}
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            enabled ? "bg-[#8DE3B5]" : "bg-slate-200 dark:bg-slate-600"
+            enabled ? "bg-[#A87830]" : "bg-slate-200 dark:bg-slate-600"
           }`}
         >
           <span

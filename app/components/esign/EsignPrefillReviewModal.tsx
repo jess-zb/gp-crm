@@ -55,7 +55,7 @@ export function EsignPrefillReviewModal({
   );
   const missingKeys = new Set(missingRequiredReviewFields(template, values).map((f) => f.key));
   const highlightClass =
-    "border-[#8DE3B5] bg-[#8DE3B5]/20 ring-1 ring-[#8DE3B5]/50 focus:border-[#8DE3B5] focus:ring-[#8DE3B5]/40 dark:border-[#8DE3B5] dark:bg-[#8DE3B5]/10";
+    "border-[#A87830] bg-[#A87830]/20 ring-1 ring-[#A87830]/50 focus:border-[#A87830] focus:ring-[#A87830]/40 dark:border-[#A87830] dark:bg-[#A87830]/10";
 
   useEffect(() => {
     setValues(reviewValuesFromPrefill(prefill));
@@ -127,8 +127,8 @@ export function EsignPrefillReviewModal({
         <div
           className={`mt-1 flex items-center rounded-md border bg-white transition-colors focus-within:ring-2 ${
             invalid
-              ? `border-[#8DE3B5] bg-[#8DE3B5]/20 focus-within:border-[#8DE3B5] focus-within:ring-[#8DE3B5]/40 dark:bg-[#8DE3B5]/10 ${nudge ? "esign-missing-nudge" : ""}`
-              : "border-slate-200 focus-within:border-[#8DE3B5] focus-within:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929]"
+              ? `border-[#A87830] bg-[#A87830]/20 focus-within:border-[#A87830] focus-within:ring-[#A87830]/40 dark:bg-[#A87830]/10 ${nudge ? "esign-missing-nudge" : ""}`
+              : "border-slate-200 focus-within:border-[#A87830] focus-within:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212]"
           }`}
         >
           <span className="pl-3 text-[13px] text-slate-500 dark:text-slate-400">$</span>
@@ -171,7 +171,7 @@ export function EsignPrefillReviewModal({
       onBackdropClick={busy || hideCancel ? undefined : onCancel}
     >
       <div className="crm-modal-panel flex max-h-[calc(100vh-2rem)] max-w-xl flex-col p-0">
-        <div className="flex items-start justify-between gap-3 border-b border-slate-200 px-6 py-4 dark:border-[#1a3550]">
+        <div className="flex items-start justify-between gap-3 border-b border-slate-200 px-6 py-4 dark:border-[#2E2E2E]">
           <div>
             <h3 id="esign-review-title" className="crm-modal-title mb-0 text-[15px]">
               Confirm Before Sending
@@ -187,7 +187,7 @@ export function EsignPrefillReviewModal({
               type="button"
               disabled={busy}
               onClick={onCancel}
-              className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 dark:hover:bg-[#102840] dark:hover:text-slate-200"
+              className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-50 dark:hover:bg-[#242424] dark:hover:text-slate-200"
               aria-label="Close"
             >
               <X className="h-5 w-5" />
@@ -209,7 +209,7 @@ export function EsignPrefillReviewModal({
                 <span className="font-medium text-slate-700 dark:text-slate-300">
                   {field.label}
                   {field.required ? (
-                    <span className="text-[#3a6b5a]" aria-hidden>
+                    <span className="text-[#7A5620]" aria-hidden>
                       {" "}
                       *
                     </span>
@@ -221,7 +221,7 @@ export function EsignPrefillReviewModal({
           </div>
           {cards.length ? (
             <div className="mt-5">
-              <h4 className="mb-3 border-b border-slate-200 pb-2 text-[10px] font-bold uppercase tracking-[0.08em] text-[#3a6b5a] dark:border-[#1a3550]">
+              <h4 className="mb-3 border-b border-slate-200 pb-2 text-[10px] font-bold uppercase tracking-[0.08em] text-[#7A5620] dark:border-[#2E2E2E]">
                 Cards
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -230,7 +230,7 @@ export function EsignPrefillReviewModal({
                     <span className="font-medium text-slate-700 dark:text-slate-300">
                       {field.label}
                       {field.required ? (
-                        <span className="text-[#3a6b5a]" aria-hidden>
+                        <span className="text-[#7A5620]" aria-hidden>
                           {" "}
                           *
                         </span>
@@ -244,7 +244,7 @@ export function EsignPrefillReviewModal({
           ) : null}
         </div>
 
-        <div className="flex justify-end gap-2 border-t border-slate-200 px-6 py-4 dark:border-[#1a3550]">
+        <div className="flex justify-end gap-2 border-t border-slate-200 px-6 py-4 dark:border-[#2E2E2E]">
           {hideCancel ? null : (
             <button
               type="button"

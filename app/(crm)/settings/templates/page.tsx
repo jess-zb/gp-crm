@@ -32,7 +32,7 @@ export default async function TemplatesSettingsPage() {
         <p className="mb-6 text-[13px]">
           <Link
             href="/settings"
-            className="font-medium text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+            className="font-medium text-[#A87830] hover:underline dark:text-[#A87830]"
           >
             ← Account settings
           </Link>

@@ -12,9 +12,9 @@
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-muted: #94a3b8;
-    --zb-brand: #8DE3B5;
-    --zb-brand-hover: #6BC99A;
-    --zb-brand-tint: #E4F8F0;
+    --zb-brand: #A87830;
+    --zb-brand-hover: #8C6428;
+    --zb-brand-tint: #F4E8D4;
 
     /* shadcn-compatible HSL tokens (Tailwind `border-border`) */
     --background: oklch(1 0 0);
@@ -36,12 +36,12 @@
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
 
-    --zb-dark-bg: #071929;
-    --zb-dark-card: #0d2035;
-    --zb-dark-border: #1a3550;
+    --zb-dark-bg: #121212;
+    --zb-dark-card: #1C1C1C;
+    --zb-dark-border: #2E2E2E;
     --zb-dark-text: #e8eaee;
-    --zb-dark-muted: #8DE3B5;
-    --zb-dark-accent: #8DE3B5;
+    --zb-dark-muted: #A87830;
+    --zb-dark-accent: #A87830;
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
     --chart-1: oklch(0.87 0 0);
@@ -127,11 +127,11 @@
   }
 
   .zb-card {
-    @apply rounded-lg border border-slate-200 bg-white p-5 transition-[background-color,border-color] duration-150 ease-out dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#E8EAEE];
+    @apply rounded-lg border border-slate-200 bg-white p-5 transition-[background-color,border-color] duration-150 ease-out dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE];
   }
 
   .crm-card {
-    @apply rounded-lg border border-slate-200 bg-white transition-[background-color,border-color] duration-150 ease-out dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#E8EAEE];
+    @apply rounded-lg border border-slate-200 bg-white transition-[background-color,border-color] duration-150 ease-out dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE];
   }
 
   .crm-page-title {
@@ -145,40 +145,40 @@
   }
 
   .crm-btn-primary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-md bg-[#8DE3B5] px-3.5 py-2 text-[12px] font-semibold text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:opacity-40 dark:hover:bg-[#6BC99A];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md bg-[#A87830] px-3.5 py-2 text-[12px] font-semibold text-[#161616] transition-colors hover:bg-[#8C6428] disabled:opacity-40 dark:hover:bg-[#8C6428];
   }
 
   .crm-btn-secondary {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840];
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424];
   }
 
   .crm-btn-danger {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-red-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-red-900/40 dark:bg-[#0d2035] dark:text-red-400 dark:hover:bg-red-950/30;
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md border border-red-200 bg-white px-3.5 py-2 text-[12px] font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-red-900/40 dark:bg-[#1C1C1C] dark:text-red-400 dark:hover:bg-red-950/30;
   }
 
   .crm-input {
-    @apply w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-slate-100 dark:placeholder:text-slate-500;
+    @apply w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-900 placeholder:text-slate-400 transition-colors focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-slate-100 dark:placeholder:text-slate-500;
   }
 
   .crm-table-wrap {
-    @apply overflow-x-auto rounded-lg border border-slate-200 bg-white dark:border-[#1a3550] dark:bg-[#0d2035];
+    @apply overflow-x-auto rounded-lg border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C];
     -webkit-overflow-scrolling: touch;
   }
 
   .crm-table-head-row {
-    @apply border-b border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035]/80;
+    @apply border-b border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]/80;
   }
 
   .crm-table-th {
-    @apply px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#3a6b5a];
+    @apply px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[#7A5620];
   }
 
   .crm-table-td {
-    @apply border-b border-slate-100 px-4 py-2.5 text-[13px] font-normal text-slate-700 dark:border-[#1a3550] dark:text-[#e2f5ef];
+    @apply border-b border-slate-100 px-4 py-2.5 text-[13px] font-normal text-slate-700 dark:border-[#2E2E2E] dark:text-[#e2f5ef];
   }
 
   .crm-table-row {
-    @apply border-b border-slate-100 transition-colors hover:bg-slate-50/50 dark:border-[#1a3550] dark:hover:bg-[#102840]/50;
+    @apply border-b border-slate-100 transition-colors hover:bg-slate-50/50 dark:border-[#2E2E2E] dark:hover:bg-[#242424]/50;
   }
 
   .crm-table-td-strong {
@@ -186,7 +186,7 @@
   }
 
   .crm-tab-row {
-    @apply flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-[#1a3550];
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-[#2E2E2E];
   }
 
   .crm-tab {
@@ -194,19 +194,19 @@
   }
 
   .crm-tab-active {
-    @apply -mb-px border-b-2 border-[#8DE3B5] px-4 py-2.5 text-[13px] font-medium text-[#0d7a4a] dark:text-[#8DE3B5];
+    @apply -mb-px border-b-2 border-[#A87830] px-4 py-2.5 text-[13px] font-medium text-[#7A5620] dark:text-[#A87830];
   }
 
   .crm-tab-count {
-    @apply ml-1.5 rounded px-1.5 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-600 dark:bg-[#102840] dark:text-slate-400;
+    @apply ml-1.5 rounded px-1.5 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-600 dark:bg-[#242424] dark:text-slate-400;
   }
 
   .crm-tab-count-active {
-    @apply ml-1.5 rounded px-1.5 py-0.5 text-[11px] font-semibold bg-[#E4F8F0] text-[#0d7a4a] dark:bg-[#102840] dark:text-[#8DE3B5];
+    @apply ml-1.5 rounded px-1.5 py-0.5 text-[11px] font-semibold bg-[#F4E8D4] text-[#7A5620] dark:bg-[#242424] dark:text-[#A87830];
   }
 
   .crm-modal-panel {
-    @apply w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035];
+    @apply w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C];
   }
 
   .crm-modal-title {
@@ -218,15 +218,15 @@
   }
 
   .crm-link-accent {
-    @apply font-medium text-[#0d7a4a] transition-colors duration-200 ease-out hover:text-[#0a5e38] dark:text-[#8DE3B5] dark:hover:text-[#A5ECC5];
+    @apply font-medium text-[#7A5620] transition-colors duration-200 ease-out hover:text-[#5C4018] dark:text-[#A87830] dark:hover:text-[#C4A15A];
   }
 
   .section-header {
-    @apply flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-[#1a3550];
+    @apply flex items-center justify-between border-b border-slate-100 px-5 py-3 dark:border-[#2E2E2E];
   }
 
   .table-row-hover {
-    @apply cursor-pointer transition-colors duration-150 ease-out hover:bg-slate-50/50 dark:hover:bg-[#102840]/50;
+    @apply cursor-pointer transition-colors duration-150 ease-out hover:bg-slate-50/50 dark:hover:bg-[#242424]/50;
   }
 
   /* ── Typography utilities ── */
@@ -251,7 +251,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #3a6b5a;
+    color: #7A5620;
   }
 
   .zb-id {
@@ -279,7 +279,7 @@
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 3px; }
-.dark ::-webkit-scrollbar-thumb { background: #1a3550; }
+.dark ::-webkit-scrollbar-thumb { background: #2E2E2E; }
 
 /* Prevent iOS input zoom */
 @media screen and (max-width: 768px) {

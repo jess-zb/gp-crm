@@ -184,7 +184,7 @@ const AppointmentRow = memo(({
                 type="button"
                 onClick={() => onEdit(r)}
                 title="Edit appointment"
-                className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#242424] dark:hover:text-slate-300"
               >
                 <Pencil className="h-4 w-4" />
               </button>
@@ -192,7 +192,7 @@ const AppointmentRow = memo(({
                 type="button"
                 onClick={() => void onComplete(r.id)}
                 title="Mark as complete"
-                className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#242424] dark:hover:text-slate-300"
               >
                 <CheckCircle className="h-4 w-4" />
               </button>
@@ -286,15 +286,15 @@ export function AppointmentsView({
         </CrmPageHeader>
 
         <div className="mx-auto min-w-0 w-full max-w-6xl flex-1 px-6 py-5">
-      <div className="mb-5 flex flex-wrap items-center gap-3 border-b border-slate-200 pb-4 dark:border-[#1a3550]">
-        <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#1a3550]">
+      <div className="mb-5 flex flex-wrap items-center gap-3 border-b border-slate-200 pb-4 dark:border-[#2E2E2E]">
+        <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#2E2E2E]">
           <button
             type="button"
             onClick={() => setPipeline("sales")}
             className={`px-4 py-1.5 text-sm font-medium ${
               pipeline === "sales"
-                ? "bg-[#8DE3B5] text-[#0A2540]"
-                : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-[#102840]"
+                ? "bg-[#A87830] text-[#161616]"
+                : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-[#242424]"
             }`}
           >
             Sales
@@ -304,8 +304,8 @@ export function AppointmentsView({
             onClick={() => setPipeline("service")}
             className={`px-4 py-1.5 text-sm font-medium ${
               pipeline === "service"
-                ? "bg-[#8DE3B5] text-[#0A2540]"
-                : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-[#102840]"
+                ? "bg-[#A87830] text-[#161616]"
+                : "text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-[#242424]"
             }`}
           >
             Service
@@ -319,7 +319,7 @@ export function AppointmentsView({
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+            className="rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
           >
             {typeOptions.map((o) => (
               <option key={o.value} value={o.value}>
@@ -332,13 +332,13 @@ export function AppointmentsView({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#1a3550]">
+          <div className="flex overflow-hidden rounded-lg border border-gray-200 dark:border-[#2E2E2E]">
             <button
               type="button"
               onClick={() => setView("list")}
               className={`flex h-8 w-8 items-center justify-center transition-colors ${
                 view === "list"
-                  ? "bg-[#8DE3B5] text-[#0A2540]"
+                  ? "bg-[#A87830] text-[#161616]"
                   : "text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300"
               }`}
               title="List view"
@@ -350,7 +350,7 @@ export function AppointmentsView({
               onClick={() => setView("calendar")}
               className={`flex h-8 w-8 items-center justify-center transition-colors ${
                 view === "calendar"
-                  ? "bg-[#8DE3B5] text-[#0A2540]"
+                  ? "bg-[#A87830] text-[#161616]"
                   : "text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300"
               }`}
               title="Calendar view"

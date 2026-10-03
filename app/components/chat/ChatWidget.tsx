@@ -133,13 +133,13 @@ function ChannelItem({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-slate-50 dark:hover:bg-[#102840]/60 ${
-        active ? "bg-slate-50 dark:bg-[#102840]/60" : ""
+      className={`flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left transition-colors hover:bg-slate-50 dark:hover:bg-[#242424]/60 ${
+        active ? "bg-slate-50 dark:bg-[#242424]/60" : ""
       }`}
     >
       <div className="flex min-w-0 items-center gap-2">
         {isAnnouncement ? (
-          <Volume2 className="h-4 w-4 shrink-0 text-[#8DE3B5]" aria-hidden />
+          <Volume2 className="h-4 w-4 shrink-0 text-[#A87830]" aria-hidden />
         ) : isDm ? (
           <User className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
         ) : (
@@ -829,9 +829,9 @@ export function ChatWidget({
       }}
     >
       {open ? (
-        <div className="chat-panel-mobile pointer-events-auto relative mb-3 flex h-[520px] w-80 max-w-none flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl max-sm:h-[calc(100dvh-5rem)] max-sm:max-h-[calc(100dvh-5rem)] max-sm:w-[calc(100vw-1rem)] dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <div className="chat-panel-mobile pointer-events-auto relative mb-3 flex h-[520px] w-80 max-w-none flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl max-sm:h-[calc(100dvh-5rem)] max-sm:max-h-[calc(100dvh-5rem)] max-sm:w-[calc(100vw-1rem)] dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <div
-            className="flex shrink-0 items-center gap-2 border-b border-slate-100 bg-slate-50 px-4 py-3 dark:border-[#1a3550] dark:bg-[#102840]/50"
+            className="flex shrink-0 items-center gap-2 border-b border-slate-100 bg-slate-50 px-4 py-3 dark:border-[#2E2E2E] dark:bg-[#242424]/50"
             style={{ paddingTop: "max(0.75rem, env(safe-area-inset-top, 0px))" }}
           >
             {activeChannel ? (
@@ -839,14 +839,14 @@ export function ChatWidget({
                 <button
                   type="button"
                   onClick={() => setActiveChannel(null)}
-                  className="rounded-md text-slate-400 transition-colors hover:bg-slate-200/80 hover:text-slate-600 dark:hover:bg-[#071929] dark:hover:text-slate-200"
+                  className="rounded-md text-slate-400 transition-colors hover:bg-slate-200/80 hover:text-slate-600 dark:hover:bg-[#121212] dark:hover:text-slate-200"
                   aria-label="Back to channels"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <span className="flex min-w-0 flex-1 items-center gap-1.5 text-[13px] font-semibold text-slate-900 dark:text-slate-100">
                   {isAnnouncement ? (
-                    <Volume2 className="h-4 w-4 shrink-0 text-[#8DE3B5]" aria-hidden />
+                    <Volume2 className="h-4 w-4 shrink-0 text-[#A87830]" aria-hidden />
                   ) : isDm ? (
                     <User className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
                   ) : (
@@ -863,7 +863,7 @@ export function ChatWidget({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="ml-auto rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-200/80 hover:text-slate-600 dark:hover:bg-[#071929] dark:hover:text-slate-200"
+              className="ml-auto rounded-md p-1 text-slate-400 transition-colors hover:bg-slate-200/80 hover:text-slate-600 dark:hover:bg-[#121212] dark:hover:text-slate-200"
               aria-label="Close chat"
             >
               <X className="h-4 w-4" />
@@ -899,7 +899,7 @@ export function ChatWidget({
                 ))}
               </div>
 
-              <div className="border-t border-slate-100 px-3 py-2 dark:border-[#1a3550]">
+              <div className="border-t border-slate-100 px-3 py-2 dark:border-[#2E2E2E]">
                 <div className="mb-1.5 flex items-center justify-between">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                     Direct Messages
@@ -935,8 +935,8 @@ export function ChatWidget({
               </div>
 
               {showUserPicker ? (
-                <div className="absolute inset-0 z-10 flex flex-col rounded-xl bg-white dark:bg-[#0d2035]">
-                  <div className="flex items-center justify-between border-b border-slate-100 p-3 dark:border-[#1a3550]">
+                <div className="absolute inset-0 z-10 flex flex-col rounded-xl bg-white dark:bg-[#1C1C1C]">
+                  <div className="flex items-center justify-between border-b border-slate-100 p-3 dark:border-[#2E2E2E]">
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                       New Direct Message
                     </p>
@@ -959,9 +959,9 @@ export function ChatWidget({
                         key={user.id}
                         type="button"
                         onClick={() => void startDm(user)}
-                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-[#102840]/60"
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-[#242424]/60"
                       >
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5]">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#A87830]">
                           <span className="text-xs font-bold text-white">
                             {user.full_name
                               ?.split(" ")
@@ -1002,8 +1002,8 @@ export function ChatWidget({
                       <div
                         className={`max-w-[85%] break-words rounded-lg px-3 py-2 text-[13px] ${
                           isMe
-                            ? "rounded-br-sm bg-[#8DE3B5] text-[#0A2540]"
-                            : "rounded-bl-sm bg-slate-100 text-slate-800 dark:bg-[#102840] dark:text-slate-100"
+                            ? "rounded-br-sm bg-[#A87830] text-[#161616]"
+                            : "rounded-bl-sm bg-slate-100 text-slate-800 dark:bg-[#242424] dark:text-slate-100"
                         }`}
                       >
                         {msg.body}
@@ -1014,7 +1014,7 @@ export function ChatWidget({
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="relative shrink-0 border-t border-slate-100 dark:border-[#1a3550]">
+              <div className="relative shrink-0 border-t border-slate-100 dark:border-[#2E2E2E]">
                 {isAnnouncement && !canPost ? (
                   <p className="px-3 py-3 text-center text-[12px] text-slate-400 dark:text-slate-500">
                     Only admins can post here
@@ -1024,7 +1024,7 @@ export function ChatWidget({
                     {showEmojiPicker ? (
                       <div
                         data-emoji-panel
-                        className="absolute bottom-12 left-0 z-50 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]"
+                        className="absolute bottom-12 left-0 z-50 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
                       >
                         <div className="grid grid-cols-8 gap-0.5">
                           {COMMON_EMOJIS.map((emoji) => (
@@ -1035,7 +1035,7 @@ export function ChatWidget({
                                 setInput((prev) => prev + emoji);
                                 setShowEmojiPicker(false);
                               }}
-                              className="flex items-center justify-center rounded p-1 text-base leading-none transition-colors hover:bg-slate-100 dark:hover:bg-[#102840]"
+                              className="flex items-center justify-center rounded p-1 text-base leading-none transition-colors hover:bg-slate-100 dark:hover:bg-[#242424]"
                             >
                               {emoji}
                             </button>
@@ -1048,7 +1048,7 @@ export function ChatWidget({
                         type="button"
                         data-emoji-btn
                         onClick={() => setShowEmojiPicker((e) => !e)}
-                        className="shrink-0 rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#102840] dark:hover:text-slate-200"
+                        className="shrink-0 rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#242424] dark:hover:text-slate-200"
                         aria-label="Add emoji"
                       >
                         <Smile className="h-4 w-4" />
@@ -1063,13 +1063,13 @@ export function ChatWidget({
                           }
                         }}
                         placeholder="Type a message…"
-                        className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#8DE3B5] focus:ring-1 focus:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:text-slate-100"
+                        className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#A87830] focus:ring-1 focus:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-slate-100"
                       />
                       <button
                         type="button"
                         onClick={() => void sendMessage()}
                         disabled={!input.trim()}
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5] transition-colors hover:bg-[#6BC99A] disabled:bg-slate-200 dark:disabled:bg-slate-700"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#A87830] transition-colors hover:bg-[#8C6428] disabled:bg-slate-200 dark:disabled:bg-slate-700"
                         aria-label="Send"
                       >
                         <Send className="h-3.5 w-3.5 text-white disabled:text-slate-400" />
@@ -1086,7 +1086,7 @@ export function ChatWidget({
       <button
         type="button"
         onClick={handleOpen}
-        className="pointer-events-auto relative flex h-16 w-16 items-center justify-center rounded-full bg-[#8DE3B5] text-[#0A2540] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#6BC99A] hover:shadow-xl"
+        className="pointer-events-auto relative flex h-16 w-16 items-center justify-center rounded-full bg-[#A87830] text-[#161616] shadow-lg transition-all duration-200 hover:scale-105 hover:bg-[#8C6428] hover:shadow-xl"
         aria-label={open ? "Close messages" : "Open messages"}
       >
         <MessageCircleIcon className="h-7 w-7 text-white" />

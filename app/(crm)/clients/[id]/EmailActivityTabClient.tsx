@@ -218,7 +218,7 @@ export function EmailActivityTabClient({
   return (
     <section className="space-y-4">
       {/* Active Campaigns */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
           Active Campaigns
         </h3>
@@ -227,7 +227,7 @@ export function EmailActivityTabClient({
             Loading…
           </div>
         ) : activeEnrollments.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-xs text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+          <p className="rounded-lg border border-dashed border-slate-200 py-6 text-center text-xs text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
             No active campaigns. Set or re-save the client's stage to trigger an enrollment.
           </p>
         ) : (
@@ -235,10 +235,10 @@ export function EmailActivityTabClient({
             {activeEnrollments.map((e) => (
               <li
                 key={e.id}
-                className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-3 py-2.5 dark:bg-[#071929]"
+                className="flex items-center justify-between gap-3 rounded-lg bg-slate-50 px-3 py-2.5 dark:bg-[#121212]"
               >
                 <div className="flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5 flex-shrink-0 text-[#8DE3B5]" />
+                  <Clock className="h-3.5 w-3.5 flex-shrink-0 text-[#A87830]" />
                   <span className="text-sm font-medium text-gray-800 dark:text-slate-200">
                     {SEQUENCE_NAMES[e.sequence_key ?? ""] ?? e.sequence_key ?? "Unknown"}
                   </span>
@@ -260,7 +260,7 @@ export function EmailActivityTabClient({
       </div>
 
       {/* Upcoming Emails */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-3 flex items-center justify-between gap-2">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
             Upcoming Emails
@@ -270,7 +270,7 @@ export function EmailActivityTabClient({
           </span>
         </div>
         {!localUpcoming.length ? (
-          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-xs text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-xs text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
             No drip emails queued. Emails will appear here when this client's stage triggers a sequence.
           </p>
         ) : (
@@ -283,8 +283,8 @@ export function EmailActivityTabClient({
                   key={key}
                   className={`group flex items-start gap-2 rounded-lg border p-2.5 text-left transition ${
                     row.isSkipped
-                      ? "border-slate-200 bg-slate-50 opacity-60 dark:border-[#1a3550] dark:bg-[#071929]/40"
-                      : "border-slate-100 bg-white hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929]/40 dark:hover:bg-[#102840]"
+                      ? "border-slate-200 bg-slate-50 opacity-60 dark:border-[#2E2E2E] dark:bg-[#121212]/40"
+                      : "border-slate-100 bg-white hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212]/40 dark:hover:bg-[#242424]"
                   }`}
                 >
                   <div className="min-w-0 flex-1">
@@ -298,7 +298,7 @@ export function EmailActivityTabClient({
                       {row.subject}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 font-semibold uppercase tracking-wide text-slate-600 dark:bg-[#102840] dark:text-slate-300">
+                      <span className="rounded bg-slate-100 px-1.5 py-0.5 font-semibold uppercase tracking-wide text-slate-600 dark:bg-[#242424] dark:text-slate-300">
                         {row.sequenceLabel} {row.stepOrder}
                       </span>
                       <span>·</span>
@@ -311,9 +311,9 @@ export function EmailActivityTabClient({
                     onClick={() => void handleToggleUpcomingSkip(row)}
                     title={row.isSkipped ? "Re-enable this email" : "Skip this email"}
                     aria-label={row.isSkipped ? "Re-enable this email" : "Skip this email"}
-                    className={`shrink-0 rounded p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] ${
+                    className={`shrink-0 rounded p-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
                       row.isSkipped
-                        ? "text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                        ? "text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                         : "text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
                     }`}
                   >
@@ -333,7 +333,7 @@ export function EmailActivityTabClient({
       </div>
 
       {/* Email Log */}
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
             Email Log
@@ -355,7 +355,7 @@ export function EmailActivityTabClient({
         ) : logs.length === 0 ? (
           <div className="py-10 text-center">
             <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-lg bg-green-50 dark:bg-emerald-950/40">
-              <Mail className="h-7 w-7 text-[#8DE3B5]" />
+              <Mail className="h-7 w-7 text-[#A87830]" />
             </div>
             <p className="text-sm font-medium text-gray-600 dark:text-slate-300">No emails sent yet</p>
             <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">
@@ -363,7 +363,7 @@ export function EmailActivityTabClient({
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+          <ul className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
             {logs.map((log) => {
               const statusStyle =
                 STATUS_STYLES[log.status ?? ""] ??
@@ -375,7 +375,7 @@ export function EmailActivityTabClient({
 
               return (
                 <li key={log.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
-                  <div className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#071929]">
+                  <div className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 dark:bg-[#121212]">
                     <Mail className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -416,7 +416,7 @@ export function EmailActivityTabClient({
           }}
         >
           <div
-            className="mx-4 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:border dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-4 w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">
@@ -433,7 +433,7 @@ export function EmailActivityTabClient({
               <select
                 value={resetScope}
                 onChange={(e) => setResetScope(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               >
                 <option value="all">All active drips</option>
                 <option value="welcome_lead">Welcome – Lead</option>
@@ -448,7 +448,7 @@ export function EmailActivityTabClient({
                 type="button"
                 disabled={busy}
                 onClick={() => setShowResetModal(false)}
-                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>

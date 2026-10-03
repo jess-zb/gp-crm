@@ -11,7 +11,7 @@ type AppointmentsCalendarProps = {
 
 const PIPELINE_COLORS: Record<string, string> = {
   sales: "bg-blue-500",
-  service: "bg-[#8DE3B5]",
+  service: "bg-[#A87830]",
 };
 
 function dateKeyFromParts(y: number, m0: number, day: number) {
@@ -65,12 +65,12 @@ export function AppointmentsCalendar({ appointments, onComplete }: AppointmentsC
   const getDateKey = (day: number) => dateKeyFromParts(year, month, day);
 
   return (
-    <div className="crm-table-wrap dark:border-[#1a3550]">
-      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-[#1a3550]">
+    <div className="crm-table-wrap dark:border-[#2E2E2E]">
+      <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-[#2E2E2E]">
         <button
           type="button"
           onClick={prevMonth}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-[#102840]"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-[#242424]"
           title="Previous month"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -79,14 +79,14 @@ export function AppointmentsCalendar({ appointments, onComplete }: AppointmentsC
         <button
           type="button"
           onClick={nextMonth}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-[#102840]"
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-[#242424]"
           title="Next month"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 border-b border-gray-100 dark:border-[#1a3550]">
+      <div className="grid grid-cols-7 border-b border-gray-100 dark:border-[#2E2E2E]">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
           <div
             key={d}
@@ -97,10 +97,10 @@ export function AppointmentsCalendar({ appointments, onComplete }: AppointmentsC
         ))}
       </div>
 
-      <div className="grid grid-cols-7 divide-x divide-y divide-gray-100 dark:divide-[#1a3550]">
+      <div className="grid grid-cols-7 divide-x divide-y divide-gray-100 dark:divide-[#2E2E2E]">
         {cells.map((day, idx) => {
           if (day == null) {
-            return <div key={`empty-${idx}`} className="min-h-[100px] bg-gray-50/50 dark:bg-[#071929]/40" />;
+            return <div key={`empty-${idx}`} className="min-h-[100px] bg-gray-50/50 dark:bg-[#121212]/40" />;
           }
 
           const key = getDateKey(day);
@@ -118,13 +118,13 @@ export function AppointmentsCalendar({ appointments, onComplete }: AppointmentsC
                 isToday
                   ? "bg-green-50/50 dark:bg-emerald-950/30"
                   : isPast
-                    ? "bg-gray-50/30 dark:bg-[#071929]/50"
-                    : "bg-white hover:bg-gray-50/50 dark:bg-[#0d2035] dark:hover:bg-[#102840]/60"
+                    ? "bg-gray-50/30 dark:bg-[#121212]/50"
+                    : "bg-white hover:bg-gray-50/50 dark:bg-[#1C1C1C] dark:hover:bg-[#242424]/60"
               }`}
             >
               <div
                 className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
-                  isToday ? "bg-[#8DE3B5] text-[#0A2540]" : "text-gray-600 dark:text-slate-300"
+                  isToday ? "bg-[#A87830] text-[#161616]" : "text-gray-600 dark:text-slate-300"
                 }`}
               >
                 {day}
@@ -136,7 +136,7 @@ export function AppointmentsCalendar({ appointments, onComplete }: AppointmentsC
                   return (
                     <div
                       key={appt.id}
-                      className="group flex cursor-default items-center gap-1 rounded-md border border-gray-200 bg-white px-1.5 py-0.5 transition-colors hover:border-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:hover:border-[#8DE3B5]"
+                      className="group flex cursor-default items-center gap-1 rounded-md border border-gray-200 bg-white px-1.5 py-0.5 transition-colors hover:border-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:hover:border-[#A87830]"
                     >
                       <div
                         className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${PIPELINE_COLORS[p] ?? "bg-gray-400"}`}
@@ -166,13 +166,13 @@ export function AppointmentsCalendar({ appointments, onComplete }: AppointmentsC
         })}
       </div>
 
-      <div className="flex items-center gap-4 border-t border-gray-100 bg-gray-50/50 px-5 py-3 dark:border-[#1a3550] dark:bg-[#071929]/40">
+      <div className="flex items-center gap-4 border-t border-gray-100 bg-gray-50/50 px-5 py-3 dark:border-[#2E2E2E] dark:bg-[#121212]/40">
         <div className="flex items-center gap-1.5">
           <div className="h-2 w-2 rounded-full bg-blue-500" />
           <span className="text-xs text-gray-500 dark:text-slate-400">Sales</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="h-2 w-2 rounded-full bg-[#8DE3B5]" />
+          <div className="h-2 w-2 rounded-full bg-[#A87830]" />
           <span className="text-xs text-gray-500 dark:text-slate-400">Service</span>
         </div>
       </div>

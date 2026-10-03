@@ -38,10 +38,10 @@ export function DictationMicButton({
               ? "Stop dictation"
               : "Dictate note"
         }
-        className={`inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-lg border px-2.5 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] disabled:cursor-not-allowed disabled:opacity-50 ${
           listening
             ? "border-red-300 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-300"
-            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300 dark:hover:bg-[#102840]"
+            : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300 dark:hover:bg-[#242424]"
         }`}
       >
         {listening ? (

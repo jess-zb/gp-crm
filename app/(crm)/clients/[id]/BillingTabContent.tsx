@@ -439,11 +439,11 @@ export function BillingTabContent({
   };
 
   return (
-    <section className="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+    <section className="space-y-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-base font-bold text-slate-900 dark:text-white">Cards on file</h3>
-          <p className="mt-1 text-lg font-bold text-[#8DE3B5]">
+          <p className="mt-1 text-lg font-bold text-[#A87830]">
             Total charged: {formatMoneyUsdFromCents(totalCents)}
           </p>
         </div>
@@ -451,7 +451,7 @@ export function BillingTabContent({
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="shrink-0 rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-bold text-[#0A2540] shadow-md transition hover:opacity-95"
+            className="shrink-0 rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-bold text-[#161616] shadow-md transition hover:opacity-95"
           >
             Add Charge +
           </button>
@@ -461,9 +461,9 @@ export function BillingTabContent({
       {!cards.length ? (
         <p className="text-sm text-slate-500 dark:text-slate-400">No cards recorded.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#1a3550]">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-[#2E2E2E]">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="bg-slate-50 dark:bg-[#0d2035]/80">
+            <thead className="bg-slate-50 dark:bg-[#1C1C1C]/80">
               <tr>
                 <th className="px-3 py-2 font-semibold">Creditor</th>
                 <th className="px-3 py-2 font-semibold">Last 4</th>
@@ -481,7 +481,7 @@ export function BillingTabContent({
               {cards.map((c) => {
                 const authKey = normalizeAuthStatus(c.authorization_status);
                 return (
-                <tr key={c.id} className="border-t border-slate-100 dark:border-[#1a3550]">
+                <tr key={c.id} className="border-t border-slate-100 dark:border-[#2E2E2E]">
                   <td className="px-3 py-2 font-medium text-slate-900 dark:text-slate-100">
                     {c.creditor_name}
                   </td>
@@ -551,7 +551,7 @@ export function BillingTabContent({
                         ) : null}
                       </div>
                       {canEditCards && !c.collection_letter_doc_id ? (
-                        <label className="inline-flex cursor-pointer text-xs font-semibold text-[#8DE3B5] hover:underline">
+                        <label className="inline-flex cursor-pointer text-xs font-semibold text-[#A87830] hover:underline">
                           {attachingId === c.id ? "Uploading…" : "Attach Collection Letter"}
                           <input
                             type="file"
@@ -616,7 +616,7 @@ export function BillingTabContent({
           }}
         >
           <div
-            className="mx-auto w-full max-w-[min(28rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-auto w-full max-w-[min(28rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <h4 className="text-lg font-bold text-slate-900 dark:text-white">Edit card</h4>
@@ -627,7 +627,7 @@ export function BillingTabContent({
                   value={editMerchant}
                   onChange={(e) => setEditMerchant(e.target.value)}
                   required
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   <option value="" disabled>
                     Select MIDs
@@ -646,7 +646,7 @@ export function BillingTabContent({
                 <select
                   value={editAuth}
                   onChange={(e) => setEditAuth(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   {AUTH_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -661,7 +661,7 @@ export function BillingTabContent({
                   value={editCreditor}
                   onChange={(e) => setEditCreditor(e.target.value)}
                   required
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 />
               </label>
               <label className="block text-sm">
@@ -669,7 +669,7 @@ export function BillingTabContent({
                 <select
                   value={editType}
                   onChange={(e) => setEditType(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   <option value="visa">Visa</option>
                   <option value="mastercard">Mastercard</option>
@@ -685,7 +685,7 @@ export function BillingTabContent({
                   onChange={(e) => setEditLastFour(e.target.value.replace(/\D/g, "").slice(0, 4))}
                   required
                   maxLength={4}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 font-mono dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 font-mono dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 />
               </label>
               <label className="block text-sm">
@@ -704,7 +704,7 @@ export function BillingTabContent({
                     step="0.01"
                     min={0}
                     required
-                    className="w-full rounded-lg border border-slate-200 py-2 pl-7 pr-3 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                    className="w-full rounded-lg border border-slate-200 py-2 pl-7 pr-3 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                   />
                 </div>
               </label>
@@ -716,14 +716,14 @@ export function BillingTabContent({
                     setEditOpen(false);
                     setEditing(null);
                   }}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold dark:border-[#1a3550]"
+                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold dark:border-[#2E2E2E]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingEdit}
-                  className="rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-bold text-[#0A2540] disabled:opacity-50"
+                  className="rounded-lg bg-[#A87830] px-4 py-2 text-sm font-bold text-[#161616] disabled:opacity-50"
                 >
                   {savingEdit ? "Saving…" : "Save"}
                 </button>
@@ -747,7 +747,7 @@ export function BillingTabContent({
           }}
         >
           <div
-            className="mx-4 w-full max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-4 w-full max-w-sm rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">
@@ -783,7 +783,7 @@ export function BillingTabContent({
               <select
                 value={authStatus}
                 onChange={(e) => setAuthStatus(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               >
                 {AUTH_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -837,7 +837,7 @@ export function BillingTabContent({
           }}
         >
           <div
-            className="mx-auto w-full max-w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-auto w-full max-w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-slate-200 bg-white p-4 shadow-sm sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <h4
@@ -855,7 +855,7 @@ export function BillingTabContent({
                   onChange={(e) =>
                     setAddFormData((p) => ({ ...p, merchant_name: e.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   <option value="" disabled>
                     Select MIDs
@@ -876,7 +876,7 @@ export function BillingTabContent({
                   onChange={(e) =>
                     setAddFormData((p) => ({ ...p, authorization_status: e.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   {AUTH_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -893,7 +893,7 @@ export function BillingTabContent({
                   onChange={(e) =>
                     setAddFormData((p) => ({ ...p, creditor_name: e.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 />
               </label>
               <label className="block text-sm">
@@ -904,7 +904,7 @@ export function BillingTabContent({
                   onChange={(e) =>
                     setAddFormData((p) => ({ ...p, card_type: e.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   <option value="visa">Visa</option>
                   <option value="mastercard">Mastercard</option>
@@ -926,7 +926,7 @@ export function BillingTabContent({
                       last_four: e.target.value.replace(/\D/g, "").slice(0, 4),
                     }))
                   }
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 font-mono dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 font-mono dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 />
               </label>
               <label className="block text-sm sm:col-span-2">
@@ -947,7 +947,7 @@ export function BillingTabContent({
                     onChange={(e) =>
                       setAddFormData((p) => ({ ...p, charge_amount: e.target.value }))
                     }
-                    className="w-full rounded-lg border border-slate-200 py-2 pl-7 pr-3 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                    className="w-full rounded-lg border border-slate-200 py-2 pl-7 pr-3 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                   />
                 </div>
               </label>

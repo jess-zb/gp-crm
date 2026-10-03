@@ -222,7 +222,7 @@ export function AlertNotification({ userId }: { userId: string }) {
             ) : null}
 
             <div className="mb-4 flex items-start gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white shadow-sm dark:bg-[#0d2035]">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white shadow-sm dark:bg-[#1C1C1C]">
                 <Icon className={`h-6 w-6 ${colors.icon}`} />
               </div>
               <div className="min-w-0 flex-1">
@@ -256,7 +256,7 @@ export function AlertNotification({ userId }: { userId: string }) {
               <button
                 type="button"
                 onClick={() => dismissAlert(currentAlert.id)}
-                className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929] dark:text-slate-200 dark:hover:bg-[#102840]"
+                className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-slate-200 dark:hover:bg-[#242424]"
               >
                 {alerts.length > 1
                   ? `OK (${alerts.length - 1} more)`

@@ -238,13 +238,13 @@ export default function PortalPage() {
     const isClosed = client.stage === "closed";
     return PROGRESS_LABELS.map((_, i) => {
       if (isClosed) {
-        return { bar: "bg-[#8DE3B5]", label: "text-slate-700 dark:text-slate-200" };
+        return { bar: "bg-[#A87830]", label: "text-slate-700 dark:text-slate-200" };
       }
       if (i < idx) {
-        return { bar: "bg-[#8DE3B5]", label: "text-slate-700 dark:text-slate-200" };
+        return { bar: "bg-[#A87830]", label: "text-slate-700 dark:text-slate-200" };
       }
       if (i === idx) {
-        return { bar: "bg-[#8DE3B5]", label: "text-slate-800 dark:text-slate-100 font-semibold" };
+        return { bar: "bg-[#A87830]", label: "text-slate-800 dark:text-slate-100 font-semibold" };
       }
       return { bar: "bg-slate-200 dark:bg-slate-600", label: "text-slate-400 dark:text-slate-500" };
     });
@@ -253,7 +253,7 @@ export default function PortalPage() {
   const welcomeSection = useMemo(() => {
     if (!client || !atOrAfterWelcomePacket(client.stage)) return null;
     return (
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <h2 className="text-base font-bold text-slate-900 dark:text-white">
           Welcome packet
         </h2>
@@ -277,7 +277,7 @@ export default function PortalPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#071929]">
+      <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#121212]">
         <p className="text-center text-sm text-slate-600 dark:text-slate-400">
           Loading…
         </p>
@@ -292,13 +292,13 @@ export default function PortalPage() {
         displayName={shellName}
         onSignOut={() => void signOut()}
       >
-        <main className="min-h-screen bg-[#F5F6F8] px-4 py-8 dark:bg-[#071929]">
+        <main className="min-h-screen bg-[#F5F6F8] px-4 py-8 dark:bg-[#121212]">
           <div className="mx-auto max-w-lg rounded-xl border border-amber-200 bg-amber-50 px-4 py-6 text-center text-sm text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-100">
             We couldn&apos;t find an active client profile for this account email. Please contact
             your case manager.
           </div>
           <p className="mx-auto mt-6 max-w-lg text-center text-sm text-slate-500">
-            <Link href="/portal/login" className="text-[#8DE3B5] underline">
+            <Link href="/portal/login" className="text-[#A87830] underline">
               Portal sign in
             </Link>
           </p>
@@ -318,7 +318,7 @@ export default function PortalPage() {
       displayName={shellDisplayName}
       onSignOut={() => void signOut()}
     >
-      <main className="min-h-screen bg-[#F5F6F8] pb-12 dark:bg-[#071929]">
+      <main className="min-h-screen bg-[#F5F6F8] pb-12 dark:bg-[#121212]">
         <div className="mx-auto max-w-lg space-y-6 px-4 pt-6">
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:justify-between">
             <h1 className="text-center text-xl font-semibold text-slate-900 dark:text-white sm:text-left">
@@ -326,12 +326,12 @@ export default function PortalPage() {
             </h1>
             <Link
               href="/portal/help"
-              className="shrink-0 text-sm font-semibold text-[#8DE3B5] underline-offset-4 hover:underline"
+              className="shrink-0 text-sm font-semibold text-[#A87830] underline-offset-4 hover:underline"
             >
               Help
             </Link>
           </div>
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <h2 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
             Your progress
           </h2>
@@ -354,7 +354,7 @@ export default function PortalPage() {
 
         {welcomeSection}
 
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <h2 className="mb-3 text-base font-bold text-slate-900 dark:text-white">
             Documents
           </h2>
@@ -363,7 +363,7 @@ export default function PortalPage() {
               No documents are available yet.
             </p>
           ) : (
-            <ul className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+            <ul className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
               {documents.map((d) => (
                 <li
                   key={d.id}
@@ -391,7 +391,7 @@ export default function PortalPage() {
                   <button
                     type="button"
                     onClick={() => void downloadDoc(d)}
-                    className="shrink-0 rounded-lg border border-[#8DE3B5] bg-[#8DE3B5]/10 px-3 py-1.5 text-sm font-semibold text-[#8DE3B5] dark:bg-[#8DE3B5]/20"
+                    className="shrink-0 rounded-lg border border-[#A87830] bg-[#A87830]/10 px-3 py-1.5 text-sm font-semibold text-[#A87830] dark:bg-[#A87830]/20"
                   >
                     Download
                   </button>
@@ -401,11 +401,11 @@ export default function PortalPage() {
           )}
         </section>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <h2 className="mb-3 text-base font-bold text-slate-900 dark:text-white">
             Messages
           </h2>
-          <div className="mb-3 max-h-72 space-y-3 overflow-y-auto rounded-lg border border-slate-100 bg-slate-50 p-3 dark:border-[#1a3550] dark:bg-[#071929]/50">
+          <div className="mb-3 max-h-72 space-y-3 overflow-y-auto rounded-lg border border-slate-100 bg-slate-50 p-3 dark:border-[#2E2E2E] dark:bg-[#121212]/50">
             {messages.length === 0 ? (
               <p className="text-center text-sm text-slate-500 dark:text-slate-400">
                 No messages yet. Say hello to your team below.
@@ -416,8 +416,8 @@ export default function PortalPage() {
                   key={m.id}
                   className={`rounded-lg px-3 py-2 text-sm ${
                     m.sender_role === "client"
-                      ? "ml-4 bg-[#8DE3B5]/15 dark:bg-[#8DE3B5]/25"
-                      : "mr-4 bg-white dark:bg-[#0d2035]"
+                      ? "ml-4 bg-[#A87830]/15 dark:bg-[#A87830]/25"
+                      : "mr-4 bg-white dark:bg-[#1C1C1C]"
                   }`}
                 >
                   <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
@@ -448,13 +448,13 @@ export default function PortalPage() {
               onChange={(e) => setMessageDraft(e.target.value)}
               rows={3}
               placeholder="Type a message to your team…"
-              className="min-h-[80px] flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+              className="min-h-[80px] flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
             />
             <button
               type="button"
               disabled={sending || !messageDraft.trim()}
               onClick={() => void sendMessage()}
-              className="h-fit shrink-0 rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-bold text-[#0A2540] disabled:opacity-50"
+              className="h-fit shrink-0 rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-bold text-[#161616] disabled:opacity-50"
             >
               {sending ? "Sending…" : "Send"}
             </button>

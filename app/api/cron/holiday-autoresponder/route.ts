@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { verifyVercelCronRequest } from "@/lib/cron/verify-vercel-cron-request";
-import { FROM_EMAIL } from "@/lib/constants/business-contact";
+import { FROM_EMAIL, SUPPORT_EMAIL } from "@/lib/constants/business-contact";
 import { createServiceClient } from "@/lib/supabase/server";
 import { renderTemplate } from "@/lib/email/render-template";
 import { getRoleDisplayName } from "@/lib/utils/roles";
@@ -141,7 +141,7 @@ export async function GET(request: Request) {
             firstName: mgrFirst || "Account",
             lastName: mgrLast,
             title: String(mgr?.title ?? "").trim() || getRoleDisplayName("acct_manager"),
-            email: String(mgr?.email ?? "").trim() || "emile@debtsupportpros.com",
+            email: String(mgr?.email ?? "").trim() || SUPPORT_EMAIL,
           },
           portalUrl,
           unsubscribeUrl,

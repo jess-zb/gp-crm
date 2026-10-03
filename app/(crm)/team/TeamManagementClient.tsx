@@ -62,7 +62,7 @@ function DeptCheckboxInline({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="rounded accent-[#8DE3B5]"
+        className="rounded accent-[#A87830]"
       />
       <span className="text-sm text-slate-700 dark:text-slate-300">{label}</span>
     </label>
@@ -278,7 +278,7 @@ export function TeamManagementClient({
                     <div className="flex items-center gap-3">
                       <div
                         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: "#8DE3B5" }}
+                        style={{ backgroundColor: "#A87830" }}
                       >
                         {getInitials(m.full_name)}
                       </div>
@@ -323,7 +323,7 @@ export function TeamManagementClient({
                           !(isDevViewer || isAdminViewer))
                       }
                       onClick={() => openEdit(m)}
-                      className="inline-flex rounded-md border border-slate-200 bg-white p-2 text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-40 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840]"
+                      className="inline-flex rounded-md border border-slate-200 bg-white p-2 text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-40 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424]"
                       title="Edit member"
                       aria-label="Edit member"
                     >
@@ -347,7 +347,7 @@ export function TeamManagementClient({
           role="presentation"
         >
           <div
-            className="mx-auto max-h-[90vh] w-full max-w-[min(28rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-auto max-h-[90vh] w-full max-w-[min(28rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             role="dialog"
             aria-labelledby="invite-title"
           >
@@ -424,14 +424,14 @@ export function TeamManagementClient({
                 <button
                   type="button"
                   onClick={() => setShowInviteModal(false)}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={inviting}
-                  className="flex items-center gap-2 rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-semibold text-[#0A2540] hover:bg-[#6BC99A] disabled:opacity-50"
+                  className="flex items-center gap-2 rounded-lg bg-[#A87830] px-4 py-2 text-sm font-semibold text-[#161616] hover:bg-[#8C6428] disabled:opacity-50"
                 >
                   {inviting ? (
                     <>
@@ -450,7 +450,7 @@ export function TeamManagementClient({
 
       {showSuccess ? (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4">
-          <div className="mx-auto w-full max-w-[min(24rem,calc(100vw-2rem))] rounded-xl bg-white p-4 shadow-xl sm:p-6 dark:bg-[#0d2035]">
+          <div className="mx-auto w-full max-w-[min(24rem,calc(100vw-2rem))] rounded-xl bg-white p-4 shadow-xl sm:p-6 dark:bg-[#1C1C1C]">
             <div className="mb-4 text-center">
               <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-emerald-950/60">
                 <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-emerald-400" />
@@ -459,7 +459,7 @@ export function TeamManagementClient({
                 Team member created!
               </h3>
             </div>
-            <div className="mb-4 space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-[#071929]">
+            <div className="mb-4 space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-[#121212]">
               <p className="text-sm text-gray-600 dark:text-slate-300">
                 <span className="font-medium">Email:</span> {successInviteEmail}
               </p>
@@ -484,7 +484,7 @@ export function TeamManagementClient({
                     toast.error("Could not copy");
                   }
                 }}
-                className="flex-1 rounded-lg border border-[#8DE3B5] py-2 text-sm font-medium text-[#8DE3B5] hover:bg-green-50 dark:hover:bg-[#102840]"
+                className="flex-1 rounded-lg border border-[#A87830] py-2 text-sm font-medium text-[#A87830] hover:bg-green-50 dark:hover:bg-[#242424]"
               >
                 Copy credentials
               </button>
@@ -495,7 +495,7 @@ export function TeamManagementClient({
                   setTempPassword("");
                   setSuccessInviteEmail("");
                 }}
-                className="flex-1 rounded-lg bg-[#8DE3B5] py-2 text-sm font-medium text-[#0A2540] hover:bg-[#6BC99A]"
+                className="flex-1 rounded-lg bg-[#A87830] py-2 text-sm font-medium text-[#161616] hover:bg-[#8C6428]"
               >
                 Done
               </button>
@@ -513,7 +513,7 @@ export function TeamManagementClient({
           role="presentation"
         >
           <div
-            className="mx-auto w-full max-w-[min(24rem,calc(100vw-2rem))] rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-auto w-full max-w-[min(24rem,calc(100vw-2rem))] rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             role="dialog"
             aria-labelledby="edit-role-title"
           >
@@ -543,7 +543,7 @@ export function TeamManagementClient({
               </select>
             </label>
 
-            <div className="mt-3 flex items-center justify-between border-t border-slate-100 py-3 dark:border-[#1a3550]">
+            <div className="mt-3 flex items-center justify-between border-t border-slate-100 py-3 dark:border-[#2E2E2E]">
               <div>
                 <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                   Account Status
@@ -557,7 +557,7 @@ export function TeamManagementClient({
                 onClick={() => setEditActive((p) => !p)}
                 disabled={editRow.id === currentUserId && editActive}
                 className={`relative inline-flex h-5 w-9 rounded-full transition-colors ${
-                  editActive ? "bg-[#8DE3B5]" : "bg-slate-200 dark:bg-[#1a3550]"
+                  editActive ? "bg-[#A87830]" : "bg-slate-200 dark:bg-[#2E2E2E]"
                 }`}
                 aria-pressed={editActive}
               >
@@ -570,7 +570,7 @@ export function TeamManagementClient({
             </div>
 
             {editRole === "acct_manager" && isAdminViewer ? (
-              <div className="border-t border-slate-100 pt-3 dark:border-[#1a3550]">
+              <div className="border-t border-slate-100 pt-3 dark:border-[#2E2E2E]">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                   Department Access
                 </p>
@@ -593,7 +593,7 @@ export function TeamManagementClient({
               <button
                 type="button"
                 onClick={() => setEditRow(null)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -601,7 +601,7 @@ export function TeamManagementClient({
                 type="button"
                 onClick={saveEdit}
                 disabled={pending}
-                className="flex items-center gap-2 rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-semibold text-[#0A2540] hover:bg-[#6BC99A] disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg bg-[#A87830] px-4 py-2 text-sm font-semibold text-[#161616] hover:bg-[#8C6428] disabled:opacity-50"
               >
                 {pending ? (
                   <>

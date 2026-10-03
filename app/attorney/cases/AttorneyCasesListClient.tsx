@@ -55,27 +55,27 @@ export function AttorneyCasesListClient({ initialQ, cases }: Props) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search by name…"
-          className="min-w-[200px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#E8EAEE]"
+          className="min-w-[200px] flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE]"
         />
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-semibold text-[#0A2540] disabled:opacity-60"
+          className="rounded-lg bg-[#A87830] px-4 py-2 text-sm font-semibold text-[#161616] disabled:opacity-60"
         >
           Search
         </button>
       </form>
 
       {cases.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-200 bg-white px-6 py-14 text-center dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <div className="rounded-xl border border-dashed border-slate-200 bg-white px-6 py-14 text-center dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <p className="text-sm text-slate-600 dark:text-slate-400">
             No cases assigned yet
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
-          <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#1a3550]">
-            <thead className="bg-slate-50 dark:bg-[#0d2035]/80">
+        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+          <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#2E2E2E]">
+            <thead className="bg-slate-50 dark:bg-[#1C1C1C]/80">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
                   Client Name
@@ -88,7 +88,7 @@ export function AttorneyCasesListClient({ initialQ, cases }: Props) {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+            <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
               {cases.map((c) => {
                 const name =
                   `${c.first_name ?? ""} ${c.last_name ?? ""}`.trim() || "Client";
@@ -105,7 +105,7 @@ export function AttorneyCasesListClient({ initialQ, cases }: Props) {
                         router.push(`/attorney/cases/${c.id}`);
                       }
                     }}
-                    className="cursor-pointer hover:bg-slate-50/80 dark:hover:bg-[#102840]/40"
+                    className="cursor-pointer hover:bg-slate-50/80 dark:hover:bg-[#242424]/40"
                   >
                     <td className="whitespace-nowrap px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {name}
@@ -117,7 +117,7 @@ export function AttorneyCasesListClient({ initialQ, cases }: Props) {
                       <Link
                         href={`/attorney/cases/${c.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#0A2540] shadow-sm hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#8DE3B5] dark:hover:bg-[#102840]"
+                        className="inline-flex rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-[#161616] shadow-sm hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#A87830] dark:hover:bg-[#242424]"
                       >
                         View case
                       </Link>

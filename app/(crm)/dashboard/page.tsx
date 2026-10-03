@@ -323,7 +323,7 @@ export default async function DashboardPage() {
         ) : null}
 
         {!isAdmin && !showDeptView ? (
-          <div className="rounded-lg border border-slate-200 bg-white p-6 dark:border-[#1a3550] dark:bg-[#0d2035]">
+          <div className="rounded-lg border border-slate-200 bg-white p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Welcome back{firstName ? `, ${firstName}` : ""}. Your dashboard
               will appear here once department access is configured on your

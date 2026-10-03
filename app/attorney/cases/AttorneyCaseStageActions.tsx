@@ -129,7 +129,7 @@ export function AttorneyCaseStageActions({
               successMsg: "Close undone — case is active again",
             })
           }
-          className="rounded-lg border-2 border-[#8DE3B5] bg-transparent px-4 py-2 text-sm font-semibold text-[#8DE3B5] transition hover:bg-[#8DE3B5]/10 disabled:opacity-50 dark:text-[#7fbf6f] dark:hover:bg-[#8DE3B5]/20"
+          className="rounded-lg border-2 border-[#A87830] bg-transparent px-4 py-2 text-sm font-semibold text-[#A87830] transition hover:bg-[#A87830]/10 disabled:opacity-50 dark:text-[#7fbf6f] dark:hover:bg-[#A87830]/20"
         >
           {loading === "revert" ? "Undoing…" : "Undo Close Case"}
         </button>

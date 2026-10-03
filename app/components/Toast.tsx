@@ -59,7 +59,7 @@ function ToastBubble({
     <div
       className={`pointer-events-auto flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-white shadow-lg transition duration-200 ease-out ${
         item.type === "success"
-          ? "bg-[#8DE3B5]"
+          ? "bg-[#A87830]"
           : item.type === "warning"
             ? "bg-amber-600"
             : "bg-red-600"

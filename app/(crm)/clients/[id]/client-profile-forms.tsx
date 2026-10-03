@@ -86,7 +86,7 @@ export function AddCardForm({ clientId }: { clientId: string }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="grid gap-3 rounded-lg border border-slate-100 p-4 dark:border-[#1a3550] sm:grid-cols-2"
+      className="grid gap-3 rounded-lg border border-slate-100 p-4 dark:border-[#2E2E2E] sm:grid-cols-2"
     >
       <input type="hidden" name="clientId" value={clientId} />
       <label className="block text-sm sm:col-span-2">

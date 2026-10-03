@@ -47,13 +47,13 @@ export default async function MidDocumentsPage({
         <nav className="text-[13px] text-slate-600 dark:text-slate-400" aria-label="Breadcrumb">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/settings" className="font-medium text-[#8DE3B5] hover:underline">
+              <Link href="/settings" className="font-medium text-[#A87830] hover:underline">
                 Settings
               </Link>
             </li>
             <li className="text-slate-400">/</li>
             <li>
-              <Link href="/settings/mids" className="font-medium text-[#8DE3B5] hover:underline">
+              <Link href="/settings/mids" className="font-medium text-[#A87830] hover:underline">
                 MIDs
               </Link>
             </li>

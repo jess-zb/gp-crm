@@ -16,13 +16,13 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#0A2540',
+  themeColor: '#161616',
 };
 
 export function generateMetadata(): Metadata {
   return {
-    title: 'DebtSupportPros CRM',
-    description: 'Case management for DebtSupportPros, LLC',
+    title: 'Golden Pathway CRM',
+    description: 'Case management for Golden Pathway Financial',
     manifest: '/manifest.json',
     icons: {
       icon: '/favicon.png',
@@ -32,7 +32,7 @@ export function generateMetadata(): Metadata {
     appleWebApp: {
       capable: true,
       statusBarStyle: 'black-translucent',
-      title: 'DSP CRM',
+      title: 'GP CRM',
     },
     other: {
       'mobile-web-app-capable': 'yes',

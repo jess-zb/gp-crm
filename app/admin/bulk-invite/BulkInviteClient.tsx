@@ -204,7 +204,7 @@ export function BulkInviteClient({ canExportCsv }: { canExportCsv: boolean }) {
             type="button"
             disabled={busy}
             onClick={() => void createAll()}
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-semibold text-[#0A2540] shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-semibold text-[#161616] shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {busy ? "Working…" : "Create All Users"}
           </button>
@@ -212,7 +212,7 @@ export function BulkInviteClient({ canExportCsv }: { canExportCsv: boolean }) {
           <button
             type="button"
             onClick={exportCsv}
-            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840]"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424]"
           >
             Export results (CSV)
           </button>
@@ -220,10 +220,10 @@ export function BulkInviteClient({ canExportCsv }: { canExportCsv: boolean }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929]/80">
+            <thead className="border-b border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212]/80">
               <tr>
                 <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">
                   Name
@@ -245,7 +245,7 @@ export function BulkInviteClient({ canExportCsv }: { canExportCsv: boolean }) {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+            <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
               {rows.map((r) => (
                 <tr key={r.email}>
                   <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">

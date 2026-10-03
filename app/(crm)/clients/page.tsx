@@ -86,7 +86,7 @@ function ClientsPageShell({ children }: { children: React.ReactNode }) {
             <li>
               <Link
                 href="/dashboard"
-                className="font-medium text-[#8DE3B5] hover:text-[#6BC99A] dark:text-[#8DE3B5] dark:hover:text-[#A5ECC5]"
+                className="font-medium text-[#A87830] hover:text-[#8C6428] dark:text-[#A87830] dark:hover:text-[#C4A15A]"
               >
                 Dashboard
               </Link>

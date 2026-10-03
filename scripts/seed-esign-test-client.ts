@@ -1,5 +1,5 @@
 /**
- * Disposable CRM client for eSign QA. Email goes to jessica@debtsupportpros.com.
+ * Disposable CRM client for eSign QA.
  * Delete this client when testing is done (nickname ESIGN-TEST-DELETE).
  *
  *   npx tsx scripts/seed-esign-test-client.ts
@@ -9,7 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 
 config({ path: ".env.local" });
 
-const EMAIL = "jessica@debtsupportpros.com";
+const EMAIL = "esign-qa@goldenpathway.io";
 const NICKNAME = "ESIGN-TEST-DELETE";
 
 async function main() {

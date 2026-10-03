@@ -84,12 +84,12 @@ export function EsignLayoutEditorClient({
         stamp at the size of that box. Save, then send a new copy for the size to apply.
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-        <Link className="text-[#0A2540] underline" href={backHref}>
+        <Link className="text-[#161616] underline" href={backHref}>
           Back to {midName}
         </Link>
         <button
           type="button"
-          className="rounded-lg bg-[#0A2540] px-3 py-1.5 text-xs font-semibold text-[#8DE3B5] disabled:opacity-60"
+          className="rounded-lg bg-[#161616] px-3 py-1.5 text-xs font-semibold text-[#A87830] disabled:opacity-60"
           disabled={busy}
           onClick={() => void save()}
         >

@@ -176,7 +176,7 @@ export function RefundsQueueClient({
       ) : null}
 
       {isDevViewer && showUsage ? (
-        <div className="mt-4 grid gap-4 rounded-xl border border-gray-200 p-4 md:grid-cols-3 dark:border-[#1a3550]">
+        <div className="mt-4 grid gap-4 rounded-xl border border-gray-200 p-4 md:grid-cols-3 dark:border-[#2E2E2E]">
           {[
             { title: "Requested by", entries: queue.usage.requestedBy },
             { title: "Processed by", entries: queue.usage.refundedBy },
@@ -211,7 +211,7 @@ export function RefundsQueueClient({
       ) : null}
 
       {visibleGroups.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-gray-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+        <div className="mt-4 rounded-xl border border-gray-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
           {filtering
             ? `No queued refunds match "${query.trim()}".`
             : "No refunds are awaiting processing."}
@@ -221,9 +221,9 @@ export function RefundsQueueClient({
           {visibleGroups.map((group) => (
             <section
               key={group.processorLabel}
-              className="overflow-hidden rounded-xl border border-gray-200 dark:border-[#1a3550]"
+              className="overflow-hidden rounded-xl border border-gray-200 dark:border-[#2E2E2E]"
             >
-              <header className="flex flex-col gap-2 border-b border-gray-200 bg-slate-50 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#1a3550] dark:bg-[#0d2035]">
+              <header className="flex flex-col gap-2 border-b border-gray-200 bg-slate-50 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
                 <div>
                   <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
                     {group.processorLabel}
@@ -257,7 +257,7 @@ export function RefundsQueueClient({
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[820px] border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 text-left dark:border-[#1a3550]">
+                    <tr className="border-b border-gray-200 text-left dark:border-[#2E2E2E]">
                       <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                         Client
                       </th>
@@ -284,12 +284,12 @@ export function RefundsQueueClient({
                       return (
                         <tr
                           key={row.id}
-                          className="border-b border-slate-100 last:border-b-0 dark:border-[#1a3550]"
+                          className="border-b border-slate-100 last:border-b-0 dark:border-[#2E2E2E]"
                         >
                           <td className="px-4 py-2.5 align-middle">
                             <Link
                               href={`/clients/${row.clientId}`}
-                              className="text-sm font-medium text-[#8DE3B5] hover:text-[#6BC99A] dark:hover:text-[#A5ECC5]"
+                              className="text-sm font-medium text-[#A87830] hover:text-[#8C6428] dark:hover:text-[#C4A15A]"
                             >
                               {row.clientName}
                             </Link>
@@ -326,7 +326,7 @@ export function RefundsQueueClient({
                           <td className="px-4 py-2.5 text-center align-middle">
                             <input
                               type="checkbox"
-                              className="h-4 w-4 rounded border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                              className="h-4 w-4 rounded border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                               checked={!!row.offsetBilledAt}
                               disabled={busy}
                               onChange={() => onToggleOffset(row)}
@@ -372,7 +372,7 @@ export function RefundsQueueClient({
           <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
             Processed today
           </h2>
-          <ul className="mt-2 divide-y divide-slate-100 rounded-xl border border-gray-200 dark:divide-[#1a3550] dark:border-[#1a3550]">
+          <ul className="mt-2 divide-y divide-slate-100 rounded-xl border border-gray-200 dark:divide-[#2E2E2E] dark:border-[#2E2E2E]">
             {visibleRefundedToday.map((row) => (
               <li
                 key={row.id}
@@ -380,7 +380,7 @@ export function RefundsQueueClient({
               >
                 <Link
                   href={`/clients/${row.clientId}`}
-                  className="font-medium text-[#8DE3B5] hover:text-[#6BC99A] dark:hover:text-[#A5ECC5]"
+                  className="font-medium text-[#A87830] hover:text-[#8C6428] dark:hover:text-[#C4A15A]"
                 >
                   {row.clientName}
                 </Link>

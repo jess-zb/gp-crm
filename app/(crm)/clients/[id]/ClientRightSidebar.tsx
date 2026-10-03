@@ -476,13 +476,13 @@ export function ClientRightSidebar({
     <aside
       className={`w-full shrink-0 space-y-6 lg:min-w-[320px] lg:w-80 ${className}`}
     >
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-3 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => toggleSection("notes")}
             aria-expanded={openSections.notes}
-            className="flex items-center gap-1.5 rounded text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-400 dark:hover:text-slate-200"
+            className="flex items-center gap-1.5 rounded text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:text-slate-200"
           >
             <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openSections.notes ? "" : "-rotate-90"}`} aria-hidden />
             Notes
@@ -493,7 +493,7 @@ export function ClientRightSidebar({
               onClick={() => openSidebarCommModal("call")}
               title="Add Call"
               aria-label="Add Call"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-500 dark:hover:bg-blue-950/30 dark:hover:text-blue-400"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-blue-950/30 dark:hover:text-blue-400"
             >
               <Phone className="h-3.5 w-3.5" />
             </button>
@@ -502,7 +502,7 @@ export function ClientRightSidebar({
               onClick={() => openSidebarCommModal("sms")}
               title="Add Text"
               aria-label="Add Text"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-green-50 hover:text-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-500 dark:hover:bg-green-950/30 dark:hover:text-green-400"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-green-50 hover:text-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-green-950/30 dark:hover:text-green-400"
             >
               <MessageSquare className="h-3.5 w-3.5" />
             </button>
@@ -511,7 +511,7 @@ export function ClientRightSidebar({
               onClick={() => openSidebarCommModal("email")}
               title="Add Email"
               aria-label="Add Email"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-purple-50 hover:text-purple-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-500 dark:hover:bg-purple-950/30 dark:hover:text-purple-400"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-purple-50 hover:text-purple-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-purple-950/30 dark:hover:text-purple-400"
             >
               <Mail className="h-3.5 w-3.5" />
             </button>
@@ -520,7 +520,7 @@ export function ClientRightSidebar({
               onClick={() => openSidebarCommModal("note")}
               title="Add Note"
               aria-label="Add Note"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-500 dark:hover:bg-[#2a3f2c] dark:hover:text-slate-200"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-[#2a3f2c] dark:hover:text-slate-200"
             >
               <Plus className="h-3.5 w-3.5" />
             </button>
@@ -529,7 +529,7 @@ export function ClientRightSidebar({
         {openSections.notes ? (
         <>
         {!localCommNotes.length ? (
-          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
             No notes yet. Use the icons above to log a call, text, email, or internal note.
           </p>
         ) : (
@@ -546,7 +546,7 @@ export function ClientRightSidebar({
                     className={`group relative w-full rounded-lg border p-3 text-left transition ${
                       n.is_pinned
                         ? "border-amber-300 bg-amber-50/80 dark:border-amber-700/60 dark:bg-amber-950/20"
-                        : "border-slate-100 bg-slate-50/80 hover:bg-slate-100 dark:border-[#1a3550] dark:bg-[#071929]/40 dark:hover:bg-[#102840]"
+                        : "border-slate-100 bg-slate-50/80 hover:bg-slate-100 dark:border-[#2E2E2E] dark:bg-[#121212]/40 dark:hover:bg-[#242424]"
                     }`}
                   >
                     {n.is_pinned ? (
@@ -558,7 +558,7 @@ export function ClientRightSidebar({
                     <button
                       type="button"
                       onClick={() => setDetailNote(n)}
-                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
                     >
                       <p className={`break-words pr-14 text-sm ${n.is_pinned ? "text-amber-900 dark:text-amber-100" : "text-slate-800 dark:text-slate-200"}`}>
                         {truncateNote(n.body)}
@@ -574,7 +574,7 @@ export function ClientRightSidebar({
                       onClick={() => void handleToggleNotePin(n.id)}
                       title={n.is_pinned ? "Unpin note" : "Pin note"}
                       aria-label={n.is_pinned ? "Unpin note" : "Pin note"}
-                      className={`absolute bottom-2 right-2 rounded p-1 text-xs transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] ${
+                      className={`absolute bottom-2 right-2 rounded p-1 text-xs transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
                         n.is_pinned
                           ? "text-amber-500 opacity-100 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
                           : "text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400"
@@ -590,7 +590,7 @@ export function ClientRightSidebar({
         <div className="mt-3 text-center">
           <Link
             href={`/clients/${clientId}?tab=communications`}
-            className="text-xs font-semibold text-[#8DE3B5] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+            className="text-xs font-semibold text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
           >
             View all notes
           </Link>
@@ -601,13 +601,13 @@ export function ClientRightSidebar({
 
       {csChecklistSlot}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-3 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => toggleSection("appts")}
             aria-expanded={openSections.appts}
-            className="flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-white dark:hover:text-slate-200"
+            className="flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-white dark:hover:text-slate-200"
           >
             <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openSections.appts ? "" : "-rotate-90"}`} aria-hidden />
             Appointments
@@ -615,7 +615,7 @@ export function ClientRightSidebar({
           <button
             type="button"
             onClick={() => setReminderFormOpen(true)}
-            className="inline-flex min-h-11 min-w-[44px] items-center justify-center text-xs font-medium text-[#8DE3B5] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+            className="inline-flex min-h-11 min-w-[44px] items-center justify-center text-xs font-medium text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
           >
             Add +
           </button>
@@ -623,14 +623,14 @@ export function ClientRightSidebar({
         {openSections.appts ? (
         <>
         {!activeReminders.length ? (
-          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
             No active appointments. Click 'Add +' to schedule one.
           </p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-200 dark:border-[#1a3550]">
+                <tr className="border-b border-slate-200 dark:border-[#2E2E2E]">
                   <th className="py-2 pr-2 font-semibold">Due</th>
                   <th className="py-2 pr-2 font-semibold">Appointment</th>
                   <th className="py-2 pr-1 font-semibold text-center">St</th>
@@ -645,7 +645,7 @@ export function ClientRightSidebar({
                   return (
                     <tr
                       key={r.id}
-                      className="border-b border-slate-100 last:border-0 dark:border-[#1a3550]"
+                      className="border-b border-slate-100 last:border-0 dark:border-[#2E2E2E]"
                     >
                       <td className="py-2 pr-2 align-top text-slate-600 dark:text-slate-300">
                         <ClientFormattedDate
@@ -675,7 +675,7 @@ export function ClientRightSidebar({
                                   clientStage: clientStage,
                                 })
                               }
-                              className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                              className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:hover:bg-[#242424] dark:hover:text-slate-300"
                               title="Edit appointment"
                               aria-label="Edit appointment"
                             >
@@ -685,7 +685,7 @@ export function ClientRightSidebar({
                               type="button"
                               disabled={busyId === r.id}
                               onClick={() => void markReminderComplete(r.id)}
-                              className="rounded border border-slate-200 px-1.5 py-0.5 text-[10px] font-semibold text-[#8DE3B5] hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:hover:bg-[#102840]"
+                              className="rounded border border-slate-200 px-1.5 py-0.5 text-[10px] font-semibold text-[#A87830] hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:hover:bg-[#242424]"
                               title="Mark complete"
                               aria-label="Mark complete"
                             >
@@ -720,7 +720,7 @@ export function ClientRightSidebar({
           }}
         >
           <div
-            className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-start justify-between gap-3">
@@ -734,7 +734,7 @@ export function ClientRightSidebar({
                 type="button"
                 disabled={saving}
                 onClick={closeAppointmentModal}
-                className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] disabled:opacity-50 dark:hover:bg-[#102840]"
+                className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] disabled:opacity-50 dark:hover:bg-[#242424]"
                 aria-label="Close"
               >
                 <X className="h-5 w-5" />
@@ -747,10 +747,10 @@ export function ClientRightSidebar({
                   value={appointmentType}
                   onChange={(e) => setAppointmentType(e.target.value)}
                   required
-                  className={`mt-1 w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                  className={`mt-1 w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                     fieldErrors.appointmentType
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                      : "border-slate-200 dark:border-[#1a3550]"
+                      : "border-slate-200 dark:border-[#2E2E2E]"
                   }`}
                 >
                   <option value="">Select type…</option>
@@ -774,10 +774,10 @@ export function ClientRightSidebar({
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
                     required
-                    className={`mt-1 w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                       fieldErrors.dueDate || fieldErrors.dateTime
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                        : "border-slate-200 dark:border-[#1a3550]"
+                        : "border-slate-200 dark:border-[#2E2E2E]"
                     }`}
                   />
                 </label>
@@ -787,10 +787,10 @@ export function ClientRightSidebar({
                     type="time"
                     value={dueTime}
                     onChange={(e) => setDueTime(e.target.value)}
-                    className={`mt-1 w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                       fieldErrors.dateTime
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                        : "border-slate-200 dark:border-[#1a3550]"
+                        : "border-slate-200 dark:border-[#2E2E2E]"
                     }`}
                   />
                 </label>
@@ -811,7 +811,7 @@ export function ClientRightSidebar({
                   value={notesAppt}
                   onChange={(e) => setNotesAppt(e.target.value)}
                   rows={2}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 />
               </label>
               <label className="block text-sm">
@@ -819,7 +819,7 @@ export function ClientRightSidebar({
                 <select
                   value={assignToId}
                   onChange={(e) => setAssignToId(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   <option value="">—</option>
                   {staffOptions.map((m) => (
@@ -834,7 +834,7 @@ export function ClientRightSidebar({
                   type="button"
                   disabled={saving}
                   onClick={closeAppointmentModal}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200"
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
                 >
                   Cancel
                 </button>
@@ -858,12 +858,12 @@ export function ClientRightSidebar({
         </div>
       ) : null}
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <button
           type="button"
           onClick={() => toggleSection("account")}
           aria-expanded={openSections.account}
-          className="mb-3 flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-white dark:hover:text-slate-200"
+          className="mb-3 flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-white dark:hover:text-slate-200"
         >
           <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openSections.account ? "" : "-rotate-90"}`} aria-hidden />
           Account information
@@ -897,7 +897,7 @@ export function ClientRightSidebar({
           </div>
         </div>
 
-        <div className="mt-3 border-t border-gray-100 pt-3 dark:border-[#1a3550]">
+        <div className="mt-3 border-t border-gray-100 pt-3 dark:border-[#2E2E2E]">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
             Assigned Attorney
           </p>
@@ -926,7 +926,7 @@ export function ClientRightSidebar({
           }}
         >
           <div
-            className="w-full max-w-md rounded-lg bg-white p-5 shadow-sm dark:border dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="w-full max-w-md rounded-lg bg-white p-5 shadow-sm dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">Add Call</h3>
@@ -941,8 +941,8 @@ export function ClientRightSidebar({
                   onClick={() => setSbDirection(d)}
                   className={`flex-1 rounded-lg border py-2 text-xs font-semibold capitalize ${
                     sbDirection === d
-                      ? "border-[#8DE3B5] bg-[#8DE3B5]/10 text-[#8DE3B5]"
-                      : "border-slate-200 text-slate-600 dark:border-[#1a3550] dark:text-slate-300"
+                      ? "border-[#A87830] bg-[#A87830]/10 text-[#A87830]"
+                      : "border-slate-200 text-slate-600 dark:border-[#2E2E2E] dark:text-slate-300"
                   }`}
                 >
                   {d}
@@ -954,10 +954,10 @@ export function ClientRightSidebar({
               value={sbCallNotes}
               onChange={(e) => setSbCallNotes(e.target.value)}
               rows={4}
-              className={`mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#8DE3B5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+              className={`mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                 fieldErrors.sbCallNotes
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                  : "border-gray-200 dark:border-[#1a3550]"
+                  : "border-gray-200 dark:border-[#2E2E2E]"
               }`}
             />
             {fieldErrors.sbCallNotes && (
@@ -970,7 +970,7 @@ export function ClientRightSidebar({
                 type="button"
                 disabled={sbCommSaving}
                 onClick={() => closeSidebarCommModal()}
-                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -1002,7 +1002,7 @@ export function ClientRightSidebar({
           }}
         >
           <div
-            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:border dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">Add Text</h3>
@@ -1017,8 +1017,8 @@ export function ClientRightSidebar({
                   onClick={() => setSbDirection(d)}
                   className={`flex-1 rounded-lg border py-2 text-xs font-semibold capitalize ${
                     sbDirection === d
-                      ? "border-[#8DE3B5] bg-[#8DE3B5]/10 text-[#8DE3B5]"
-                      : "border-slate-200 text-slate-600 dark:border-[#1a3550] dark:text-slate-300"
+                      ? "border-[#A87830] bg-[#A87830]/10 text-[#A87830]"
+                      : "border-slate-200 text-slate-600 dark:border-[#2E2E2E] dark:text-slate-300"
                   }`}
                 >
                   {d}
@@ -1030,10 +1030,10 @@ export function ClientRightSidebar({
               value={sbSmsBody}
               onChange={(e) => setSbSmsBody(e.target.value)}
               rows={4}
-              className={`mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#8DE3B5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+              className={`mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                 fieldErrors.sbSmsBody
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                  : "border-gray-200 dark:border-[#1a3550]"
+                  : "border-gray-200 dark:border-[#2E2E2E]"
               }`}
             />
             {fieldErrors.sbSmsBody && (
@@ -1046,7 +1046,7 @@ export function ClientRightSidebar({
                 type="button"
                 disabled={sbCommSaving}
                 onClick={() => closeSidebarCommModal()}
-                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -1078,7 +1078,7 @@ export function ClientRightSidebar({
           }}
         >
           <div
-            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:border dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="mb-2 text-sm font-semibold text-slate-900 dark:text-white">Add Email</h3>
@@ -1093,8 +1093,8 @@ export function ClientRightSidebar({
                   onClick={() => setSbDirection(d)}
                   className={`flex-1 rounded-lg border py-2 text-xs font-semibold capitalize ${
                     sbDirection === d
-                      ? "border-[#8DE3B5] bg-[#8DE3B5]/10 text-[#8DE3B5]"
-                      : "border-slate-200 text-slate-600 dark:border-[#1a3550] dark:text-slate-300"
+                      ? "border-[#A87830] bg-[#A87830]/10 text-[#A87830]"
+                      : "border-slate-200 text-slate-600 dark:border-[#2E2E2E] dark:text-slate-300"
                   }`}
                 >
                   {d}
@@ -1106,10 +1106,10 @@ export function ClientRightSidebar({
               type="text"
               value={sbEmailSubject}
               onChange={(e) => setSbEmailSubject(e.target.value)}
-              className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-[#8DE3B5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+              className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                 fieldErrors.sbEmailSubject
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                  : "border-gray-200 dark:border-[#1a3550]"
+                  : "border-gray-200 dark:border-[#2E2E2E]"
               }`}
             />
             {fieldErrors.sbEmailSubject && (
@@ -1122,10 +1122,10 @@ export function ClientRightSidebar({
               value={sbEmailBody}
               onChange={(e) => setSbEmailBody(e.target.value)}
               rows={4}
-              className={`mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#8DE3B5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+              className={`mt-1 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                 fieldErrors.sbEmailBody
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                  : "border-gray-200 dark:border-[#1a3550]"
+                  : "border-gray-200 dark:border-[#2E2E2E]"
               }`}
             />
             {fieldErrors.sbEmailBody && (
@@ -1138,7 +1138,7 @@ export function ClientRightSidebar({
                 type="button"
                 disabled={sbCommSaving}
                 onClick={() => closeSidebarCommModal()}
-                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -1170,7 +1170,7 @@ export function ClientRightSidebar({
           }}
         >
           <div
-            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:border dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="w-full max-w-md rounded-xl bg-white p-5 shadow-xl dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-2 flex items-start justify-between gap-3">
@@ -1191,10 +1191,10 @@ export function ClientRightSidebar({
               onChange={(e) => setNoteText(e.target.value)}
               placeholder="Write your note here, or click Dictate to speak it…"
               rows={6}
-              className={`w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#8DE3B5] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+              className={`w-full resize-none rounded-lg border px-3 py-2 text-sm focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                 fieldErrors.noteText
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                  : "border-gray-200 dark:border-[#1a3550]"
+                  : "border-gray-200 dark:border-[#2E2E2E]"
               }`}
             />
             {fieldErrors.noteText && (
@@ -1206,7 +1206,7 @@ export function ClientRightSidebar({
               <button
                 type="button"
                 onClick={() => closeSidebarCommModal()}
-                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+                className="flex-1 rounded-lg border border-gray-200 py-2 text-sm text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -1240,7 +1240,7 @@ export function ClientRightSidebar({
           }}
         >
           <div
-            className="max-h-[min(80vh,28rem)] w-full max-w-md overflow-y-auto rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="max-h-[min(80vh,28rem)] w-full max-w-md overflow-y-auto rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-2">
@@ -1250,10 +1250,10 @@ export function ClientRightSidebar({
                 onClick={() => void handleToggleNotePin(detailNote.id)}
                 title={detailNote.is_pinned ? "Unpin note" : "Pin note"}
                 aria-label={detailNote.is_pinned ? "Unpin note" : "Pin note"}
-                className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] ${
+                className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
                   detailNote.is_pinned
                     ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:hover:bg-amber-950/70"
-                    : "bg-slate-100 text-slate-500 hover:bg-amber-50 hover:text-amber-600 dark:bg-[#102840] dark:text-slate-400 dark:hover:text-amber-400"
+                    : "bg-slate-100 text-slate-500 hover:bg-amber-50 hover:text-amber-600 dark:bg-[#242424] dark:text-slate-400 dark:hover:text-amber-400"
                 }`}
               >
                 <Pin className={`h-3 w-3 ${detailNote.is_pinned ? "fill-current" : ""}`} aria-hidden />
@@ -1270,7 +1270,7 @@ export function ClientRightSidebar({
             <button
               type="button"
               onClick={() => setDetailNote(null)}
-              className="mt-4 w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-700 dark:border-[#1a3550] dark:text-slate-200"
+              className="mt-4 w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
             >
               Close
             </button>
@@ -1278,7 +1278,7 @@ export function ClientRightSidebar({
         </div>
       ) : null}
 
-      <div className="mt-4 border-t border-gray-100 pt-4 dark:border-[#1a3550]">
+      <div className="mt-4 border-t border-gray-100 pt-4 dark:border-[#2E2E2E]">
         <p className="text-xs text-gray-400 dark:text-slate-500">
           Client ID: <span className="font-mono">{accountInfo.id}</span>
         </p>

@@ -27,7 +27,7 @@ export default function SignupPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#C9A84C] mb-4">
             <span className="text-[#0D1B2A] text-2xl font-bold">ZB</span>
           </div>
-          <h1 className="text-white text-2xl font-semibold">DebtSupportPros CRM</h1>
+          <h1 className="text-white text-2xl font-semibold">Golden Pathway CRM</h1>
           <p className="text-slate-400 text-sm mt-1">Create your account</p>
         </div>
         <div className="bg-white rounded-xl shadow-2xl p-8">
@@ -62,7 +62,7 @@ export default function SignupPage() {
                 autoComplete="email"
                 required
                 className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#0D1B2A] focus:border-transparent"
-                placeholder="you@debtsupportpros.com"
+                placeholder="you@goldenpathway.io"
               />
             </div>
             <div>

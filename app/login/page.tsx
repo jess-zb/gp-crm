@@ -169,17 +169,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0A2540] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#161616] px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <Image
             src="/favicon.png"
-            alt="DebtSupportPros"
+            alt="Golden Pathway"
             width={72}
             height={72}
             className="h-[72px] w-[72px] object-contain"
           />
-          <h1 className="mt-4 text-2xl font-bold text-white">DebtSupportPros CRM</h1>
+          <h1 className="mt-4 text-2xl font-bold text-white">Golden Pathway CRM</h1>
           <p className="mt-3 text-sm text-[#E8EAEE]/95">Sign in to your account</p>
         </div>
         <div className="rounded-xl bg-white p-8 shadow-md">
@@ -194,7 +194,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => { setView("login"); setResetSent(false); setResetEmail(""); }}
-                    className="mt-5 text-sm font-medium text-[#0A2540] underline underline-offset-2"
+                    className="mt-5 text-sm font-medium text-[#161616] underline underline-offset-2"
                   >
                     ← Back to sign in
                   </button>
@@ -209,14 +209,14 @@ export default function LoginPage() {
                       value={resetEmail}
                       onChange={(e) => setResetEmail(e.target.value)}
                       required
-                      placeholder="you@debtsupportpros.com"
-                      className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/30"
+                      placeholder="you@goldenpathway.io"
+                      className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/30"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={resetLoading}
-                    className="w-full rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-semibold text-[#0A2540] transition hover:bg-[#6BC99A] disabled:opacity-50"
+                    className="w-full rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-semibold text-[#161616] transition hover:bg-[#8C6428] disabled:opacity-50"
                   >
                     {resetLoading ? "Sending…" : "Send reset link"}
                   </button>
@@ -244,8 +244,8 @@ export default function LoginPage() {
                   if (statusMessage) setStatusMessage(null);
                 }}
                 required
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/30"
-                placeholder="you@debtsupportpros.com"
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/30"
+                placeholder="you@goldenpathway.io"
               />
             </div>
             <div>
@@ -268,7 +268,7 @@ export default function LoginPage() {
                   required
                   autoComplete="current-password"
                   placeholder="Password"
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]"
+                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#A87830]"
                 />
                 <button
                   type="button"
@@ -294,7 +294,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-semibold text-[#0A2540] transition duration-200 ease-out hover:bg-[#6BC99A] disabled:opacity-50"
+              className="w-full rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-semibold text-[#161616] transition duration-200 ease-out hover:bg-[#8C6428] disabled:opacity-50"
             >
               {loading ? "Signing in…" : "Sign in"}
             </button>

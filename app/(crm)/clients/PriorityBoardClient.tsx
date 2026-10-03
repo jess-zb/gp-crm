@@ -112,14 +112,14 @@ function SortHeader({
         type="button"
         onClick={() => onSort(field)}
         title={`Sort by ${label}`}
-        className={`group inline-flex w-full items-center gap-1 rounded uppercase tracking-wide hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:hover:text-white ${justify}`}
+        className={`group inline-flex w-full items-center gap-1 rounded uppercase tracking-wide hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:hover:text-white ${justify}`}
       >
         <span>{label}</span>
         {active ? (
           sort.dir === "asc" ? (
-            <ChevronUp className="h-3.5 w-3.5 shrink-0 text-[#8DE3B5]" aria-hidden />
+            <ChevronUp className="h-3.5 w-3.5 shrink-0 text-[#A87830]" aria-hidden />
           ) : (
-            <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[#8DE3B5]" aria-hidden />
+            <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[#A87830]" aria-hidden />
           )
         ) : (
           // Kept in the layout so the header does not jump when it becomes the
@@ -347,7 +347,7 @@ export function PriorityBoardClient({
               <button
                 type="button"
                 onClick={() => setSort({ field: "priority", dir: "desc" })}
-                className="font-semibold text-[#8DE3B5] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+                className="font-semibold text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
               >
                 Back to priority order
               </button>
@@ -363,7 +363,7 @@ export function PriorityBoardClient({
       ) : null}
 
       {selectedVisibleIds.length > 0 ? (
-        <div className="mt-4 flex flex-col gap-3 rounded-xl border border-[#8DE3B5]/30 bg-[#8DE3B5]/10 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#3d5c3f] dark:bg-[#102840]/80">
+        <div className="mt-4 flex flex-col gap-3 rounded-xl border border-[#A87830]/30 bg-[#A87830]/10 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#3d5c3f] dark:bg-[#242424]/80">
           <p className="shrink-0 text-sm font-medium text-slate-800 dark:text-slate-200">
             {selectedVisibleIds.length} selected
           </p>
@@ -403,14 +403,14 @@ export function PriorityBoardClient({
         </div>
       ) : null}
 
-      <div className="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-[#1a3550]">
+      <div className="mt-4 overflow-x-auto rounded-xl border border-gray-200 dark:border-[#2E2E2E]">
         <table className="w-full min-w-[720px] border-collapse">
           <thead>
-            <tr className="border-b border-gray-200 bg-slate-50 text-left dark:border-[#1a3550] dark:bg-[#0d2035]">
+            <tr className="border-b border-gray-200 bg-slate-50 text-left dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
               <th className="w-10 px-3 py-2.5">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                  className="h-4 w-4 rounded border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                   checked={allOnPageSelected}
                   onChange={toggleAll}
                   aria-label="Select all clients"
@@ -468,12 +468,12 @@ export function PriorityBoardClient({
               sortedRows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b border-slate-100 transition-colors last:border-b-0 hover:bg-slate-50 dark:border-[#1a3550] dark:hover:bg-[#102840]/60"
+                  className="border-b border-slate-100 transition-colors last:border-b-0 hover:bg-slate-50 dark:border-[#2E2E2E] dark:hover:bg-[#242424]/60"
                 >
                   <td className="px-3 py-2 align-middle">
                     <input
                       type="checkbox"
-                      className="h-4 w-4 rounded border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                      className="h-4 w-4 rounded border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                       checked={selected.has(row.id)}
                       onChange={() => toggleOne(row.id)}
                       aria-label={`Select ${row.displayName}`}
@@ -482,7 +482,7 @@ export function PriorityBoardClient({
                   <td className="px-4 py-2 align-middle">
                     <Link
                       href={`/clients/${row.id}`}
-                      className="text-sm font-medium text-[#8DE3B5] hover:text-[#6BC99A] dark:hover:text-[#A5ECC5]"
+                      className="text-sm font-medium text-[#A87830] hover:text-[#8C6428] dark:hover:text-[#C4A15A]"
                     >
                       {row.displayName}
                     </Link>
@@ -572,7 +572,7 @@ export function PriorityBoardClient({
               <button
                 type="button"
                 onClick={() => setUntickTarget(null)}
-                className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#1f3520]"
+                className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#1f3520]"
               >
                 Cancel
               </button>

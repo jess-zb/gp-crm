@@ -146,8 +146,8 @@ export function DocPreviewModal({
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-xl bg-white shadow-2xl dark:border dark:border-[#1a3550] dark:bg-[#0d2035]">
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-[#1a3550]">
+      <div className="flex max-h-[90vh] w-full max-w-4xl flex-col rounded-xl bg-white shadow-2xl dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-[#2E2E2E]">
           <p
             id="doc-preview-title"
             className="max-w-md truncate text-sm font-semibold text-slate-800 dark:text-slate-100"
@@ -177,7 +177,7 @@ export function DocPreviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md p-1.5 transition-colors hover:bg-slate-100 dark:hover:bg-[#102840]"
+              className="rounded-md p-1.5 transition-colors hover:bg-slate-100 dark:hover:bg-[#242424]"
               aria-label="Close preview"
             >
               <X className="h-4 w-4 text-slate-500" />
@@ -185,7 +185,7 @@ export function DocPreviewModal({
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-auto rounded-b-xl bg-slate-50 dark:bg-[#071929]/60">
+        <div className="min-h-0 flex-1 overflow-auto rounded-b-xl bg-slate-50 dark:bg-[#121212]/60">
           {previewState === "loading" ? (
             <div className="flex min-h-[320px] items-center justify-center p-8 text-sm text-slate-500">
               Loading preview…
@@ -202,7 +202,7 @@ export function DocPreviewModal({
 
           {showTextPreview ? (
             <div className="p-6">
-              <pre className="max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs text-slate-800 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-100">
+              <pre className="max-h-[70vh] overflow-auto whitespace-pre-wrap rounded-lg border border-slate-200 bg-white p-4 font-mono text-xs text-slate-800 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-100">
                 {textContent}
               </pre>
             </div>
@@ -220,7 +220,7 @@ export function DocPreviewModal({
 
           {showAudio ? (
             <div className="flex items-center justify-center p-8">
-              <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-sm dark:border dark:border-[#1a3550] dark:bg-[#0d2035]">
+              <div className="w-full max-w-md rounded-xl bg-white p-6 text-center shadow-sm dark:border dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-950/40">
                   <Mic className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>

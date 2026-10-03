@@ -47,10 +47,10 @@ export function AddressFields({
       : "font-medium text-slate-800 dark:text-slate-200";
 
   const streetErr = Boolean(fieldErrors?.street_address);
-  const streetClassName = `mt-1 w-full min-w-0 rounded-lg border px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-1 focus:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white dark:focus:border-[#8DE3B5] ${
+  const streetClassName = `mt-1 w-full min-w-0 rounded-lg border px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-1 focus:ring-[#A87830] dark:bg-[#121212] dark:text-white dark:focus:border-[#A87830] ${
     streetErr
       ? "border-red-500 focus:border-red-500 dark:border-red-500"
-      : "border-slate-200 dark:border-[#1a3550]"
+      : "border-slate-200 dark:border-[#2E2E2E]"
   }`;
 
   return (

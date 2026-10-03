@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Text } from "@react-email/components";
-import { BUSINESS_NAME, SUPPORT_PHONE } from "@/lib/constants/business-contact";
+import { BUSINESS_NAME, SUPPORT_EMAIL, SUPPORT_PHONE } from "@/lib/constants/business-contact";
 import Layout from "./_layout";
 import type { EmailProps } from "./_types";
 
@@ -16,7 +16,7 @@ export default function WelcomeCsEmail({ client, accountManager, portalUrl, unsu
 
       <Text>
         It was great speaking with you today! I want to officially welcome you to the next phase of your program with{" "}
-        {BUSINESS_NAME}. My name is Emile Points, and I'm the Manager of the Client Services Department.
+        {BUSINESS_NAME}. Client Services will take it from here.
       </Text>
 
       <Text>
@@ -39,11 +39,9 @@ export default function WelcomeCsEmail({ client, accountManager, portalUrl, unsu
       <Text>
         Here's how to reach us anytime:
         <br />
-        📞 Client Services Department: {SUPPORT_PHONE}
+        📞 {SUPPORT_PHONE}
         <br />
-        📞 Direct Line (Emile Points, Manager): 520-689-8843
-        <br />
-        📧 Email: emile@debtsupportpros.com
+        📧 {SUPPORT_EMAIL}
       </Text>
 
       <Text>
@@ -64,9 +62,7 @@ export default function WelcomeCsEmail({ client, accountManager, portalUrl, unsu
       <Text>
         Warm regards,
         <br />
-        Emile Points
-        <br />
-        Manager, Client Services
+        The {BUSINESS_NAME} Client Services Team
       </Text>
     </Layout>
   );

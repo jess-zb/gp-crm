@@ -166,10 +166,10 @@ const ErrorMessage = ({
 };
 
 const inputClass = (hasErr: boolean) =>
-  `mt-1 w-full rounded-lg border px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-1 focus:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+  `mt-1 w-full rounded-lg border px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-1 focus:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
     hasErr
       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-      : "border-slate-200 dark:border-[#1a3550]"
+      : "border-slate-200 dark:border-[#2E2E2E]"
   }`;
 
 export function AccountTabForm({
@@ -381,7 +381,7 @@ export function AccountTabForm({
         showSaved("form");
       }}
     >
-      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-base font-bold text-slate-900 dark:text-white">
             Client Information
@@ -635,7 +635,7 @@ export function AccountTabForm({
         </div>
       </section>
 
-      <div className="mt-6 flex justify-end border-t border-gray-100 pt-4 dark:border-[#1a3550]">
+      <div className="mt-6 flex justify-end border-t border-gray-100 pt-4 dark:border-[#2E2E2E]">
         {savedField === "form" ? (
           <span className="mr-3 flex items-center gap-1 self-center text-sm font-medium text-green-600 dark:text-green-400">
             <Check className="h-4 w-4" aria-hidden />

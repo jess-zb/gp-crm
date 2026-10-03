@@ -187,7 +187,7 @@ export function EsignDocumentBoard({
                 e.dataTransfer.setData("text/esign-bind", bind);
                 e.dataTransfer.effectAllowed = "copy";
               }}
-              className="rounded-full border border-[#0A2540]/20 bg-white px-3 py-1 text-xs font-medium text-[#0A2540]"
+              className="rounded-full border border-[#161616]/20 bg-white px-3 py-1 text-xs font-medium text-[#161616]"
             >
               {BIND_LABELS[bind]}
             </button>
@@ -226,9 +226,9 @@ export function EsignDocumentBoard({
             const boxClass = `h-full w-full overflow-hidden rounded border-2 p-0 text-left text-[10px] font-semibold leading-tight shadow-sm ${
               isSig
                 ? isPlaced
-                  ? "pointer-events-none cursor-default border-[#0d7a4a]/50 bg-white/80"
-                  : "border-[#12B981] bg-[#8DE3B5]/80 text-[#0A2540] ring-2 ring-[#8DE3B5] ring-offset-1 animate-pulse"
-                : "border-[#12B981] bg-[#8DE3B5]/70 px-1 text-[#0A2540]"
+                  ? "pointer-events-none cursor-default border-[#7A5620]/50 bg-white/80"
+                  : "border-[#12B981] bg-[#A87830]/80 text-[#161616] ring-2 ring-[#A87830] ring-offset-1 animate-pulse"
+                : "border-[#12B981] bg-[#A87830]/70 px-1 text-[#161616]"
             }`;
             const boxStyle = {
               left: `${field.xPct}%`,
@@ -306,7 +306,7 @@ export function EsignDocumentBoard({
                     role="presentation"
                     aria-hidden
                     title="Resize"
-                    className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 translate-x-[30%] translate-y-[30%] cursor-nwse-resize rounded-[2px] border border-[#0A2540] bg-[#8DE3B5] shadow-sm"
+                    className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 translate-x-[30%] translate-y-[30%] cursor-nwse-resize rounded-[2px] border border-[#161616] bg-[#A87830] shadow-sm"
                     onPointerDown={(e) => {
                       e.preventDefault();
                       e.stopPropagation();

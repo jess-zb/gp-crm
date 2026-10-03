@@ -16,12 +16,6 @@ const SKIP_PATH_PARTS = [
   `${path.sep}graphify-out${path.sep}`,
   `${path.sep}check-business-contact.ts`,
   `${path.sep}business-contact.ts`,
-  // TODO(rebrand): these three seed the email templates and still carry the
-  // source project's marketing copy. Rewrite them with Golden Pathway wording
-  // and delete these three skips so the checker covers them.
-  `${path.sep}20260429081800_email_message_templates.sql`,
-  `${path.sep}20260429072600_email_sequences.sql`,
-  `${path.sep}20260617000000_fix_email_dispatch.sql`,
 ];
 
 const EXTENSIONS = new Set([".ts", ".tsx", ".sql", ".md", ".mjs"]);

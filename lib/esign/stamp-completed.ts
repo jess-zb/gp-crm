@@ -53,7 +53,7 @@ export async function stampSignedFormPages(
   const doc = await PDFDocument.load(pdf, { ignoreEncryption: true });
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const ref = (certRef ?? "—").trim() || "—";
-  const line = `ELECTRONIC ORIGINAL · Do not alter · DebtSupportPros CRM · Cert ${ref} · Altering this file voids the signature record`;
+  const line = `ELECTRONIC ORIGINAL · Do not alter · Golden Pathway CRM · Cert ${ref} · Altering this file voids the signature record`;
 
   for (const page of doc.getPages()) {
     const { width } = page.getSize();

@@ -72,14 +72,14 @@ function welcomePacketInviteHtml(args: { logoSrc: string; signUrl: string }): st
   return `
     <div style="margin:0;padding:24px 16px;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f172a;">
       <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
-        <div style="background:#0A2540;padding:20px 24px;">
+        <div style="background:#161616;padding:20px 24px;">
           <img src="${args.logoSrc}" alt="${escapeHtml(BUSINESS_NAME)}" width="160" style="display:block;border:0;" />
         </div>
         <div style="padding:24px;font-size:15px;line-height:1.55;color:#334155;">
           <p style="margin:0 0 16px;font-size:16px;font-weight:600;color:#0f172a;">Welcome to ${escapeHtml(BUSINESS_NAME)}</p>
           <p style="margin:0 0 20px;">Please review and complete your Virtual Welcome Packet when you have a moment.</p>
           <p style="margin:0 0 12px;">
-            <a href="${escapeHtml(args.signUrl)}" style="display:inline-block;background:#8DE3B5;color:#0A2540;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:15px;">Review document</a>
+            <a href="${escapeHtml(args.signUrl)}" style="display:inline-block;background:#A87830;color:#161616;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:15px;">Review document</a>
           </p>
           <p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#64748b;word-break:break-all;">
             Or open this ${escapeHtml(BUSINESS_NAME)} link:<br/>
@@ -121,7 +121,7 @@ function ccAuthInviteHtml(args: {
   return `
     <div style="margin:0;padding:24px 16px;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f172a;">
       <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
-        <div style="background:#0A2540;padding:20px 24px;">
+        <div style="background:#161616;padding:20px 24px;">
           <img src="${args.logoSrc}" alt="${escapeHtml(BUSINESS_NAME)}" width="160" style="display:block;border:0;" />
         </div>
         <div style="padding:24px;">
@@ -131,7 +131,7 @@ function ccAuthInviteHtml(args: {
             <strong>${escapeHtml(args.documentTitle)}</strong>.
           </p>
           <p style="margin:0 0 12px;">
-            <a href="${escapeHtml(args.signUrl)}" style="display:inline-block;background:#8DE3B5;color:#0A2540;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:15px;">Review document</a>
+            <a href="${escapeHtml(args.signUrl)}" style="display:inline-block;background:#A87830;color:#161616;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:15px;">Review document</a>
           </p>
           <p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#64748b;word-break:break-all;">
             Or open this ${escapeHtml(BUSINESS_NAME)} link:<br/>
@@ -179,7 +179,7 @@ export async function sendEsignCompletedEmail(args: {
   const html = `
     <div style="margin:0;padding:24px 16px;background:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0f172a;">
       <div style="max-width:560px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
-        <div style="background:#0A2540;padding:20px 24px;">
+        <div style="background:#161616;padding:20px 24px;">
           <img src="${logoSrc}" alt="${escapeHtml(BUSINESS_NAME)}" width="160" style="display:block;border:0;" />
         </div>
         <div style="padding:24px;">

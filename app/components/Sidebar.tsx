@@ -91,9 +91,9 @@ function navRowClass(active: boolean, collapsed: boolean) {
   const pad = collapsed ? "justify-center px-0 py-2 mx-0.5" : "gap-2.5 px-3 py-2 mx-1";
   const base = `flex items-center rounded-md text-[13px] font-medium transition-colors duration-200 ease-out ${pad}`;
   if (active) {
-    return `${base} bg-[#8DE3B5] text-[#0A2540]`;
+    return `${base} bg-[#A87830] text-[#161616]`;
   }
-  return `${base} group text-[#A8C5B5] hover:bg-[#0A2540] hover:text-white`;
+  return `${base} group text-[#C8C2B8] hover:bg-[#161616] hover:text-white`;
 }
 
 export function Sidebar({
@@ -192,7 +192,7 @@ export function Sidebar({
           return (
             <Lucide
               className={`h-5 w-5 shrink-0 transition-colors duration-200 ease-out ${
-                active ? "text-white" : "text-[#9DB89A] group-hover:text-white"
+                active ? "text-white" : "text-[#C8C2B8] group-hover:text-white"
               }`}
               strokeWidth={2}
               aria-hidden
@@ -206,7 +206,7 @@ export function Sidebar({
             <Animated
               size={20}
               className={`shrink-0 transition-colors duration-200 ease-out ${
-                active ? "text-white" : "text-[#9DB89A] group-hover:text-white"
+                active ? "text-white" : "text-[#C8C2B8] group-hover:text-white"
               }`}
               aria-hidden
             />
@@ -218,7 +218,7 @@ export function Sidebar({
       ) : (
         <span
           className={`flex min-w-0 flex-1 items-center justify-between gap-2 transition-colors duration-200 ease-out ${
-            active ? "text-white" : "text-[#9DB89A] group-hover:text-white"
+            active ? "text-white" : "text-[#C8C2B8] group-hover:text-white"
           }`}
         >
           <span>{label}</span>
@@ -229,7 +229,7 @@ export function Sidebar({
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-col bg-[#0A2540] transition-[transform,width] duration-300 ease-out lg:z-40 ${widthClass} ${
+      className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-col bg-[#161616] transition-[transform,width] duration-300 ease-out lg:z-40 ${widthClass} ${
         mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       }`}
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
@@ -237,12 +237,12 @@ export function Sidebar({
       {!navCollapsed ? (
         <Link
           href={homeHref}
-          className="flex shrink-0 items-center justify-center bg-[#0A2540] px-4 py-4 transition-opacity hover:opacity-95"
-          title="DebtSupportPros CRM"
+          className="flex shrink-0 items-center justify-center bg-[#161616] px-4 py-4 transition-opacity hover:opacity-95"
+          title="Golden Pathway CRM"
         >
           <Image
             src="/logo.png"
-            alt="DebtSupportPros CRM"
+            alt="Golden Pathway CRM"
             width={148}
             height={44}
             className="object-contain"
@@ -255,8 +255,8 @@ export function Sidebar({
       ) : (
         <Link
           href={homeHref}
-          className="flex shrink-0 items-center justify-center bg-[#0A2540] px-4 py-4 transition-opacity hover:opacity-90"
-          title="DebtSupportPros"
+          className="flex shrink-0 items-center justify-center bg-[#161616] px-4 py-4 transition-opacity hover:opacity-90"
+          title="Golden Pathway"
         >
           <Image
             src="/favicon.png"
@@ -275,7 +275,7 @@ export function Sidebar({
         <button
           type="button"
           onClick={onToggleCollapsed}
-          className="hidden w-full shrink-0 items-center justify-center border-t border-[#0A2540] py-1.5 text-[#6B9E80] transition-colors duration-200 ease-out hover:bg-[#0A2540] hover:text-white lg:flex"
+          className="hidden w-full shrink-0 items-center justify-center border-t border-[#161616] py-1.5 text-[#6B9E80] transition-colors duration-200 ease-out hover:bg-[#161616] hover:text-white lg:flex"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsed}
@@ -299,7 +299,7 @@ export function Sidebar({
           return renderLink(href, label, Icon, active, lucide);
         })}
 
-        <div className="mx-3 my-2 border-t border-[#0A2540]" aria-hidden />
+        <div className="mx-3 my-2 border-t border-[#161616]" aria-hidden />
 
         {!navCollapsed ? (
           <p className="px-3 pb-1 pt-4 zb-sidebar-label">More</p>
@@ -333,11 +333,11 @@ export function Sidebar({
         )}
       </nav>
 
-      <div className="mt-auto shrink-0 border-t border-[#0A2540] p-3">
+      <div className="mt-auto shrink-0 border-t border-[#161616] p-3">
         {navCollapsed ? (
           <div className="flex flex-col items-center gap-2">
             <div
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5] text-xs font-semibold text-[#0A2540]"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#A87830] text-xs font-semibold text-[#161616]"
               title={displayName}
             >
               {initials}
@@ -346,7 +346,7 @@ export function Sidebar({
               type="button"
               onClick={() => applyTheme("light")}
               className={`flex h-8 w-full items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out ${
-                !dark ? "bg-[#0A2540] text-white" : "text-[#6B9E80] hover:bg-[#0A2540] hover:text-white"
+                !dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
               }`}
               aria-label="Light mode"
               aria-pressed={!dark}
@@ -357,7 +357,7 @@ export function Sidebar({
               type="button"
               onClick={() => applyTheme("dark")}
               className={`flex h-8 w-full items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out ${
-                dark ? "bg-[#0A2540] text-white" : "text-[#6B9E80] hover:bg-[#0A2540] hover:text-white"
+                dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
               }`}
               aria-label="Dark mode"
               aria-pressed={dark}
@@ -376,7 +376,7 @@ export function Sidebar({
         ) : (
           <div className="flex items-center gap-2.5">
             <div
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5] text-xs font-semibold text-[#0A2540]"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#A87830] text-xs font-semibold text-[#161616]"
               title={displayName}
             >
               {initials}
@@ -390,7 +390,7 @@ export function Sidebar({
                 type="button"
                 onClick={() => applyTheme("light")}
                 className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-xs transition-colors duration-200 ease-out ${
-                  !dark ? "bg-[#0A2540] text-white" : "text-[#6B9E80] hover:text-white"
+                  !dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:text-white"
                 }`}
                 aria-label="Light mode"
                 aria-pressed={!dark}
@@ -401,7 +401,7 @@ export function Sidebar({
                 type="button"
                 onClick={() => applyTheme("dark")}
                 className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-xs transition-colors duration-200 ease-out ${
-                  dark ? "bg-[#0A2540] text-white" : "text-[#6B9E80] hover:text-white"
+                  dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:text-white"
                 }`}
                 aria-label="Dark mode"
                 aria-pressed={dark}

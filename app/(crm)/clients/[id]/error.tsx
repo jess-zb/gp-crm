@@ -26,7 +26,7 @@ export default function ClientError({
       <div className="mt-8 flex gap-4">
         <button
           onClick={reset}
-          className="text-sm font-semibold text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+          className="text-sm font-semibold text-[#A87830] hover:underline dark:text-[#A87830]"
         >
           Try again
         </button>

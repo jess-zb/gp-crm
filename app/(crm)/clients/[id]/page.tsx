@@ -28,7 +28,7 @@ import { DocumentsTab, type DocumentListItem } from "./DocumentsTab";
 import { EmailActivityTabClient } from "./EmailActivityTabClient";
 import { canUseEsignStaffUi, isEsignFeatureEnabled } from "@/lib/esign/config";
 import { toUserFacingError } from "@/lib/user-facing-error";
-import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import { HIDDEN_FROM_NON_DEV_EMAILS, isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 import { formatDateTime } from "@/lib/utils/date";
 import { ClientBackButton } from "./ClientBackButton";
@@ -77,7 +77,7 @@ function tabHref(clientId: string, tab: MainTab) {
 
 function tabClass(active: boolean) {
   if (active) {
-    return "inline-flex min-h-11 shrink-0 items-center border-b-2 border-[#8DE3B5] px-4 py-3 text-sm font-semibold text-slate-900 transition-colors duration-200 ease-out dark:text-white";
+    return "inline-flex min-h-11 shrink-0 items-center border-b-2 border-[#A87830] px-4 py-3 text-sm font-semibold text-slate-900 transition-colors duration-200 ease-out dark:text-white";
   }
   return "inline-flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-4 py-3 text-sm font-medium text-slate-500 transition-colors duration-200 ease-out hover:text-slate-900 dark:text-slate-400 dark:hover:text-white";
 }
@@ -196,7 +196,7 @@ export default async function ClientProfilePage({
         </p>
         <Link
           href="/clients"
-          className="mt-8 inline-block text-sm font-semibold text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+          className="mt-8 inline-block text-sm font-semibold text-[#A87830] hover:underline dark:text-[#A87830]"
         >
           ← Back to clients
         </Link>
@@ -446,7 +446,7 @@ export default async function ClientProfilePage({
           .not(
             "email",
             "in",
-            '("dev@debtsupportpros.com","cs@debtsupportpros.com","jessica@debtsupportpros.com")'
+            `(${HIDDEN_FROM_NON_DEV_EMAILS.map((email) => `"${email}"`).join(",")})`
           )
           .order("full_name", { ascending: true })
       : Promise.resolve({
@@ -627,11 +627,11 @@ export default async function ClientProfilePage({
       </div>
 
       <nav className="mb-6 text-sm text-slate-600 dark:text-slate-400">
-        <Link href="/dashboard" className="font-medium hover:text-[#8DE3B5]">
+        <Link href="/dashboard" className="font-medium hover:text-[#A87830]">
           Dashboard
         </Link>
         <span className="mx-2 text-slate-400">/</span>
-        <Link href="/clients" className="font-medium hover:text-[#8DE3B5]">
+        <Link href="/clients" className="font-medium hover:text-[#A87830]">
           Clients
         </Link>
         <span className="mx-2 text-slate-400">/</span>
@@ -668,7 +668,7 @@ export default async function ClientProfilePage({
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         <div className="order-1 min-w-0 flex-1 space-y-8">
-          <div className="-mx-4 overflow-x-auto overflow-y-hidden border-b border-slate-200 px-4 pb-px [-webkit-overflow-scrolling:touch] dark:border-[#1a3550] sm:-mx-6 sm:px-6 md:mx-0 md:overflow-visible md:px-0">
+          <div className="-mx-4 overflow-x-auto overflow-y-hidden border-b border-slate-200 px-4 pb-px [-webkit-overflow-scrolling:touch] dark:border-[#2E2E2E] sm:-mx-6 sm:px-6 md:mx-0 md:overflow-visible md:px-0">
             <nav className="flex min-w-max gap-0 md:min-w-0">
               {VISIBLE_TABS.map((t) => (
                 <Link

@@ -16,14 +16,14 @@ export function TodayAppointments({
   appointments: TodayAppointmentRow[];
 }) {
   return (
-    <div className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#1a3550] dark:bg-[#0d2035]">
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-[#1a3550]">
+    <div className="mb-6 overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-[#2E2E2E]">
         <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
           Today&apos;s Appointments
         </h3>
         <Link
           href="/reminders"
-          className="text-xs text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+          className="text-xs text-[#A87830] hover:underline dark:text-[#A87830]"
         >
           View all →
         </Link>
@@ -38,7 +38,7 @@ export function TodayAppointments({
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-slate-50 dark:divide-[#1a3550]">
+        <div className="divide-y divide-slate-50 dark:divide-[#2E2E2E]">
           {appointments.map((a) => (
             <div
               key={a.id}

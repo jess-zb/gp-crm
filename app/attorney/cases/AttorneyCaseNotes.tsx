@@ -17,7 +17,7 @@ export function AttorneyCaseNotes({ notes }: { notes: AttorneyCaseNoteItem[] }) 
   });
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+    <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
       <div>
         <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           Notes
@@ -39,7 +39,7 @@ export function AttorneyCaseNotes({ notes }: { notes: AttorneyCaseNoteItem[] }) 
                 className={`relative rounded-lg border p-3 ${
                   n.isPinned
                     ? "border-amber-300 bg-amber-50/80 dark:border-amber-700/60 dark:bg-amber-950/20"
-                    : "border-slate-100 bg-slate-50/80 dark:border-[#1a3550] dark:bg-[#071929]/40"
+                    : "border-slate-100 bg-slate-50/80 dark:border-[#2E2E2E] dark:bg-[#121212]/40"
                 }`}
               >
                 {n.isPinned ? (

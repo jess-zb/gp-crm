@@ -20,6 +20,7 @@ import { formatDateTime } from "@/lib/utils/date";
 import { ExternalLink, FileText, Loader2, Search } from "lucide-react";
 import { getRoleDisplayName } from "@/lib/utils/roles";
 import { useMediaQuery } from "@/lib/hooks/use-media-query";
+import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 
 type HubTab = "team" | "departments" | "clients";
 
@@ -304,7 +305,7 @@ function renderAttachment(body: string): ReactNode {
       href={fileUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="mt-1 flex max-w-xs items-center gap-2 rounded-xl bg-gray-100 px-3 py-2 text-xs text-gray-700 transition-colors hover:bg-gray-200 dark:bg-[#102840] dark:text-slate-200 dark:hover:bg-[#243528]"
+      className="mt-1 flex max-w-xs items-center gap-2 rounded-xl bg-gray-100 px-3 py-2 text-xs text-gray-700 transition-colors hover:bg-gray-200 dark:bg-[#242424] dark:text-slate-200 dark:hover:bg-[#243528]"
     >
       <FileText className="h-4 w-4 shrink-0" />
       <span className="truncate">{displayName}</span>
@@ -366,8 +367,8 @@ const TeamBubble = memo(({
         title={title}
         className={`max-w-[calc(100vw-2.5rem)] sm:max-w-[85%] rounded-lg px-4 py-2.5 text-sm shadow-sm ${
           mine
-            ? "rounded-br-md bg-[#8DE3B5] text-[#0A2540]"
-            : "rounded-bl-md border border-slate-200 bg-slate-100 text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+            ? "rounded-br-md bg-[#A87830] text-[#161616]"
+            : "rounded-bl-md border border-slate-200 bg-slate-100 text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
         }`}
       >
         <MessageBody text={text} />
@@ -420,8 +421,7 @@ export function CommunicationsHub() {
     () =>
       teamMembers.filter((m) => {
         if (m.id === currentUserId) return false;
-        // Hide the developer account from non-dev viewers (keep cs/jessica visible for DMs).
-        if (currentRole !== "dev" && (m.email ?? "").trim().toLowerCase() === "dev@debtsupportpros.com") {
+        if (currentRole !== "dev" && isHiddenFromRole(m.email, currentRole)) {
           return false;
         }
         return true;
@@ -1609,7 +1609,7 @@ export function CommunicationsHub() {
 
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col">
-      <div className="mb-4 flex flex-wrap items-center gap-2 border-b border-slate-200 pb-4 dark:border-[#1a3550]">
+      <div className="mb-4 flex flex-wrap items-center gap-2 border-b border-slate-200 pb-4 dark:border-[#2E2E2E]">
         {(
           [
             ["team", "Team Chat"],
@@ -1623,8 +1623,8 @@ export function CommunicationsHub() {
             onClick={() => setTab(id)}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               tab === id
-                ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#E8EAEE] dark:hover:bg-[#102840]"
+                ? "bg-[#A87830] text-[#161616] shadow-sm"
+                : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE] dark:hover:bg-[#242424]"
             }`}
           >
             {label}
@@ -1633,16 +1633,16 @@ export function CommunicationsHub() {
       </div>
 
       {tab === "team" ? (
-        <div className="flex min-h-[min(520px,82dvh)] flex-1 flex-col gap-0 overflow-visible rounded-xl border border-slate-200 md:min-h-[520px] md:flex-row dark:border-[#1a3550]">
+        <div className="flex min-h-[min(520px,82dvh)] flex-1 flex-col gap-0 overflow-visible rounded-xl border border-slate-200 md:min-h-[520px] md:flex-row dark:border-[#2E2E2E]">
           <aside
-            className={`flex w-full min-h-0 shrink-0 flex-col overflow-hidden border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929] md:max-h-none md:max-w-[280px] md:border-r ${
+            className={`flex w-full min-h-0 shrink-0 flex-col overflow-hidden border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212] md:max-h-none md:max-w-[280px] md:border-r ${
               isNarrowHub && mobileView === "chat" ? "hidden md:flex" : "flex"
             } max-h-[44vh] border-b md:border-b-0`}
           >
-            <p className="border-b border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#1a3550] dark:text-[#8DE3B5]">
+            <p className="border-b border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#2E2E2E] dark:text-[#A87830]">
               Team
             </p>
-            <div className="border-b border-slate-200 p-2 dark:border-[#1a3550]">
+            <div className="border-b border-slate-200 p-2 dark:border-[#2E2E2E]">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
@@ -1650,7 +1650,7 @@ export function CommunicationsHub() {
                   onChange={(e) => setTeamSearch(e.target.value)}
                   placeholder="Search team…"
                   aria-label="Search team members"
-                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-1 focus:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#E8EAEE]"
+                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-[#A87830] focus:outline-none focus:ring-1 focus:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE]"
                 />
               </div>
             </div>
@@ -1676,24 +1676,24 @@ export function CommunicationsHub() {
                       }}
                       className={`flex min-h-11 w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition ${
                         selectedPeerId === m.id
-                          ? "bg-[#8DE3B5]/20 font-semibold text-[#071929] dark:bg-[#8DE3B5]/25 dark:text-[#E8EAEE]"
-                          : "text-slate-800 hover:bg-white dark:text-[#E8EAEE] dark:hover:bg-[#0d2035]"
+                          ? "bg-[#A87830]/20 font-semibold text-[#121212] dark:bg-[#A87830]/25 dark:text-[#E8EAEE]"
+                          : "text-slate-800 hover:bg-white dark:text-[#E8EAEE] dark:hover:bg-[#1C1C1C]"
                       }`}
                     >
                       <span
                         className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                        style={{ backgroundColor: "#8DE3B5" }}
+                        style={{ backgroundColor: "#A87830" }}
                       >
                         {getInitials(label)}
                         {pulse ? (
-                          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full bg-[#8DE3B5] ring-2 ring-white dark:ring-[#071929]" />
+                          <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full bg-[#A87830] ring-2 ring-white dark:ring-[#121212]" />
                         ) : null}
                       </span>
                       <span className="min-w-0 flex-1">
                         <span className="flex items-center gap-2">
                           <span className="block min-w-0 flex-1 truncate font-medium">{label}</span>
                           {unread > 0 || pulse ? (
-                            <span className="ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5] px-1 text-xs font-bold text-[#0A2540]">
+                            <span className="ml-auto inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#A87830] px-1 text-xs font-bold text-[#161616]">
                               {unread > 0 ? (unread > 99 ? "99+" : unread) : "!"}
                             </span>
                           ) : null}
@@ -1706,18 +1706,18 @@ export function CommunicationsHub() {
             </ul>
           </aside>
           <div
-            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-visible bg-white dark:bg-[#0d2035] ${
+            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-visible bg-white dark:bg-[#1C1C1C] ${
               isNarrowHub && mobileView === "list" ? "hidden md:flex" : "flex"
             }`}
           >
-            <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-3 dark:border-[#1a3550] md:px-4">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-3 dark:border-[#2E2E2E] md:px-4">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 {isNarrowHub && mobileView === "chat" ? (
                   <button
                     type="button"
                     onClick={() => setMobileView("list")}
                     aria-label="Back to list"
-                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 md:hidden dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 md:hidden dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                   >
                     ← Back
                   </button>
@@ -1729,11 +1729,11 @@ export function CommunicationsHub() {
             </div>
             <div className="flex min-h-[300px] flex-1 flex-col gap-4 overflow-y-auto p-4">
               {!selectedPeerId ? (
-                <p className="text-center text-sm text-slate-500 dark:text-[#8DE3B5]">
+                <p className="text-center text-sm text-slate-500 dark:text-[#A87830]">
                   Select a team member to start chatting
                 </p>
               ) : teamMessages.length === 0 ? (
-                <p className="text-center text-sm text-slate-500 dark:text-[#8DE3B5]">
+                <p className="text-center text-sm text-slate-500 dark:text-[#A87830]">
                   No messages yet. Say hello below.
                 </p>
               ) : (
@@ -1752,20 +1752,20 @@ export function CommunicationsHub() {
               )}
               <div ref={teamEndRef} />
             </div>
-            <form onSubmit={sendTeamMessage} className="border-t border-gray-100 p-3 dark:border-[#1a3550]">
+            <form onSubmit={sendTeamMessage} className="border-t border-gray-100 p-3 dark:border-[#2E2E2E]">
               {teamTypingUsers.length > 0 ? (
                 <div className="mb-2 flex items-end gap-2 px-1">
-                  <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-gray-100 px-4 py-3 dark:bg-[#102840]">
+                  <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-gray-100 px-4 py-3 dark:bg-[#242424]">
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "0ms" }}
                     />
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "200ms" }}
                     />
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "400ms" }}
                     />
                   </div>
@@ -1775,7 +1775,7 @@ export function CommunicationsHub() {
                 </div>
               ) : null}
               <div
-                className="rounded-xl border border-gray-200 bg-white transition-colors focus-within:border-[#8DE3B5] focus-within:ring-1 focus-within:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:focus-within:border-[#8DE3B5] dark:focus-within:ring-[#8DE3B5]"
+                className="rounded-xl border border-gray-200 bg-white transition-colors focus-within:border-[#A87830] focus-within:ring-1 focus-within:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:focus-within:border-[#A87830] dark:focus-within:ring-[#A87830]"
                 data-emoji-popover
               >
                 <textarea
@@ -1798,7 +1798,7 @@ export function CommunicationsHub() {
                   className="max-h-32 min-h-[44px] w-full resize-none rounded-t-xl bg-transparent px-4 pb-2 pt-3 text-sm text-slate-900 focus:outline-none dark:text-[#E8EAEE]"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 />
-                <div className="flex items-center justify-between border-t border-gray-100 px-3 pb-2 dark:border-[#1a3550]">
+                <div className="flex items-center justify-between border-t border-gray-100 px-3 pb-2 dark:border-[#2E2E2E]">
                   <div className="flex items-center gap-1">
                     <div className="relative">
                       <button
@@ -1811,12 +1811,12 @@ export function CommunicationsHub() {
                           setShowDeptEmoji(false);
                           setShowPortalEmoji(false);
                         }}
-                        className="rounded-lg p-1.5 text-base leading-none text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                        className="rounded-lg p-1.5 text-base leading-none text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                       >
                         😊
                       </button>
                       {showTeamEmoji ? (
-                        <div className="absolute bottom-9 left-0 z-50 grid w-48 grid-cols-6 gap-0.5 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]">
+                        <div className="absolute bottom-9 left-0 z-50 grid w-48 grid-cols-6 gap-0.5 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
                           {COMMON_EMOJIS.map((emoji) => (
                             <button
                               key={emoji}
@@ -1827,7 +1827,7 @@ export function CommunicationsHub() {
                                 setTeamInput((prev) => prev + emoji);
                                 setShowTeamEmoji(false);
                               }}
-                              className="rounded-lg p-1 text-lg leading-none transition-colors hover:bg-gray-100 dark:hover:bg-[#102840]"
+                              className="rounded-lg p-1 text-lg leading-none transition-colors hover:bg-gray-100 dark:hover:bg-[#242424]"
                             >
                               {emoji}
                             </button>
@@ -1838,7 +1838,7 @@ export function CommunicationsHub() {
                     <label
                       title="Attach file"
                       aria-label="Attach file"
-                      className="cursor-pointer rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                      className="cursor-pointer rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                     >
                       <input
                         type="file"
@@ -1870,7 +1870,7 @@ export function CommunicationsHub() {
                     disabled={
                       !selectedPeerId || busy || (!teamInput.trim() && !uploadingTeam)
                     }
-                    className="flex items-center justify-center rounded-lg bg-[#8DE3B5] p-2 text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex items-center justify-center rounded-lg bg-[#A87830] p-2 text-[#161616] transition-colors hover:bg-[#8C6428] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {busy || uploadingTeam ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -1886,13 +1886,13 @@ export function CommunicationsHub() {
       ) : null}
 
       {tab === "departments" ? (
-        <div className="flex min-h-[min(520px,82dvh)] flex-1 flex-col gap-0 overflow-visible rounded-xl border border-slate-200 md:min-h-[520px] md:flex-row dark:border-[#1a3550]">
+        <div className="flex min-h-[min(520px,82dvh)] flex-1 flex-col gap-0 overflow-visible rounded-xl border border-slate-200 md:min-h-[520px] md:flex-row dark:border-[#2E2E2E]">
           <aside
-            className={`flex w-full min-h-0 shrink-0 flex-col overflow-hidden border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929] md:max-h-none md:max-w-[260px] md:border-r ${
+            className={`flex w-full min-h-0 shrink-0 flex-col overflow-hidden border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212] md:max-h-none md:max-w-[260px] md:border-r ${
               isNarrowHub && mobileView === "chat" ? "hidden md:flex" : "flex"
             } max-h-[44vh] border-b md:border-b-0`}
           >
-            <p className="border-b border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#1a3550] dark:text-[#8DE3B5]">
+            <p className="border-b border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#2E2E2E] dark:text-[#A87830]">
               Channels
             </p>
             <ul className="min-h-0 flex-1 overflow-y-auto">
@@ -1916,8 +1916,8 @@ export function CommunicationsHub() {
                     }}
                     className={`flex min-h-11 w-full px-3 py-2.5 text-left text-sm transition ${
                       selectedDeptName === d.name
-                        ? "bg-[#8DE3B5]/20 font-semibold text-[#071929] dark:bg-[#8DE3B5]/25 dark:text-[#E8EAEE]"
-                        : "text-slate-800 hover:bg-white dark:text-[#E8EAEE] dark:hover:bg-[#0d2035]"
+                        ? "bg-[#A87830]/20 font-semibold text-[#121212] dark:bg-[#A87830]/25 dark:text-[#E8EAEE]"
+                        : "text-slate-800 hover:bg-white dark:text-[#E8EAEE] dark:hover:bg-[#1C1C1C]"
                     }`}
                   >
                     <span className="flex flex-col gap-0.5">
@@ -1927,13 +1927,13 @@ export function CommunicationsHub() {
                           {d.name}
                         </span>
                         {(deptUnreadMeta[d.name] ?? 0) > 0 ? (
-                          <span className="inline-flex min-h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5] px-1 text-[10px] font-bold leading-none text-[#0A2540]">
+                          <span className="inline-flex min-h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#A87830] px-1 text-[10px] font-bold leading-none text-[#161616]">
                             {(deptUnreadMeta[d.name] ?? 0) > 99
                               ? "99+"
                               : deptUnreadMeta[d.name]}
                           </span>
                         ) : deptPulse[d.name] ? (
-                          <span className="inline-block h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#8DE3B5]" />
+                          <span className="inline-block h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#A87830]" />
                         ) : null}
                       </span>
                       <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500">
@@ -1950,18 +1950,18 @@ export function CommunicationsHub() {
             </ul>
           </aside>
           <div
-            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-visible bg-white dark:bg-[#0d2035] ${
+            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-visible bg-white dark:bg-[#1C1C1C] ${
               isNarrowHub && mobileView === "list" ? "hidden md:flex" : "flex"
             }`}
           >
-            <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-3 dark:border-[#1a3550] md:px-4">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-3 dark:border-[#2E2E2E] md:px-4">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 {isNarrowHub && mobileView === "chat" ? (
                   <button
                     type="button"
                     onClick={() => setMobileView("list")}
                     aria-label="Back to list"
-                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 md:hidden dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 md:hidden dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                   >
                     ← Back
                   </button>
@@ -1973,7 +1973,7 @@ export function CommunicationsHub() {
             </div>
             <div className="flex min-h-[300px] flex-1 flex-col gap-4 overflow-y-auto p-4">
               {deptMessages.length === 0 ? (
-                <p className="text-center text-sm text-slate-500 dark:text-[#8DE3B5]">
+                <p className="text-center text-sm text-slate-500 dark:text-[#A87830]">
                   No messages in this channel yet
                 </p>
               ) : (
@@ -1992,20 +1992,20 @@ export function CommunicationsHub() {
               )}
               <div ref={deptEndRef} />
             </div>
-            <form onSubmit={sendDeptMessage} className="border-t border-gray-100 p-3 dark:border-[#1a3550]">
+            <form onSubmit={sendDeptMessage} className="border-t border-gray-100 p-3 dark:border-[#2E2E2E]">
               {deptTypingUsers.length > 0 ? (
                 <div className="mb-2 flex items-end gap-2 px-1">
-                  <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-gray-100 px-4 py-3 dark:bg-[#102840]">
+                  <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-gray-100 px-4 py-3 dark:bg-[#242424]">
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "0ms" }}
                     />
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "200ms" }}
                     />
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "400ms" }}
                     />
                   </div>
@@ -2015,7 +2015,7 @@ export function CommunicationsHub() {
                 </div>
               ) : null}
               <div
-                className="rounded-xl border border-gray-200 bg-white transition-colors focus-within:border-[#8DE3B5] focus-within:ring-1 focus-within:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:focus-within:border-[#8DE3B5] dark:focus-within:ring-[#8DE3B5]"
+                className="rounded-xl border border-gray-200 bg-white transition-colors focus-within:border-[#A87830] focus-within:ring-1 focus-within:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:focus-within:border-[#A87830] dark:focus-within:ring-[#A87830]"
                 data-emoji-popover
               >
                 <textarea
@@ -2038,7 +2038,7 @@ export function CommunicationsHub() {
                   className="max-h-32 min-h-[44px] w-full resize-none rounded-t-xl bg-transparent px-4 pb-2 pt-3 text-sm text-slate-900 focus:outline-none dark:text-[#E8EAEE]"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 />
-                <div className="flex items-center justify-between border-t border-gray-100 px-3 pb-2 dark:border-[#1a3550]">
+                <div className="flex items-center justify-between border-t border-gray-100 px-3 pb-2 dark:border-[#2E2E2E]">
                   <div className="flex items-center gap-1">
                     <div className="relative">
                       <button
@@ -2051,12 +2051,12 @@ export function CommunicationsHub() {
                           setShowTeamEmoji(false);
                           setShowPortalEmoji(false);
                         }}
-                        className="rounded-lg p-1.5 text-base leading-none text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                        className="rounded-lg p-1.5 text-base leading-none text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                       >
                         😊
                       </button>
                       {showDeptEmoji ? (
-                        <div className="absolute bottom-9 left-0 z-50 grid w-48 grid-cols-6 gap-0.5 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]">
+                        <div className="absolute bottom-9 left-0 z-50 grid w-48 grid-cols-6 gap-0.5 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
                           {COMMON_EMOJIS.map((emoji) => (
                             <button
                               key={emoji}
@@ -2067,7 +2067,7 @@ export function CommunicationsHub() {
                                 setDeptInput((prev) => prev + emoji);
                                 setShowDeptEmoji(false);
                               }}
-                              className="rounded-lg p-1 text-lg leading-none transition-colors hover:bg-gray-100 dark:hover:bg-[#102840]"
+                              className="rounded-lg p-1 text-lg leading-none transition-colors hover:bg-gray-100 dark:hover:bg-[#242424]"
                             >
                               {emoji}
                             </button>
@@ -2078,7 +2078,7 @@ export function CommunicationsHub() {
                     <label
                       title="Attach file"
                       aria-label="Attach file"
-                      className="cursor-pointer rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                      className="cursor-pointer rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                     >
                       <input
                         type="file"
@@ -2110,7 +2110,7 @@ export function CommunicationsHub() {
                     disabled={
                       !selectedDeptName || busy || (!deptInput.trim() && !uploadingDept)
                     }
-                    className="flex items-center justify-center rounded-lg bg-[#8DE3B5] p-2 text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex items-center justify-center rounded-lg bg-[#A87830] p-2 text-[#161616] transition-colors hover:bg-[#8C6428] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {busy || uploadingDept ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -2126,16 +2126,16 @@ export function CommunicationsHub() {
       ) : null}
 
       {tab === "clients" ? (
-        <div className="flex min-h-[min(520px,82dvh)] flex-1 flex-col gap-0 overflow-visible rounded-xl border border-slate-200 md:min-h-[520px] md:flex-row dark:border-[#1a3550]">
+        <div className="flex min-h-[min(520px,82dvh)] flex-1 flex-col gap-0 overflow-visible rounded-xl border border-slate-200 md:min-h-[520px] md:flex-row dark:border-[#2E2E2E]">
           <aside
-            className={`flex w-full min-h-0 shrink-0 flex-col overflow-hidden border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929] md:max-h-none md:max-w-[300px] md:border-r ${
+            className={`flex w-full min-h-0 shrink-0 flex-col overflow-hidden border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212] md:max-h-none md:max-w-[300px] md:border-r ${
               isNarrowHub && mobileView === "chat" ? "hidden md:flex" : "flex"
             } max-h-[44vh] border-b md:border-b-0`}
           >
-            <p className="border-b border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#1a3550] dark:text-[#8DE3B5]">
+            <p className="border-b border-slate-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-[#2E2E2E] dark:text-[#A87830]">
               Clients
             </p>
-            <div className="border-b border-slate-200 p-2 dark:border-[#1a3550]">
+            <div className="border-b border-slate-200 p-2 dark:border-[#2E2E2E]">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
@@ -2143,7 +2143,7 @@ export function CommunicationsHub() {
                   onChange={(e) => setClientSearch(e.target.value)}
                   placeholder="Search clients…"
                   aria-label="Search clients"
-                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-1 focus:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-[#E8EAEE]"
+                  className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-[#A87830] focus:outline-none focus:ring-1 focus:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE]"
                 />
               </div>
             </div>
@@ -2163,14 +2163,14 @@ export function CommunicationsHub() {
                       }}
                       className={`flex min-h-11 w-full px-3 py-2.5 text-left text-sm transition ${
                         selectedClientId === row.clientId
-                          ? "bg-[#8DE3B5]/20 font-semibold dark:bg-[#8DE3B5]/25"
-                          : "hover:bg-white dark:hover:bg-[#0d2035]"
+                          ? "bg-[#A87830]/20 font-semibold dark:bg-[#A87830]/25"
+                          : "hover:bg-white dark:hover:bg-[#1C1C1C]"
                       }`}
                     >
                       <span className="flex items-center gap-2">
                         {clientPulse[row.clientId] ? (
                           <span
-                            className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#8DE3B5]"
+                            className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[#A87830]"
                             aria-hidden
                           />
                         ) : null}
@@ -2178,7 +2178,7 @@ export function CommunicationsHub() {
                           {row.displayName}
                         </span>
                         {row.unreadCount > 0 ? (
-                          <span className="inline-flex min-h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#8DE3B5] px-1 text-[10px] font-bold leading-none text-[#0A2540]">
+                          <span className="inline-flex min-h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[#A87830] px-1 text-[10px] font-bold leading-none text-[#161616]">
                             {row.unreadCount > 99 ? "99+" : row.unreadCount}
                           </span>
                         ) : null}
@@ -2200,18 +2200,18 @@ export function CommunicationsHub() {
             </ul>
           </aside>
           <div
-            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-visible bg-white dark:bg-[#0d2035] ${
+            className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-visible bg-white dark:bg-[#1C1C1C] ${
               isNarrowHub && mobileView === "list" ? "hidden md:flex" : "flex"
             }`}
           >
-            <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-3 dark:border-[#1a3550] md:px-4">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-200 px-3 py-3 dark:border-[#2E2E2E] md:px-4">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 {isNarrowHub && mobileView === "chat" ? (
                   <button
                     type="button"
                     onClick={() => setMobileView("list")}
                     aria-label="Back to list"
-                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 md:hidden dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                    className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-slate-200 px-3 text-sm font-semibold text-slate-700 md:hidden dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                   >
                     ← Back
                   </button>
@@ -2226,11 +2226,11 @@ export function CommunicationsHub() {
             </div>
             <div className="flex min-h-[300px] flex-1 flex-col gap-4 overflow-y-auto p-4">
               {!selectedClientId ? (
-                <p className="text-center text-sm text-slate-500 dark:text-[#8DE3B5]">
+                <p className="text-center text-sm text-slate-500 dark:text-[#A87830]">
                   Select a client to view their messages
                 </p>
               ) : portalMessages.length === 0 ? (
-                <p className="text-center text-sm text-slate-500 dark:text-[#8DE3B5]">
+                <p className="text-center text-sm text-slate-500 dark:text-[#A87830]">
                   No messages yet.
                 </p>
               ) : (
@@ -2249,8 +2249,8 @@ export function CommunicationsHub() {
                         title={bubbleTitle}
                         className={`max-w-[calc(100vw-2.5rem)] rounded-lg px-4 py-2.5 text-sm shadow-sm sm:max-w-[85%] ${
                           mine
-                            ? "rounded-br-md bg-[#8DE3B5] text-[#0A2540]"
-                            : "rounded-bl-md border border-slate-200 bg-slate-100 text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                            ? "rounded-br-md bg-[#A87830] text-[#161616]"
+                            : "rounded-bl-md border border-slate-200 bg-slate-100 text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                         }`}
                       >
                         <MessageBody text={msg.message} />
@@ -2263,7 +2263,7 @@ export function CommunicationsHub() {
                         <span className="font-medium text-slate-600 dark:text-slate-300">
                           {msg.sender_name ?? "—"}
                         </span>
-                        <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-slate-700 dark:bg-[#1a3550] dark:text-[#8DE3B5]">
+                        <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-slate-700 dark:bg-[#2E2E2E] dark:text-[#A87830]">
                           {roleLabel(msg.sender_role)}
                         </span>
                         <ClientFormattedDate
@@ -2278,20 +2278,20 @@ export function CommunicationsHub() {
               )}
               <div ref={clientEndRef} />
             </div>
-            <form onSubmit={sendPortalMessage} className="border-t border-gray-100 p-3 dark:border-[#1a3550]">
+            <form onSubmit={sendPortalMessage} className="border-t border-gray-100 p-3 dark:border-[#2E2E2E]">
               {portalTypingUsers.length > 0 ? (
                 <div className="mb-2 flex items-end gap-2 px-1">
-                  <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-gray-100 px-4 py-3 dark:bg-[#102840]">
+                  <div className="flex items-center gap-1 rounded-lg rounded-bl-sm bg-gray-100 px-4 py-3 dark:bg-[#242424]">
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "0ms" }}
                     />
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "200ms" }}
                     />
                     <span
-                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#8DE3B5]"
+                      className="h-2 w-2 rounded-full bg-gray-400 dark:bg-[#A87830]"
                       style={{ animation: "typingDot 1.4s infinite", animationDelay: "400ms" }}
                     />
                   </div>
@@ -2301,7 +2301,7 @@ export function CommunicationsHub() {
                 </div>
               ) : null}
               <div
-                className="rounded-xl border border-gray-200 bg-white transition-colors focus-within:border-[#8DE3B5] focus-within:ring-1 focus-within:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:focus-within:border-[#8DE3B5] dark:focus-within:ring-[#8DE3B5]"
+                className="rounded-xl border border-gray-200 bg-white transition-colors focus-within:border-[#A87830] focus-within:ring-1 focus-within:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:focus-within:border-[#A87830] dark:focus-within:ring-[#A87830]"
                 data-emoji-popover
               >
                 <textarea
@@ -2324,7 +2324,7 @@ export function CommunicationsHub() {
                   className="max-h-32 min-h-[44px] w-full resize-none rounded-t-xl bg-transparent px-4 pb-2 pt-3 text-sm text-slate-900 focus:outline-none dark:text-[#E8EAEE]"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 />
-                <div className="flex items-center justify-between border-t border-gray-100 px-3 pb-2 dark:border-[#1a3550]">
+                <div className="flex items-center justify-between border-t border-gray-100 px-3 pb-2 dark:border-[#2E2E2E]">
                   <div className="flex items-center gap-1">
                     <div className="relative">
                       <button
@@ -2337,12 +2337,12 @@ export function CommunicationsHub() {
                           setShowTeamEmoji(false);
                           setShowDeptEmoji(false);
                         }}
-                        className="rounded-lg p-1.5 text-base leading-none text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                        className="rounded-lg p-1.5 text-base leading-none text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                       >
                         😊
                       </button>
                       {showPortalEmoji ? (
-                        <div className="absolute bottom-9 left-0 z-50 grid w-48 grid-cols-6 gap-0.5 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]">
+                        <div className="absolute bottom-9 left-0 z-50 grid w-48 grid-cols-6 gap-0.5 rounded-xl border border-gray-200 bg-white p-2 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
                           {COMMON_EMOJIS.map((emoji) => (
                             <button
                               key={emoji}
@@ -2353,7 +2353,7 @@ export function CommunicationsHub() {
                                 setPortalInput((prev) => prev + emoji);
                                 setShowPortalEmoji(false);
                               }}
-                              className="rounded-lg p-1 text-lg leading-none transition-colors hover:bg-gray-100 dark:hover:bg-[#102840]"
+                              className="rounded-lg p-1 text-lg leading-none transition-colors hover:bg-gray-100 dark:hover:bg-[#242424]"
                             >
                               {emoji}
                             </button>
@@ -2364,7 +2364,7 @@ export function CommunicationsHub() {
                     <label
                       title="Attach file"
                       aria-label="Attach file"
-                      className="cursor-pointer rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#102840] dark:hover:text-slate-300"
+                      className="cursor-pointer rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-[#242424] dark:hover:text-slate-300"
                     >
                       <input
                         type="file"
@@ -2398,7 +2398,7 @@ export function CommunicationsHub() {
                       busy ||
                       (!portalInput.trim() && !uploadingPortal)
                     }
-                    className="flex items-center justify-center rounded-lg bg-[#8DE3B5] p-2 text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex items-center justify-center rounded-lg bg-[#A87830] p-2 text-[#161616] transition-colors hover:bg-[#8C6428] disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {busy || uploadingPortal ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

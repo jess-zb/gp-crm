@@ -12,8 +12,8 @@ type LayoutProps = EmailProps & {
   children: React.ReactNode;
 };
 
-const NAVY = "#0A2540";
-const BRAND = "#8DE3B5";
+const NAVY = "#161616";
+const BRAND = "#A87830";
 const SLATE_900 = "#0f172a";
 const SLATE_600 = "#475569";
 const SLATE_500 = "#64748b";

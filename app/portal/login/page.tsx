@@ -34,19 +34,19 @@ export default function PortalLoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#071929]">
+    <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#121212]">
       <div className="mx-auto max-w-md">
         <div className="mb-8 flex justify-center">
           <Image
             src="/logo.png"
-            alt="DebtSupportPros"
+            alt="Golden Pathway"
             width={200}
             height={60}
             className="h-auto max-w-[200px] object-contain"
           />
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <h1 className="text-center text-xl font-semibold text-slate-900 dark:text-white">
             Client portal
           </h1>
@@ -69,7 +69,7 @@ export default function PortalLoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                 required
               />
             </div>
@@ -87,7 +87,7 @@ export default function PortalLoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                 required
               />
             </div>
@@ -95,7 +95,7 @@ export default function PortalLoginPage() {
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-lg bg-[#8DE3B5] py-3 text-sm font-bold text-[#0A2540] disabled:opacity-50"
+              className="w-full rounded-lg bg-[#A87830] py-3 text-sm font-bold text-[#161616] disabled:opacity-50"
             >
               {busy ? "Signing in…" : "Sign in"}
             </button>

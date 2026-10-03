@@ -9,7 +9,7 @@ function BrandMark({ className = "" }: { className?: string }) {
   return (
     <Image
       src="/logo.png"
-      alt="DebtSupportPros"
+      alt="Golden Pathway"
       width={180}
       height={54}
       className={`object-contain ${className}`.trim()}
@@ -37,15 +37,15 @@ export default async function AttorneyBatchPublicPage({
           : "Invalid link";
     const body =
       loaded.reason === "expired"
-        ? "This attorney download link has expired. Ask DebtSupportPros staff for a new batch link."
+        ? "This attorney download link has expired. Ask Golden Pathway staff for a new batch link."
         : loaded.reason === "revoked"
-          ? "This attorney download link was revoked. Ask DebtSupportPros staff for a new batch link."
+          ? "This attorney download link was revoked. Ask Golden Pathway staff for a new batch link."
           : loaded.reason === "error"
-            ? "This download link could not be loaded. Please try again or ask DebtSupportPros staff for help."
+            ? "This download link could not be loaded. Please try again or ask Golden Pathway staff for help."
             : "This download link is not valid.";
 
     return (
-      <main className="min-h-screen bg-[#0A2540] px-4 py-16 text-[#E8EAEE]">
+      <main className="min-h-screen bg-[#161616] px-4 py-16 text-[#E8EAEE]">
         <div className="mx-auto max-w-lg text-center">
           <BrandMark className="mx-auto" />
           <h1 className="mt-6 text-2xl font-bold">{title}</h1>
@@ -62,7 +62,7 @@ export default async function AttorneyBatchPublicPage({
   );
 
   return (
-    <main className="min-h-screen bg-[#0A2540] px-4 py-10 text-[#E8EAEE] sm:py-14">
+    <main className="min-h-screen bg-[#161616] px-4 py-10 text-[#E8EAEE] sm:py-14">
       <div className="mx-auto max-w-3xl">
         <header className="mb-8">
           <BrandMark />

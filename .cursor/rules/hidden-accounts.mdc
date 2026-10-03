@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Hidden accounts (locked Aug 2026)
 
-The `dev` account (`dev@debtsupportpros.com`, label "Developer") must not appear
+The `dev` account (`dev@goldenpathway.io`, label "Developer") must not appear
 anywhere in the system for any other user — no pickers, dropdowns, team tables,
 assignee columns, sender names, or activity feeds.
 

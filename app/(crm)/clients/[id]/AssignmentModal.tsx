@@ -77,7 +77,7 @@ export function AssignmentModal({
           onChange={(e) => setSelectedId(e.target.value)}
           disabled={loading}
           aria-label="Select team member"
-          className="mb-3 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#8DE3B5] focus:outline-none dark:border-[#1a3550] dark:bg-[#071929] dark:text-white disabled:opacity-50"
+          className="mb-3 w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-[#A87830] focus:outline-none dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white disabled:opacity-50"
         >
           <option value="">Select team member...</option>
           {teamMembers.map((m) => (
@@ -92,7 +92,7 @@ export function AssignmentModal({
           onClick={handleRandom}
           disabled={loading}
           aria-label="Assign a random team member from the list"
-          className="mb-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-2 text-sm text-gray-500 transition-colors hover:border-[#8DE3B5] hover:text-[#8DE3B5] dark:border-slate-600 dark:text-slate-400 dark:hover:border-[#8DE3B5] dark:hover:text-[#8DE3B5] disabled:opacity-50"
+          className="mb-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-gray-300 py-2 text-sm text-gray-500 transition-colors hover:border-[#A87830] hover:text-[#A87830] dark:border-slate-600 dark:text-slate-400 dark:hover:border-[#A87830] dark:hover:text-[#A87830] disabled:opacity-50"
         >
           <Shuffle className="h-4 w-4 shrink-0" />
           Assign at Random
@@ -103,7 +103,7 @@ export function AssignmentModal({
             type="button"
             onClick={onSkip}
             disabled={loading}
-            className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#102840] disabled:opacity-50"
+            className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:bg-[#242424] disabled:opacity-50"
           >
             Skip for now
           </button>
@@ -115,7 +115,7 @@ export function AssignmentModal({
               onAssign(selectedId, member?.full_name?.trim() || member?.email || "");
             }}
             disabled={!selectedId || loading}
-            className="flex-1 rounded-lg bg-[#8DE3B5] py-2.5 text-sm font-medium text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:opacity-40 flex items-center justify-center gap-2"
+            className="flex-1 rounded-lg bg-[#A87830] py-2.5 text-sm font-medium text-[#161616] transition-colors hover:bg-[#8C6428] disabled:opacity-40 flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

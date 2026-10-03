@@ -129,7 +129,7 @@ export function ClientSettingsTab({
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
       <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">Client settings</h3>
       <form onSubmit={onSubmit} className="space-y-6">
         <input type="hidden" name="clientId" value={clientId} />
@@ -142,7 +142,7 @@ export function ClientSettingsTab({
               <select
                 name="assigned_to"
                 defaultValue={client.assigned_to ?? ""}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               >
                 <option value="">Unassigned</option>
                 {accountsOptions.map((s) => (
@@ -159,7 +159,7 @@ export function ClientSettingsTab({
               <select
                 name="assigned_services_id"
                 defaultValue={client.assigned_services_id ?? ""}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               >
                 <option value="">Unassigned</option>
                 {servicesOptions.map((s) => (
@@ -175,7 +175,7 @@ export function ClientSettingsTab({
             <>
               <div className="text-sm md:col-span-2">
                 <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
-                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200">
+                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200">
                   {assigneeName ?? "—"}
                   {assigneeName && assigneeRole ? (
                     <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
@@ -186,7 +186,7 @@ export function ClientSettingsTab({
               </div>
               <div className="text-sm md:col-span-2">
                 <span className="font-medium text-slate-700 dark:text-slate-300">Services</span>
-                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200">
+                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200">
                   {servicesAssigneeName ?? "—"}
                 </p>
               </div>
@@ -202,7 +202,7 @@ export function ClientSettingsTab({
                 <select
                   name="attorney_id"
                   defaultValue={client.attorney_id ?? ""}
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-slate-900 focus:border-green-500 focus:outline-none dark:border-[#1a3550] dark:bg-[#071929] dark:text-white dark:focus:border-green-500"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-slate-900 focus:border-green-500 focus:outline-none dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white dark:focus:border-green-500"
                 >
                   <option value="">No attorney assigned</option>
                   {attorneyOptions.map((a) => (
@@ -222,7 +222,7 @@ export function ClientSettingsTab({
                 <span className="text-xs font-medium text-gray-600 dark:text-slate-400">
                   Assigned Attorney
                 </span>
-                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-gray-700 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200">
+                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-gray-700 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200">
                   {client.attorney_id
                     ? client.attorney?.full_name?.trim() ||
                       client.attorney?.email?.trim() ||
@@ -239,14 +239,14 @@ export function ClientSettingsTab({
           ) : null}
         </div>
 
-        <div className="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-[#1a3550]">
+        <div className="flex items-center justify-between border-t border-gray-100 pt-4 dark:border-[#2E2E2E]">
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600 dark:text-slate-400">Record Status</span>
             <button
               type="button"
               onClick={() => void handleToggleActive()}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${
-                recordActive ? "bg-[#8DE3B5]" : "bg-gray-300 dark:bg-slate-600"
+                recordActive ? "bg-[#A87830]" : "bg-gray-300 dark:bg-slate-600"
               }`}
               aria-pressed={recordActive}
               aria-label={recordActive ? "Mark archived" : "Mark active"}
@@ -259,7 +259,7 @@ export function ClientSettingsTab({
             </button>
             <span
               className={`text-sm font-medium ${
-                recordActive ? "text-[#8DE3B5] dark:text-[#8DE3B5]" : "text-gray-400 dark:text-slate-500"
+                recordActive ? "text-[#A87830] dark:text-[#A87830]" : "text-gray-400 dark:text-slate-500"
               }`}
             >
               {recordActive ? "Active" : "Archived"}
@@ -269,7 +269,7 @@ export function ClientSettingsTab({
           <button
             type="submit"
             disabled={isSaving}
-            className="flex items-center gap-2 rounded-xl bg-[#8DE3B5] px-5 py-2.5 text-sm font-medium text-[#0A2540] transition-colors hover:bg-[#6BC99A] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex items-center gap-2 rounded-xl bg-[#A87830] px-5 py-2.5 text-sm font-medium text-[#161616] transition-colors hover:bg-[#8C6428] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSaving ? (
               <>

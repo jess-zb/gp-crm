@@ -12,7 +12,7 @@ export default function ClientNotFound() {
       </p>
       <Link
         href="/clients"
-        className="mt-8 inline-block text-sm font-semibold text-[#8DE3B5] hover:underline dark:text-[#8DE3B5]"
+        className="mt-8 inline-block text-sm font-semibold text-[#A87830] hover:underline dark:text-[#A87830]"
       >
         ← Back to clients
       </Link>

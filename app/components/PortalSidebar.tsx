@@ -6,7 +6,7 @@ import { LogOut } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "zb-theme";
-const ACTIVE_BG = "#8DE3B5";
+const ACTIVE_BG = "#A87830";
 /** Stand out on both light sidebar and dark sidebar. */
 
 function getInitials(name: string) {
@@ -63,11 +63,11 @@ export function PortalSidebar({
 
   return (
     <aside
-      className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-out dark:border-[#1a3550] dark:bg-[#0d2035] md:z-40 ${
+      className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-slate-200 bg-white transition-transform duration-200 ease-out dark:border-[#2E2E2E] dark:bg-[#1C1C1C] md:z-40 ${
         mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
       }`}
     >
-      <div className="flex shrink-0 justify-center border-b border-slate-200 px-4 py-4 dark:border-[#1a3550]">
+      <div className="flex shrink-0 justify-center border-b border-slate-200 px-4 py-4 dark:border-[#2E2E2E]">
         <Link
           href="/portal"
           className="block transition-opacity duration-200 ease-out hover:opacity-90"
@@ -75,7 +75,7 @@ export function PortalSidebar({
         >
           <Image
             src="/logo.png"
-            alt="DebtSupportPros"
+            alt="Golden Pathway"
             width={140}
             height={42}
             className="mx-auto block h-auto max-w-[140px] object-contain"
@@ -85,7 +85,7 @@ export function PortalSidebar({
 
       <div className="min-h-0 flex-1" aria-hidden />
 
-      <div className="mt-auto shrink-0 space-y-3 border-t border-slate-200 p-3 dark:border-[#1a3550]">
+      <div className="mt-auto shrink-0 space-y-3 border-t border-slate-200 p-3 dark:border-[#2E2E2E]">
         <div className="flex items-center gap-3 px-1">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
@@ -110,8 +110,8 @@ export function PortalSidebar({
             onClick={() => applyTheme("light")}
             className={`inline-flex flex-1 items-center justify-center rounded-lg py-2 text-base leading-none transition-colors duration-200 ease-out ${
               !dark
-                ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-[#1a3550] dark:bg-[#071929] dark:text-slate-300 dark:hover:bg-[#102840]"
+                ? "bg-[#A87830] text-[#161616] shadow-sm"
+                : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-slate-300 dark:hover:bg-[#242424]"
             }`}
             aria-label="Light mode"
             aria-pressed={!dark}
@@ -125,8 +125,8 @@ export function PortalSidebar({
             onClick={() => applyTheme("dark")}
             className={`inline-flex flex-1 items-center justify-center rounded-lg py-2 text-base leading-none transition-colors duration-200 ease-out ${
               dark
-                ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-[#1a3550] dark:bg-[#071929] dark:text-slate-300 dark:hover:bg-[#102840]"
+                ? "bg-[#A87830] text-[#161616] shadow-sm"
+                : "border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-slate-300 dark:hover:bg-[#242424]"
             }`}
             aria-label="Dark mode"
             aria-pressed={dark}
@@ -143,7 +143,7 @@ export function PortalSidebar({
             onMobileClose?.();
             onSignOut();
           }}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition-colors hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE] dark:hover:bg-[#102840]"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition-colors hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE] dark:hover:bg-[#242424]"
         >
           <LogOut className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
           Sign out

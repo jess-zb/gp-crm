@@ -180,12 +180,12 @@ export default async function AttorneyCaseDetailPage({
     <main className="mx-auto min-w-0 max-w-[1200px] overflow-x-hidden px-4 py-6 sm:py-8">
       <Link
         href="/attorney/cases"
-        className="text-sm font-medium text-[#0A2540] hover:underline dark:text-[#8DE3B5]"
+        className="text-sm font-medium text-[#161616] hover:underline dark:text-[#A87830]"
       >
         ← Back to Cases
       </Link>
 
-      <section className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <section className="mt-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
@@ -213,7 +213,7 @@ export default async function AttorneyCaseDetailPage({
 
       <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1 space-y-8">
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Client Info
             </h2>
@@ -254,7 +254,7 @@ export default async function AttorneyCaseDetailPage({
         </div>
 
         <aside className="w-full shrink-0 space-y-6 lg:w-80">
-          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+          <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Account info
             </h2>

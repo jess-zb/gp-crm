@@ -1,17 +1,21 @@
 /**
- * Canonical DebtSupportPros (DSP) client-facing contact information.
+ * Canonical Golden Pathway client-facing contact information.
  * Import from here — never hardcode phone/email/brand in templates or dispatch code.
+ *
+ * BUSINESS_LEGAL_NAME is provisional. The wordmark reads "Golden Pathway
+ * Financial"; confirm the legal entity before anything is filed or printed
+ * as a contract.
  */
-export const BUSINESS_NAME = "DebtSupportPros";
-export const BUSINESS_LEGAL_NAME = "DebtSupportPros, LLC";
+export const BUSINESS_NAME = "Golden Pathway";
+export const BUSINESS_LEGAL_NAME = "Golden Pathway Financial";
 
-export const SUPPORT_EMAIL = "support@debtsupportpros.com";
+export const SUPPORT_EMAIL = "support@goldenpathway.io";
 export const FROM_EMAIL = `${BUSINESS_NAME} <${SUPPORT_EMAIL}>`;
 
-export const SUPPORT_PHONE = "888-885-6042";
-export const SUPPORT_PHONE_E164 = "+18888856042";
+export const SUPPORT_PHONE = "928-433-8408";
+export const SUPPORT_PHONE_E164 = "+19284338408";
 
-export const WEBSITE_URL = "https://debtsupportpros.com/";
+export const WEBSITE_URL = "https://www.goldenpathway.io";
 
 /**
  * Production CRM origin used by every client-facing link when
@@ -57,8 +61,11 @@ export const FORBIDDEN_CONTACT_PATTERNS: readonly RegExp[] = [
   /jessica@zerobalance\.info/i,
   /https?:\/\/zerobalance\.info/i,
   /app\.debtsupportpros\.com/i,
+  /debtsupportpros\.com/i,
+  /DebtSupportPros/i,
   /dspcrm\.vercel\.app/i,
   /zb-crm\.vercel\.app/i,
+  /888[-.\s(]*885[-.\s)]*6042/i,
   /Welcome to Zero Balance/i,
   /Zero Balance Team/i,
   /with Zero Balance/i,
@@ -73,7 +80,7 @@ export function scrubLegacyContactText(text: string): string {
   t = t.replace(/888[-.\s(]*807[-.\s)]*4221/gi, SUPPORT_PHONE);
   t = t.replace(/\(888\)\s*807-4221/gi, SUPPORT_PHONE);
   t = t.replace(/support@zerobalance\.info/gi, SUPPORT_EMAIL);
-  t = t.replace(/emile@zerobalance\.info/gi, "emile@debtsupportpros.com");
+  t = t.replace(/emile@zerobalance\.info/gi, SUPPORT_EMAIL);
   t = t.replace(/https?:\/\/zerobalance\.info\/?/gi, WEBSITE_URL);
   t = t.replace(/Welcome to Zero Balance!/g, EMAIL_SUBJECTS.welcome_lead);
   t = t.replace(/Welcome to Your Next Step with Zero Balance!/g, EMAIL_SUBJECTS.welcome_cs);

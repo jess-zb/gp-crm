@@ -18,7 +18,7 @@ function AlertRow({
   return (
     <Link
       href={href}
-      className="flex items-start gap-3 px-4 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-[#102840]/40"
+      className="flex items-start gap-3 px-4 py-2.5 transition-colors hover:bg-slate-50 dark:hover:bg-[#242424]/40"
     >
       <div
         className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
@@ -78,13 +78,13 @@ export function AdminDashboard({
         </Link>
       ) : null}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#1a3550] dark:bg-[#0d2035]">
-        <div className="border-b border-slate-100 px-4 py-3 dark:border-[#1a3550]">
+      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+        <div className="border-b border-slate-100 px-4 py-3 dark:border-[#2E2E2E]">
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
             Team Activity Today
           </h3>
         </div>
-        <div className="divide-y divide-slate-50 dark:divide-[#1a3550]">
+        <div className="divide-y divide-slate-50 dark:divide-[#2E2E2E]">
           {teamActivity.length === 0 ? (
             <p className="px-4 py-6 text-center text-sm text-slate-400 dark:text-slate-500">
               No stage advances yet today
@@ -119,13 +119,13 @@ export function AdminDashboard({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#1a3550] dark:bg-[#0d2035]">
-        <div className="border-b border-slate-100 px-4 py-3 dark:border-[#1a3550]">
+      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+        <div className="border-b border-slate-100 px-4 py-3 dark:border-[#2E2E2E]">
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
             Alerts
           </h3>
         </div>
-        <div className="divide-y divide-slate-50 dark:divide-[#1a3550]">
+        <div className="divide-y divide-slate-50 dark:divide-[#2E2E2E]">
           {rnaClients.map((c) => (
             <AlertRow
               key={c.id}

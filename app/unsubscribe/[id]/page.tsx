@@ -44,8 +44,8 @@ export default async function UnsubscribePage({
   }
 
   return (
-    <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#071929]">
-      <div className="mx-auto max-w-md rounded-xl border border-[#8DE3B5]/40 bg-white p-6 text-center text-sm text-slate-700 shadow-sm dark:border-[#8DE3B5]/20 dark:bg-[#0B2233] dark:text-slate-200">
+    <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#121212]">
+      <div className="mx-auto max-w-md rounded-xl border border-[#A87830]/40 bg-white p-6 text-center text-sm text-slate-700 shadow-sm dark:border-[#A87830]/20 dark:bg-[#0B2233] dark:text-slate-200">
         <h1 className="text-base font-semibold text-slate-900 dark:text-slate-50">
           You&apos;ve been unsubscribed
         </h1>

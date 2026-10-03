@@ -292,7 +292,7 @@ function statusBadge(stage: string, isActive: boolean | null) {
     );
   }
   return (
-    <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-500/15 dark:bg-[#0d2035] dark:text-slate-300">
+    <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-500/15 dark:bg-[#1C1C1C] dark:text-slate-300">
       Inactive
     </span>
   );
@@ -312,7 +312,7 @@ function searchScopeBadge(isActive: boolean | null) {
     );
   }
   return (
-    <span className="inline-flex shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600 ring-1 ring-inset ring-slate-500/15 dark:bg-[#0d2035] dark:text-slate-300">
+    <span className="inline-flex shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600 ring-1 ring-inset ring-slate-500/15 dark:bg-[#1C1C1C] dark:text-slate-300">
       Archived
     </span>
   );
@@ -349,7 +349,7 @@ const SortableHeader = memo(({
         <ChevronUp
           className={`-mb-1 h-4 w-4 ${
             sortField === field && sortDir === "asc"
-              ? "text-[#8DE3B5]"
+              ? "text-[#A87830]"
               : "text-gray-300 group-hover:text-gray-400 dark:text-slate-600 dark:group-hover:text-slate-500"
           }`}
           aria-label="Sort ascending"
@@ -357,7 +357,7 @@ const SortableHeader = memo(({
         <ChevronDown
           className={`h-4 w-4 ${
             sortField === field && sortDir === "desc"
-              ? "text-[#8DE3B5]"
+              ? "text-[#A87830]"
               : "text-gray-300 group-hover:text-gray-400 dark:text-slate-600 dark:group-hover:text-slate-500"
           }`}
           aria-label="Sort descending"
@@ -500,12 +500,12 @@ const ClientRow = memo(
             goView(client.id);
           }
         }}
-        className="crm-table-row cursor-pointer border-b border-slate-100 transition-colors hover:bg-slate-50/50 dark:border-[#1a3550] dark:hover:bg-[#102840]/40"
+        className="crm-table-row cursor-pointer border-b border-slate-100 transition-colors hover:bg-slate-50/50 dark:border-[#2E2E2E] dark:hover:bg-[#242424]/40"
       >
         <td className="px-3 py-2.5 align-middle" onClick={(e) => e.stopPropagation()}>
           <input
             type="checkbox"
-            className="h-4 w-4 rounded border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+            className="h-4 w-4 rounded border-slate-300 text-[#A87830] focus:ring-[#A87830]"
             checked={isSelected}
             onChange={() => toggleOne(client.id)}
             aria-label={`Select ${displayName}`}
@@ -530,7 +530,7 @@ const ClientRow = memo(
                 e.stopPropagation();
                 goView(client.id);
               }}
-              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-400 dark:hover:bg-[#1f3520] dark:hover:text-slate-200"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:bg-[#1f3520] dark:hover:text-slate-200"
               title="View"
               aria-label="View client"
             >
@@ -542,7 +542,7 @@ const ClientRow = memo(
                 e.stopPropagation();
                 onEdit(client.id);
               }}
-              className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] sm:inline-flex dark:text-slate-400 dark:hover:bg-[#1f3520] dark:hover:text-slate-200"
+              className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] sm:inline-flex dark:text-slate-400 dark:hover:bg-[#1f3520] dark:hover:text-slate-200"
               title="Edit"
               aria-label="Edit client"
             >
@@ -557,7 +557,7 @@ const ClientRow = memo(
                 }}
                 title="Reactivate client"
                 aria-label="Reactivate client"
-                className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-emerald-500 transition-colors hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] sm:inline-flex dark:text-emerald-400 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300"
+                className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-emerald-500 transition-colors hover:bg-emerald-50 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] sm:inline-flex dark:text-emerald-400 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300"
               >
                 <RefreshCw className="h-4 w-4" />
               </button>
@@ -567,7 +567,7 @@ const ClientRow = memo(
                 type="button"
                 title="Delete"
                 aria-label="Delete client"
-                className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] sm:inline-flex dark:text-red-400 dark:hover:bg-red-950/30"
+                className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-red-600 hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] sm:inline-flex dark:text-red-400 dark:hover:bg-red-950/30"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (!window.confirm("Deactivate this client?")) return;
@@ -1131,7 +1131,7 @@ export function ClientsListClient({
             }}
             placeholder="Search name, phone, or email…"
             autoComplete="off"
-            className="crm-input w-full pl-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+            className="crm-input w-full pl-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
           />
         </div>
         {localSearch.trim() ? (
@@ -1180,13 +1180,13 @@ export function ClientsListClient({
           <button
             type="button"
             onClick={() => setShowColumnPicker((p) => !p)}
-            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300 dark:hover:bg-[#1f3520]"
+            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300 dark:hover:bg-[#1f3520]"
           >
             <Columns className="h-3.5 w-3.5" />
             Columns
           </button>
           {showColumnPicker ? (
-            <div className="absolute right-0 top-9 z-20 w-52 rounded-xl border border-gray-200 bg-white p-3 shadow-lg dark:border-[#1a3550] dark:bg-[#0d2035]">
+            <div className="absolute right-0 top-9 z-20 w-52 rounded-xl border border-gray-200 bg-white p-3 shadow-lg dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
                 Show columns
               </p>
@@ -1208,7 +1208,7 @@ export function ClientsListClient({
                           : [...prev, col.id]
                       );
                     }}
-                    className="rounded accent-[#8DE3B5]"
+                    className="rounded accent-[#A87830]"
                   />
                   <span className="text-sm text-gray-700 dark:text-slate-200">{col.label}</span>
                   {"required" in col && col.required ? (
@@ -1223,7 +1223,7 @@ export function ClientsListClient({
       />
 
       {someSelected ? (
-        <div className="mt-4 flex flex-col gap-3 rounded-xl border border-[#8DE3B5]/30 bg-[#8DE3B5]/10 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#3d5c3f] dark:bg-[#102840]/80">
+        <div className="mt-4 flex flex-col gap-3 rounded-xl border border-[#A87830]/30 bg-[#A87830]/10 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#3d5c3f] dark:bg-[#242424]/80">
           <p className="shrink-0 text-sm font-medium text-slate-800 dark:text-slate-200">
             {selected.size} selected
           </p>
@@ -1273,7 +1273,7 @@ export function ClientsListClient({
                     }
                   });
                 }}
-                className="inline-flex shrink-0 min-h-11 items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 disabled:opacity-50 dark:border-red-900/50 dark:bg-[#0d2035] dark:text-red-400 dark:hover:bg-red-950/40"
+                className="inline-flex shrink-0 min-h-11 items-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 disabled:opacity-50 dark:border-red-900/50 dark:bg-[#1C1C1C] dark:text-red-400 dark:hover:bg-red-950/40"
               >
                 {bulkPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {bulkPending ? "Deleting..." : "Delete Selected"}
@@ -1301,19 +1301,19 @@ export function ClientsListClient({
             {/* ── Mobile card list (< md) ── */}
             <div className={`md:hidden transition-opacity duration-150 ${navPending ? "opacity-60" : "opacity-100"}`}>
               {navPending ? (
-                <div className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+                <div className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                   {Array.from({ length: Math.min(pageSize, 8) }).map((_, i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-3">
-                      <div className="h-4 w-4 shrink-0 animate-pulse rounded bg-gray-100 dark:bg-[#1a3550]" />
+                      <div className="h-4 w-4 shrink-0 animate-pulse rounded bg-gray-100 dark:bg-[#2E2E2E]" />
                       <div className="flex-1 space-y-1.5">
-                        <div className="h-3.5 w-[60%] animate-pulse rounded-full bg-gray-100 dark:bg-[#1a3550]" />
-                        <div className="h-3 w-[30%] animate-pulse rounded-full bg-gray-100 dark:bg-[#1a3550]" />
+                        <div className="h-3.5 w-[60%] animate-pulse rounded-full bg-gray-100 dark:bg-[#2E2E2E]" />
+                        <div className="h-3 w-[30%] animate-pulse rounded-full bg-gray-100 dark:bg-[#2E2E2E]" />
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+                <div className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                   {displayRows.map((client) => {
                     const displayName = `${client.first_name ?? ""} ${client.last_name ?? ""}`.trim() || "—";
                     return (
@@ -1328,12 +1328,12 @@ export function ClientsListClient({
                             goView(client.id);
                           }
                         }}
-                        className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-50/70 active:bg-slate-100 dark:hover:bg-[#102840]/40"
+                        className="flex items-start gap-3 px-4 py-3 transition-colors hover:bg-slate-50/70 active:bg-slate-100 dark:hover:bg-[#242424]/40"
                       >
                         <div className="mt-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
                           <input
                             type="checkbox"
-                            className="h-4 w-4 rounded border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                            className="h-4 w-4 rounded border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                             checked={selected.has(client.id)}
                             onChange={() => toggleOne(client.id)}
                             aria-label={`Select ${displayName}`}
@@ -1355,7 +1355,7 @@ export function ClientsListClient({
                         <button
                           type="button"
                           onClick={(e) => { e.stopPropagation(); goView(client.id); }}
-                          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:text-slate-400 dark:hover:bg-[#1f3520] dark:hover:text-slate-200"
+                          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:bg-[#1f3520] dark:hover:text-slate-200"
                           title="View"
                           aria-label="View client"
                         >
@@ -1410,7 +1410,7 @@ export function ClientsListClient({
                       <input
                         ref={headerCheckboxRef}
                         type="checkbox"
-                        className="h-4 w-4 rounded border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                        className="h-4 w-4 rounded border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                         checked={allOnPageSelected}
                         onChange={toggleAllOnPage}
                         aria-label="Select all on this page"
@@ -1426,25 +1426,25 @@ export function ClientsListClient({
                   </tr>
                 </thead>
                 {navPending ? (
-                  <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+                  <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                     {Array.from({ length: pageSize }).map((_, i) => (
-                      <tr key={i} className="border-b border-gray-50 dark:border-[#1a3550]">
+                      <tr key={i} className="border-b border-gray-50 dark:border-[#2E2E2E]">
                         <td className="px-3 py-2.5">
-                          <div className="h-4 w-4 animate-pulse rounded bg-gray-100 dark:bg-[#1a3550]" />
+                          <div className="h-4 w-4 animate-pulse rounded bg-gray-100 dark:bg-[#2E2E2E]" />
                         </td>
                         {orderedVisibleColumns.map((colId) => (
                           <td key={colId} className="px-4 py-2.5">
-                            <div className="h-3.5 max-w-[12rem] w-[85%] animate-pulse rounded-full bg-gray-100 dark:bg-[#1a3550]" />
+                            <div className="h-3.5 max-w-[12rem] w-[85%] animate-pulse rounded-full bg-gray-100 dark:bg-[#2E2E2E]" />
                           </td>
                         ))}
                         <td className="px-3 py-2.5">
-                          <div className="h-3.5 w-16 animate-pulse rounded-full bg-gray-100 dark:bg-[#1a3550]" />
+                          <div className="h-3.5 w-16 animate-pulse rounded-full bg-gray-100 dark:bg-[#2E2E2E]" />
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 ) : (
-                  <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+                  <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                     {displayRows.map((client) => (
                       <ClientRow
                         key={client.id}
@@ -1469,7 +1469,7 @@ export function ClientsListClient({
         )}
 
         {!navPending && clients.length > 0 ? (
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-200 px-4 py-4 md:flex-row dark:border-[#1a3550]">
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-slate-200 px-4 py-4 md:flex-row dark:border-[#2E2E2E]">
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Showing{" "}
               <span className="font-medium text-slate-900 dark:text-slate-200">
@@ -1511,8 +1511,8 @@ export function ClientsListClient({
                     }
                     className={`rounded-lg border px-2.5 py-1 text-xs transition-colors ${
                       pageSize === size
-                        ? "border-[#8DE3B5] bg-[#8DE3B5] text-[#0A2540]"
-                        : "border-gray-200 text-gray-600 hover:border-gray-300 dark:border-[#1a3550] dark:text-slate-300 dark:hover:border-slate-500"
+                        ? "border-[#A87830] bg-[#A87830] text-[#161616]"
+                        : "border-gray-200 text-gray-600 hover:border-gray-300 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:border-slate-500"
                     }`}
                   >
                     {size}
@@ -1538,8 +1538,8 @@ export function ClientsListClient({
                   }
                   className={`rounded-lg border px-3 py-1.5 text-sm font-medium ${
                     pageClamped <= 1 || navPending
-                      ? "cursor-not-allowed border-slate-100 text-slate-300 dark:border-[#1a3550] dark:text-slate-600"
-                      : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                      ? "cursor-not-allowed border-slate-100 text-slate-300 dark:border-[#2E2E2E] dark:text-slate-600"
+                      : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                   }`}
                 >
                   Previous
@@ -1564,8 +1564,8 @@ export function ClientsListClient({
                   }
                   className={`rounded-lg border px-3 py-1.5 text-sm font-medium ${
                     pageClamped >= totalPages || navPending
-                      ? "cursor-not-allowed border-slate-100 text-slate-300 dark:border-[#1a3550] dark:text-slate-600"
-                      : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                      ? "cursor-not-allowed border-slate-100 text-slate-300 dark:border-[#2E2E2E] dark:text-slate-600"
+                      : "border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                   }`}
                 >
                   Next
@@ -1602,7 +1602,7 @@ export function ClientsListClient({
               value={reactivateStage}
               disabled={isReactivating}
               onChange={(e) => setReactivateStage(e.target.value)}
-              className="mt-1 mb-5 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#8DE3B5] focus:outline-none dark:border-[#1a3550] dark:bg-[#102840] dark:text-slate-100"
+              className="mt-1 mb-5 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:border-[#A87830] focus:outline-none dark:border-[#2E2E2E] dark:bg-[#242424] dark:text-slate-100"
             >
               <optgroup label="Sales Pipeline">
                 <option value="lead">New Lead</option>
@@ -1630,7 +1630,7 @@ export function ClientsListClient({
                   setShowReactivateModal(false);
                   setReactivateClient(null);
                 }}
-                className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#1f3520]"
+                className="flex-1 rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#1f3520]"
               >
                 Cancel
               </button>
@@ -1641,7 +1641,7 @@ export function ClientsListClient({
                 className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
                   isReactivating
                     ? "cursor-not-allowed bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"
-                    : "bg-[#8DE3B5] text-[#0A2540] hover:bg-[#6BC99A]"
+                    : "bg-[#A87830] text-[#161616] hover:bg-[#8C6428]"
                 }`}
               >
                 {isReactivating ? (
@@ -1667,7 +1667,7 @@ export function ClientsListClient({
             <select
               value={pickStage}
               onChange={(e) => setPickStage(e.target.value)}
-              className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-[#1a3550] dark:bg-[#102840] dark:text-slate-100"
+              className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-[#2E2E2E] dark:bg-[#242424] dark:text-slate-100"
             >
               {STAGE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -1679,7 +1679,7 @@ export function ClientsListClient({
               <button
                 type="button"
                 onClick={() => setStageOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm dark:border-[#1a3550] dark:text-slate-200"
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -1699,7 +1699,7 @@ export function ClientsListClient({
                     }
                   });
                 }}
-                className="flex items-center gap-2 rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-semibold text-[#0A2540] disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg bg-[#A87830] px-4 py-2 text-sm font-semibold text-[#161616] disabled:opacity-50"
               >
                 {bulkPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {bulkPending ? "Applying..." : "Apply"}
@@ -1718,7 +1718,7 @@ export function ClientsListClient({
             <select
               value={pickAssign}
               onChange={(e) => setPickAssign(e.target.value)}
-              className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-[#1a3550] dark:bg-[#102840] dark:text-slate-100"
+              className="mt-4 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-[#2E2E2E] dark:bg-[#242424] dark:text-slate-100"
             >
               <option value="">Unassigned</option>
               {staffMembers.map((s) => (
@@ -1731,7 +1731,7 @@ export function ClientsListClient({
               <button
                 type="button"
                 onClick={() => setAssignOpen(false)}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm dark:border-[#1a3550] dark:text-slate-200"
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm dark:border-[#2E2E2E] dark:text-slate-200"
               >
                 Cancel
               </button>
@@ -1752,7 +1752,7 @@ export function ClientsListClient({
                     }
                   });
                 }}
-                className="flex items-center gap-2 rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-semibold text-[#0A2540] disabled:opacity-50"
+                className="flex items-center gap-2 rounded-lg bg-[#A87830] px-4 py-2 text-sm font-semibold text-[#161616] disabled:opacity-50"
               >
                 {bulkPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {bulkPending ? "Applying..." : "Apply"}

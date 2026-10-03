@@ -199,7 +199,7 @@ export function AddAppointmentModal({
       }}
     >
       <div
-        className="flex h-[600px] max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]"
+        className="flex h-[600px] max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="add-appointment-title"
@@ -241,7 +241,7 @@ export function AddAppointmentModal({
               ) : null}
               {searchResults.length > 0 && !selectedClient ? (
                 <div
-                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]"
+                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
                   role="listbox"
                 >
                   <ul className="py-1">
@@ -249,7 +249,7 @@ export function AddAppointmentModal({
                       <li key={c.id} role="option" aria-selected={false}>
                         <button
                           type="button"
-                          className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-[#102840]"
+                          className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-[#242424]"
                           onClick={() => handleSelectClient(c)}
                         >
                           {`${c.first_name ?? ""} ${c.last_name ?? ""}`.trim() || "Client"}{" "}
@@ -287,8 +287,8 @@ export function AddAppointmentModal({
               value={appointmentType}
               disabled={!selectedClient}
               onChange={(e) => setAppointmentType(e.target.value)}
-              className={`mt-1 w-full rounded-md border bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:bg-[#071929] dark:text-white ${
-                fieldErrors.type ? "border-red-500 dark:border-red-500" : "border-slate-200 dark:border-[#1a3550]"
+              className={`mt-1 w-full rounded-md border bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:bg-[#121212] dark:text-white ${
+                fieldErrors.type ? "border-red-500 dark:border-red-500" : "border-slate-200 dark:border-[#2E2E2E]"
               }`}
               aria-invalid={!!fieldErrors.type}
               aria-describedby={fieldErrors.type ? "type-error" : undefined}
@@ -316,8 +316,8 @@ export function AddAppointmentModal({
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className={`mt-1 w-full rounded-md border bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:bg-[#071929] dark:text-white ${
-                  fieldErrors.date ? "border-red-500 dark:border-red-500" : "border-slate-200 dark:border-[#1a3550]"
+                className={`mt-1 w-full rounded-md border bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:bg-[#121212] dark:text-white ${
+                  fieldErrors.date ? "border-red-500 dark:border-red-500" : "border-slate-200 dark:border-[#2E2E2E]"
                 }`}
                 aria-invalid={!!fieldErrors.date}
                 aria-describedby={fieldErrors.date ? "date-error" : undefined}
@@ -334,7 +334,7 @@ export function AddAppointmentModal({
                 type="time"
                 value={dueTime}
                 onChange={(e) => setDueTime(e.target.value)}
-                className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
           </div>
@@ -345,7 +345,7 @@ export function AddAppointmentModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+              className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
             />
           </label>
 
@@ -354,7 +354,7 @@ export function AddAppointmentModal({
             <select
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+              className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
             >
               <option value="">—</option>
               {teamMembers.map((m) => (
@@ -366,7 +366,7 @@ export function AddAppointmentModal({
           </label>
         </div>
 
-        <div className="flex-shrink-0 border-t border-gray-100 px-6 pb-6 pt-4 dark:border-[#1a3550]">
+        <div className="flex-shrink-0 border-t border-gray-100 px-6 pb-6 pt-4 dark:border-[#2E2E2E]">
           <div className="flex justify-end gap-2">
             <button type="button" onClick={onClose} className="crm-btn-secondary">
               Cancel

@@ -50,17 +50,17 @@ export default function UpdatePasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0A2540] px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#161616] px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center text-center">
           <Image
             src="/favicon.png"
-            alt="DebtSupportPros"
+            alt="Golden Pathway"
             width={72}
             height={72}
             className="h-[72px] w-[72px] object-contain"
           />
-          <h1 className="mt-4 text-2xl font-bold text-white">DebtSupportPros CRM</h1>
+          <h1 className="mt-4 text-2xl font-bold text-white">Golden Pathway CRM</h1>
           <p className="mt-3 text-sm text-[#E8EAEE]/90">Set your new password</p>
         </div>
         <div className="rounded-xl bg-white p-8 shadow-md">
@@ -69,7 +69,7 @@ export default function UpdatePasswordPage() {
               <p className="text-sm text-slate-500">Verifying your reset link…</p>
               <p className="mt-3 text-xs text-slate-400">
                 If nothing happens,{" "}
-                <a href="/login" className="text-[#0A2540] underline">
+                <a href="/login" className="text-[#161616] underline">
                   return to sign in
                 </a>{" "}
                 and request a new link.
@@ -89,7 +89,7 @@ export default function UpdatePasswordPage() {
                     required
                     minLength={8}
                     placeholder="At least 8 characters"
-                    className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]"
+                    className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 pr-11 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#A87830]"
                   />
                   <button
                     type="button"
@@ -111,7 +111,7 @@ export default function UpdatePasswordPage() {
                   onChange={(e) => setConfirm(e.target.value)}
                   required
                   placeholder="Re-enter password"
-                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]"
+                  className="h-11 w-full rounded-lg border border-slate-200 bg-white px-4 text-sm text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#A87830]"
                 />
               </div>
               {message ? (
@@ -128,7 +128,7 @@ export default function UpdatePasswordPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-semibold text-[#0A2540] transition hover:bg-[#6BC99A] disabled:opacity-50"
+                className="w-full rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-semibold text-[#161616] transition hover:bg-[#8C6428] disabled:opacity-50"
               >
                 {loading ? "Updating…" : "Set new password"}
               </button>

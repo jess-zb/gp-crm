@@ -43,14 +43,14 @@ export default async function PortalSetupPage({
 
     if (existingProfile?.id) {
       return (
-        <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#071929]">
-          <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#121212]">
+          <div className="mx-auto max-w-md rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <p className="text-sm text-slate-700 dark:text-slate-200">
               Your account is already set up.
             </p>
             <Link
               href="/portal/login"
-              className="mt-4 inline-block text-sm font-semibold text-[#8DE3B5] underline"
+              className="mt-4 inline-block text-sm font-semibold text-[#A87830] underline"
             >
               Sign in to the portal
             </Link>
@@ -76,12 +76,12 @@ export default async function PortalSetupPage({
 
 function InvalidInvite({ message }: { message: string }) {
   return (
-    <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#071929]">
+    <main className="min-h-screen bg-[#F5F6F8] px-4 py-10 dark:bg-[#121212]">
       <div className="mx-auto max-w-md rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-100">
         <p>{message}</p>
         <Link
           href="/portal/login"
-          className="mt-4 inline-block font-medium text-[#8DE3B5] underline"
+          className="mt-4 inline-block font-medium text-[#A87830] underline"
         >
           Portal sign in
         </Link>

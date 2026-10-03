@@ -80,8 +80,8 @@ export function DeptCheckbox({
         <div
           className={`flex h-4 w-4 items-center justify-center rounded border-2 transition-colors ${
             value
-              ? "border-[#8DE3B5] bg-[#8DE3B5]"
-              : "border-slate-300 group-hover:border-slate-400 dark:border-[#1a3550] dark:group-hover:border-slate-500"
+              ? "border-[#A87830] bg-[#A87830]"
+              : "border-slate-300 group-hover:border-slate-400 dark:border-[#2E2E2E] dark:group-hover:border-slate-500"
           }`}
         >
           {value ? (
@@ -105,7 +105,7 @@ export function DeptCheckbox({
       <span
         className={`text-xs font-medium transition-colors ${
           value
-            ? "text-[#8DE3B5]"
+            ? "text-[#A87830]"
             : "text-slate-500 dark:text-slate-400"
         }`}
       >

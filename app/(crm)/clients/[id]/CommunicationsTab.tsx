@@ -172,7 +172,7 @@ function NoteBody({ body }: { body: string }) {
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="text-xs text-[#8DE3B5] hover:underline mt-1 dark:text-[#7fbf6f]"
+          className="text-xs text-[#A87830] hover:underline mt-1 dark:text-[#7fbf6f]"
         >
           {expanded ? "Show less" : "Show more"}
         </button>
@@ -518,7 +518,7 @@ export function CommunicationsTab({
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
+    <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
       <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
         Communications
       </h3>
@@ -544,7 +544,7 @@ export function CommunicationsTab({
       ) : null}
 
       {!rows.length ? (
-        <p className="rounded-lg border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-[#1a3550] dark:text-slate-400">
+        <p className="rounded-lg border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
           No communications logged yet. Use the buttons above to log calls, texts, emails, or internal notes for this client.
         </p>
       ) : (
@@ -555,7 +555,7 @@ export function CommunicationsTab({
               className={`group rounded-lg border p-4 ${
                 c.is_pinned
                   ? "border-amber-300 bg-amber-50/60 dark:border-amber-700/50 dark:bg-amber-950/20"
-                  : "border-slate-200 bg-slate-50/80 dark:border-[#1a3550] dark:bg-[#0d2035]/80"
+                  : "border-slate-200 bg-slate-50/80 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]/80"
               }`}
             >
               <div className="flex gap-3">
@@ -608,7 +608,7 @@ export function CommunicationsTab({
                               type="button"
                               disabled={editCommSaving || !editingCommBody.trim()}
                               onClick={() => void handleSaveEditComm(c.id)}
-                              className="rounded-md bg-[#8DE3B5] px-3 py-1 text-xs font-semibold text-[#0A2540] hover:bg-[#6BC99A] disabled:opacity-50"
+                              className="rounded-md bg-[#A87830] px-3 py-1 text-xs font-semibold text-[#161616] hover:bg-[#8C6428] disabled:opacity-50"
                             >
                               {editCommSaving ? "Saving…" : "Save"}
                             </button>
@@ -616,7 +616,7 @@ export function CommunicationsTab({
                               type="button"
                               disabled={editCommSaving}
                               onClick={() => { setEditingCommId(null); setEditingCommBody(""); }}
-                              className="rounded-md border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-50 dark:border-[#1a3550] dark:text-slate-300 dark:hover:bg-[#102840]"
+                              className="rounded-md border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-50 dark:border-[#2E2E2E] dark:text-slate-300 dark:hover:bg-[#242424]"
                             >
                               Cancel
                             </button>
@@ -680,7 +680,7 @@ export function CommunicationsTab({
         </ul>
       )}
 
-      <div className="mt-8 border-t border-gray-100 pt-6 dark:border-[#1a3550]">
+      <div className="mt-8 border-t border-gray-100 pt-6 dark:border-[#2E2E2E]">
         <h3 className="mb-4 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-slate-400">
           Activity Log
         </h3>
@@ -694,14 +694,14 @@ export function CommunicationsTab({
             </p>
           </div>
         ) : (
-          <ul className="divide-y divide-gray-50 dark:divide-[#1a3550]/60">
+          <ul className="divide-y divide-gray-50 dark:divide-[#2E2E2E]/60">
             {activityLog.map((entry) => (
               <li
                 key={entry.id}
                 className="flex items-center justify-between gap-3 py-2.5"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-[#102840]">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-[#242424]">
                     <ActivityLogActionIcon action={entry.action} />
                   </span>
                   <span className="truncate text-sm font-medium text-gray-800 dark:text-slate-100">
@@ -730,7 +730,7 @@ export function CommunicationsTab({
           }}
         >
           <div
-            className="mx-auto max-h-[90vh] w-full max-w-[min(32rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="mx-auto max-h-[90vh] w-full max-w-[min(32rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="comm-modal-title"
@@ -765,10 +765,10 @@ export function CommunicationsTab({
                         type="date"
                         value={dateStr}
                         onChange={(e) => setDateStr(e.target.value)}
-                        className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                        className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                           fieldErrors.dateTime
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                            : "border-slate-200 dark:border-[#1a3550]"
+                            : "border-slate-200 dark:border-[#2E2E2E]"
                         }`}
                       />
                     </div>
@@ -784,10 +784,10 @@ export function CommunicationsTab({
                         type="time"
                         value={timeStr}
                         onChange={(e) => setTimeStr(e.target.value)}
-                        className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                        className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                           fieldErrors.dateTime
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                            : "border-slate-200 dark:border-[#1a3550]"
+                            : "border-slate-200 dark:border-[#2E2E2E]"
                         }`}
                       />
                     </div>
@@ -813,7 +813,7 @@ export function CommunicationsTab({
                           name="comm-direction"
                           checked={direction === "inbound"}
                           onChange={() => setDirection("inbound")}
-                          className="h-4 w-4 border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                          className="h-4 w-4 border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                         />
                         Inbound
                       </label>
@@ -827,7 +827,7 @@ export function CommunicationsTab({
                           name="comm-direction"
                           checked={direction === "outbound"}
                           onChange={() => setDirection("outbound")}
-                          className="h-4 w-4 border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                          className="h-4 w-4 border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                         />
                         Outbound
                       </label>
@@ -851,10 +851,10 @@ export function CommunicationsTab({
                       onChange={(e) => setCallNotes(e.target.value)}
                       rows={5}
                       required
-                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                         fieldErrors.callNotes
                           ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                          : "border-slate-200 dark:border-[#1a3550]"
+                          : "border-slate-200 dark:border-[#2E2E2E]"
                       }`}
                       placeholder="Call notes…"
                     />
@@ -880,7 +880,7 @@ export function CommunicationsTab({
                       id="sms-template"
                       value={smsTplId}
                       onChange={(e) => applySmsTemplate(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                     >
                       <option value="">— None —</option>
                       {textTemplates.map((t) => (
@@ -903,10 +903,10 @@ export function CommunicationsTab({
                       onChange={(e) => setSmsMessage(e.target.value)}
                       rows={5}
                       required
-                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                         fieldErrors.smsMessage
                           ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                          : "border-slate-200 dark:border-[#1a3550]"
+                          : "border-slate-200 dark:border-[#2E2E2E]"
                       }`}
                       placeholder="Text message…"
                     />
@@ -932,7 +932,7 @@ export function CommunicationsTab({
                       id="email-template"
                       value={emailTplId}
                       onChange={(e) => applyEmailTemplate(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                     >
                       <option value="">— None —</option>
                       {emailTemplates.map((t) => (
@@ -954,10 +954,10 @@ export function CommunicationsTab({
                       type="text"
                       value={emailSubject}
                       onChange={(e) => setEmailSubject(e.target.value)}
-                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                         fieldErrors.emailSubject
                           ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                          : "border-slate-200 dark:border-[#1a3550]"
+                          : "border-slate-200 dark:border-[#2E2E2E]"
                       }`}
                       placeholder="Subject"
                     />
@@ -980,10 +980,10 @@ export function CommunicationsTab({
                       onChange={(e) => setEmailBody(e.target.value)}
                       rows={6}
                       required
-                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                      className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                         fieldErrors.emailBody
                           ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                          : "border-slate-200 dark:border-[#1a3550]"
+                          : "border-slate-200 dark:border-[#2E2E2E]"
                       }`}
                       placeholder="Email body…"
                     />
@@ -1017,10 +1017,10 @@ export function CommunicationsTab({
                     onChange={(e) => setNoteBody(e.target.value)}
                     rows={6}
                     required
-                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#071929] dark:text-[#E8EAEE] ${
+                    className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm text-slate-900 dark:bg-[#121212] dark:text-[#E8EAEE] ${
                       fieldErrors.noteBody
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                        : "border-slate-200 dark:border-[#1a3550]"
+                        : "border-slate-200 dark:border-[#2E2E2E]"
                     }`}
                     placeholder="Internal note, or click Dictate to speak it…"
                   />

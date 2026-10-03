@@ -212,7 +212,7 @@ export function ReportsClient({
           <li>
             <Link
               href="/dashboard"
-              className="font-medium text-[#8DE3B5] hover:text-[#6BC99A] dark:text-[#8DE3B5]"
+              className="font-medium text-[#A87830] hover:text-[#8C6428] dark:text-[#A87830]"
             >
               Dashboard
             </Link>
@@ -237,8 +237,8 @@ export function ReportsClient({
             onClick={() => setDateRange(r)}
             className={`rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
               dateRange === r
-                ? "border-[#8DE3B5] bg-[#8DE3B5] text-[#0A2540]"
-                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300 dark:hover:bg-[#102840]"
+                ? "border-[#A87830] bg-[#A87830] text-[#161616]"
+                : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300 dark:hover:bg-[#242424]"
             }`}
           >
             {r === "7d"
@@ -251,7 +251,7 @@ export function ReportsClient({
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
             {activityStats.stageAdvances.toLocaleString()}
           </p>
@@ -262,7 +262,7 @@ export function ReportsClient({
             Clients moved forward in pipeline
           </p>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
             {activityStats.appointmentsCompleted.toLocaleString()}
           </p>
@@ -273,7 +273,7 @@ export function ReportsClient({
             Calls and follow-ups logged
           </p>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-[#1a3550] dark:bg-[#0d2035]">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
           <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
             {activityStats.newClients.toLocaleString()}
           </p>
@@ -286,7 +286,7 @@ export function ReportsClient({
         </div>
       </div>
 
-      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 dark:border-[#1a3550] dark:bg-[#0d2035]">
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <h2 className="mb-4 text-sm font-semibold text-slate-900 dark:text-white">
           Active Clients by Stage
         </h2>
@@ -345,7 +345,7 @@ export function ReportsClient({
           <button
             type="button"
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300 dark:hover:bg-[#102840]"
+            className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300 dark:hover:bg-[#242424]"
           >
             <Download className="h-3.5 w-3.5" />
             Export CSV
@@ -360,8 +360,8 @@ export function ReportsClient({
               onClick={() => setDeptFilter(d)}
               className={`rounded-md border px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
                 deptFilter === d
-                  ? "border-[#8DE3B5] bg-[#8DE3B5] text-[#0A2540]"
-                  : "border-slate-200 bg-white text-slate-600 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-300"
+                  ? "border-[#A87830] bg-[#A87830] text-[#161616]"
+                  : "border-slate-200 bg-white text-slate-600 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300"
               }`}
             >
               {d === "all"
@@ -376,7 +376,7 @@ export function ReportsClient({
           <div className="overflow-x-auto">
             <table className="min-w-[640px] w-full border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035]/80">
+                <tr className="border-b border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]/80">
                   <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
                     Name
                   </th>
@@ -394,11 +394,11 @@ export function ReportsClient({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                 {teamPerformance.map((row) => (
                   <tr
                     key={row.id}
-                    className="bg-white dark:bg-[#0d2035]/40"
+                    className="bg-white dark:bg-[#1C1C1C]/40"
                   >
                     <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {row.full_name}
@@ -435,7 +435,7 @@ export function ReportsClient({
           <div className="overflow-x-auto">
             <table className="min-w-[560px] w-full border-collapse text-left text-sm">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035]/80">
+                <tr className="border-b border-slate-200 bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]/80">
                   <th className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200">
                     Stage
                   </th>
@@ -450,11 +450,11 @@ export function ReportsClient({
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
                 {orderedVelocity.map((row) => (
                   <tr
                     key={row.stage}
-                    className="bg-white dark:bg-[#0d2035]/40"
+                    className="bg-white dark:bg-[#1C1C1C]/40"
                   >
                     <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                       {row.label}

@@ -30,7 +30,7 @@ export function DashboardPipelineFunnel({
         </div>
         <Link
           href="/pipeline"
-          className="text-sm font-medium text-[#8DE3B5] hover:text-[#6BC99A] dark:text-[#8DE3B5] dark:hover:text-[#A5ECC5]"
+          className="text-sm font-medium text-[#A87830] hover:text-[#8C6428] dark:text-[#A87830] dark:hover:text-[#C4A15A]"
         >
           Full pipeline
         </Link>

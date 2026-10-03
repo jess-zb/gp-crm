@@ -45,7 +45,7 @@ export function BoardSearchInput({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           autoComplete="off"
-          className="crm-input w-full pl-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+          className="crm-input w-full pl-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
         />
       </div>
       {value.trim() ? (

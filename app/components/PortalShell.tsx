@@ -47,11 +47,11 @@ export function PortalShell({ children, displayName, onSignOut }: Props) {
       />
 
       <div className="min-h-screen transition-[padding] duration-200 ease-out pl-0 md:pl-64">
-        <div className="sticky top-0 z-30 flex min-h-[52px] items-center gap-2 border-b border-slate-200/90 bg-[#F5F6F8] px-2 py-1.5 dark:border-[#1a3550] dark:bg-[#071929] md:hidden">
+        <div className="sticky top-0 z-30 flex min-h-[52px] items-center gap-2 border-b border-slate-200/90 bg-[#F5F6F8] px-2 py-1.5 dark:border-[#2E2E2E] dark:bg-[#121212] md:hidden">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
-            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg font-semibold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-100 dark:hover:bg-[#102840]"
+            className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-lg font-semibold text-slate-800 shadow-sm hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-100 dark:hover:bg-[#242424]"
             aria-label="Open menu"
           >
             ☰

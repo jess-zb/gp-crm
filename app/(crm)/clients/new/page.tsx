@@ -12,7 +12,7 @@ import { enrollWelcomeLeadForNewClientAction } from "./enroll-actions";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { useMids } from "@/lib/hooks/use-mids";
 
-const BRAND_PRIMARY = "#8DE3B5";
+const BRAND_PRIMARY = "#A87830";
 
 type TeamOption = {
   id: string;
@@ -263,10 +263,10 @@ export default function NewClientPage() {
   );
 
   const inputClass = (name: string, hasErr: boolean) =>
-    `mt-1 w-full rounded-lg border px-3 py-2 text-slate-900 shadow-sm focus:outline-none focus:ring-2 dark:bg-[#071929] dark:text-white ${
+    `mt-1 w-full rounded-lg border px-3 py-2 text-slate-900 shadow-sm focus:outline-none focus:ring-2 dark:bg-[#121212] dark:text-white ${
       hasErr
         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
-        : "border-slate-200 focus:border-[#8DE3B5] focus:ring-[#8DE3B5]/20 dark:border-[#1a3550]"
+        : "border-slate-200 focus:border-[#A87830] focus:ring-[#A87830]/20 dark:border-[#2E2E2E]"
     }`;
 
   const labelStrong = "font-medium text-slate-800 dark:text-slate-200";
@@ -278,13 +278,13 @@ export default function NewClientPage() {
       <nav className="text-[13px] text-slate-600 dark:text-slate-400" aria-label="Breadcrumb">
         <ol className="flex flex-wrap items-center gap-1.5">
           <li>
-            <Link href="/dashboard" className="font-medium text-[#8DE3B5] hover:underline">
+            <Link href="/dashboard" className="font-medium text-[#A87830] hover:underline">
               Dashboard
             </Link>
           </li>
           <li className="text-slate-400">/</li>
           <li>
-            <Link href="/clients" className="font-medium text-[#8DE3B5] hover:underline">
+            <Link href="/clients" className="font-medium text-[#A87830] hover:underline">
               Clients
             </Link>
           </li>
@@ -336,28 +336,28 @@ export default function NewClientPage() {
               <span className={labelStrong}>Primary nickname</span>
               <input
                 name="nickname"
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
             <label className="block text-sm">
               <span className={labelStrong}>Secondary first name</span>
               <input
                 name="spouse_first_name"
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
             <label className="block text-sm">
               <span className={labelStrong}>Secondary last name</span>
               <input
                 name="spouse_last_name"
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
             <label className="block text-sm">
               <span className={labelStrong}>Secondary nickname</span>
               <input
                 name="spouse_nickname"
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
           </div>
@@ -407,7 +407,7 @@ export default function NewClientPage() {
                 value={phoneWork}
                 onChange={(e) => setPhoneWork(formatPhoneMask(e.target.value))}
                 placeholder="(555) 555-5555"
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
             <label className="block text-sm">
@@ -419,7 +419,7 @@ export default function NewClientPage() {
                 value={phoneHome}
                 onChange={(e) => setPhoneHome(formatPhoneMask(e.target.value))}
                 placeholder="(555) 555-5555"
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
           </div>
@@ -446,10 +446,10 @@ export default function NewClientPage() {
                   });
                 }}
                 placeholder="Used to verify client identity on calls"
-                className={`mt-1 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:bg-[#071929] dark:text-white dark:focus:border-green-500 dark:focus:ring-green-500/40 ${
+                className={`mt-1 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 dark:bg-[#121212] dark:text-white dark:focus:border-green-500 dark:focus:ring-green-500/40 ${
                   fieldErrors.verbal_password
                     ? "border border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                    : "border border-gray-300 focus:border-green-500 focus:ring-green-500 dark:border-[#1a3550]"
+                    : "border border-gray-300 focus:border-green-500 focus:ring-green-500 dark:border-[#2E2E2E]"
                 }`}
               />
               {fieldErrors.verbal_password ? (

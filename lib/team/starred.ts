@@ -1,8 +1,5 @@
 /** Order defines medal rank (🥇 🥈 🥉) on the Team page. */
-export const STARRED_EMAILS = [
-  "daniel@stellari.io",
-  "haydenrosene25@yahoo.com",
-  "emile@debtsupportpros.com",
-] as const;
+/** Empty until a Golden Pathway roster is provided. Order would be medal rank. */
+export const STARRED_EMAILS: readonly string[] = [];
 
 export const STARRED_MEDALS = ["🥇", "🥈", "🥉"] as const;

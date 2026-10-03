@@ -14,7 +14,7 @@ import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { ReportsClient } from "./ReportsClient";
 
 export const metadata = {
-  title: "Reports | DebtSupportPros CRM",
+  title: "Reports | Golden Pathway CRM",
 };
 
 export default async function ReportsPage() {

@@ -11,13 +11,13 @@ import { toUserFacingError } from "@/lib/user-facing-error";
 const STORAGE_KEY = "zb-theme";
 
 const cardClass =
-  "rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]";
+  "rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]";
 
 const inputClass =
-  "mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#8DE3B5] focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/20 dark:border-[#1a3550] dark:bg-[#071929] dark:text-white";
+  "mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white";
 
 const emailInputClass =
-  "mt-1 w-full cursor-not-allowed rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-slate-500 shadow-sm dark:border-[#1a3550] dark:bg-[#0a120b] dark:text-slate-500";
+  "mt-1 w-full cursor-not-allowed rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-slate-500 shadow-sm dark:border-[#2E2E2E] dark:bg-[#0a120b] dark:text-slate-500";
 
 export function SettingsClient({
   initialFullName,
@@ -125,7 +125,7 @@ export function SettingsClient({
   const displayEmail = email ?? "—";
 
   const workspaceLinkClass =
-    "flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#8DE3B5]/50 hover:bg-white dark:border-[#1a3550] dark:bg-[#071929]/50 dark:text-[#E8EAEE] dark:hover:border-[#8DE3B5]/40 dark:hover:bg-[#0d2035]";
+    "flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#A87830]/50 hover:bg-white dark:border-[#2E2E2E] dark:bg-[#121212]/50 dark:text-[#E8EAEE] dark:hover:border-[#A87830]/40 dark:hover:bg-[#1C1C1C]";
 
   return (
     <div className="space-y-6">
@@ -138,7 +138,7 @@ export function SettingsClient({
         </p>
         <p className="mt-3 text-sm text-slate-700 dark:text-slate-300">
           <span className="font-medium text-slate-800 dark:text-slate-200">Role</span>
-          <span className="ml-2 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-800 dark:bg-[#102840] dark:text-[#8DE3B5]">
+          <span className="ml-2 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-800 dark:bg-[#242424] dark:text-[#A87830]">
             {roleDisplay}
           </span>
         </p>
@@ -168,7 +168,7 @@ export function SettingsClient({
           <button
             type="submit"
             disabled={nameSaving}
-            className="rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-bold text-[#0A2540] shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-bold text-[#161616] shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {nameSaving ? "Saving…" : "Save profile"}
           </button>
@@ -208,7 +208,7 @@ export function SettingsClient({
           <button
             type="submit"
             disabled={passwordSaving}
-            className="rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-bold text-[#0A2540] shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-bold text-[#161616] shadow-sm transition hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {passwordSaving ? "Saving…" : "Save password"}
           </button>
@@ -260,8 +260,8 @@ export function SettingsClient({
               onClick={() => applyTheme("light")}
               className={`rounded-md px-3 py-2 text-base leading-none transition ${
                 !dark
-                  ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840]"
+                  ? "bg-[#A87830] text-[#161616] shadow-sm"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424]"
               }`}
               aria-label="Light mode"
               aria-pressed={!dark}
@@ -273,8 +273,8 @@ export function SettingsClient({
               onClick={() => applyTheme("dark")}
               className={`rounded-md px-3 py-2 text-base leading-none transition ${
                 dark
-                  ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840]"
+                  ? "bg-[#A87830] text-[#161616] shadow-sm"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424]"
               }`}
               aria-label="Dark mode"
               aria-pressed={dark}

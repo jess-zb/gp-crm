@@ -217,7 +217,7 @@ export function SignDocumentClient({
           disabled={busy}
           onClick={() => void submit()}
           className={`crm-btn-primary !px-8 !py-2.5 !text-sm ${
-            allSignaturesPlaced && !busy ? "ring-2 ring-[#8DE3B5] ring-offset-2" : ""
+            allSignaturesPlaced && !busy ? "ring-2 ring-[#A87830] ring-offset-2" : ""
           }`}
         >
           {busy ? (

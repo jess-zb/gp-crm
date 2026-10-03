@@ -87,12 +87,12 @@ export default function PortalHelpClient() {
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   return (
-    <main className="min-h-screen bg-[#F5F6F8] pb-12 dark:bg-[#071929]">
+    <main className="min-h-screen bg-[#F5F6F8] pb-12 dark:bg-[#121212]">
       <div className="mx-auto max-w-lg px-4 pt-6">
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link
             href="/portal"
-            className="inline-flex text-sm font-semibold text-[#8DE3B5] hover:underline"
+            className="inline-flex text-sm font-semibold text-[#A87830] hover:underline"
           >
             ← Back to portal
           </Link>
@@ -117,7 +117,7 @@ export default function PortalHelpClient() {
                   return (
                     <div
                       key={key}
-                      className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-[#1a3550] dark:bg-[#0d2035]"
+                      className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
                     >
                       <button
                         type="button"
@@ -131,7 +131,7 @@ export default function PortalHelpClient() {
                         </span>
                       </button>
                       {open ? (
-                        <div className="border-t border-slate-100 px-4 py-3 text-sm leading-loose text-slate-700 dark:border-[#1a3550] dark:text-slate-300">
+                        <div className="border-t border-slate-100 px-4 py-3 text-sm leading-loose text-slate-700 dark:border-[#2E2E2E] dark:text-slate-300">
                           {item.a.split("\n\n").map((para, i) => (
                             <p key={i} className={i > 0 ? "mt-3" : ""}>
                               {para}

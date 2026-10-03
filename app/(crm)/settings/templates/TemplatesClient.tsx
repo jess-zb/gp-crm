@@ -26,7 +26,7 @@ const MERGE_HINT =
   "{{client_name}}, {{first_name}}, {{assigned_user}}, {{stage}}";
 
 const TAB_BTN =
-  "rounded-lg px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#8DE3B5]/40";
+  "rounded-lg px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-[#A87830]/40";
 
 function previewText(body: string, max = 100) {
   const t = body.trim().replace(/\s+/g, " ");
@@ -131,7 +131,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
       return {
         label: "Default",
         className:
-          "bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-500/15 dark:bg-[#0d2035] dark:text-slate-300 dark:ring-[#3d5c3f]/30",
+          "bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-500/15 dark:bg-[#1C1C1C] dark:text-slate-300 dark:ring-[#3d5c3f]/30",
       };
     }
     return null;
@@ -247,8 +247,8 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
             onClick={() => setTab("email")}
             className={`${TAB_BTN} ${
               tab === "email"
-                ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-[#102840] dark:text-slate-200 dark:hover:bg-[#243526]"
+                ? "bg-[#A87830] text-[#161616] shadow-sm"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-[#242424] dark:text-slate-200 dark:hover:bg-[#243526]"
             }`}
           >
             Email Templates
@@ -258,8 +258,8 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
             onClick={() => setTab("text")}
             className={`${TAB_BTN} ${
               tab === "text"
-                ? "bg-[#8DE3B5] text-[#0A2540] shadow-sm"
-                : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-[#102840] dark:text-slate-200 dark:hover:bg-[#243526]"
+                ? "bg-[#A87830] text-[#161616] shadow-sm"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-[#242424] dark:text-slate-200 dark:hover:bg-[#243526]"
             }`}
           >
             Text Templates
@@ -269,7 +269,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
           <button
             type="button"
             onClick={openAdd}
-            className="rounded-lg bg-[#8DE3B5] px-4 py-2.5 text-sm font-semibold text-[#0A2540] shadow-sm hover:opacity-95"
+            className="rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-semibold text-[#161616] shadow-sm hover:opacity-95"
           >
             Add Template
           </button>
@@ -283,8 +283,8 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
             onClick={() => setEmailSequencesOnly(false)}
             className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
               !emailSequencesOnly
-                ? "border-[#8DE3B5] bg-emerald-50 text-emerald-900 dark:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-100"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840]"
+                ? "border-[#A87830] bg-emerald-50 text-emerald-900 dark:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-100"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424]"
             }`}
           >
             All email
@@ -294,8 +294,8 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
             onClick={() => setEmailSequencesOnly(true)}
             className={`rounded-full border px-3 py-1 text-xs font-semibold transition ${
               emailSequencesOnly
-                ? "border-[#8DE3B5] bg-emerald-50 text-emerald-900 dark:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-100"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:bg-[#0d2035] dark:text-slate-200 dark:hover:bg-[#102840]"
+                ? "border-[#A87830] bg-emerald-50 text-emerald-900 dark:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-100"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200 dark:hover:bg-[#242424]"
             }`}
           >
             Email Sequences
@@ -303,8 +303,8 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
         </div>
       ) : null}
 
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-[#1a3550] dark:bg-[#0d2035]">
-        <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#1a3550]">
+      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+        <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-[#2E2E2E]">
           <thead className="bg-slate-50 dark:bg-[#0f1f11]">
             <tr>
               <th className="px-4 py-3 font-semibold text-slate-900 dark:text-white">
@@ -324,7 +324,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-[#1a3550]">
+          <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
             {loading ? (
               <tr>
                 <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
@@ -340,7 +340,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
               </tr>
             ) : (
               filtered.map((r) => (
-                <tr key={r.id} className="hover:bg-slate-50/80 dark:hover:bg-[#102840]/50">
+                <tr key={r.id} className="hover:bg-slate-50/80 dark:hover:bg-[#242424]/50">
                   <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
                     {r.name}
                     {tab === "email" && emailSequencesOnly && (r.sequence_key || r.template_key) ? (
@@ -386,7 +386,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                         <button
                           type="button"
                           onClick={() => openEdit(r)}
-                          className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                          className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
                         >
                           Edit
                         </button>
@@ -418,7 +418,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
           }}
         >
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             role="dialog"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
@@ -436,7 +436,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                   placeholder="e.g. Welcome follow-up"
                 />
               </label>
@@ -452,7 +452,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                       name="tpl-type"
                       checked={modalType === "email"}
                       onChange={() => setModalType("email")}
-                      className="h-4 w-4 border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                      className="h-4 w-4 border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                     />
                     Email
                   </label>
@@ -462,7 +462,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                       name="tpl-type"
                       checked={modalType === "text"}
                       onChange={() => setModalType("text")}
-                      className="h-4 w-4 border-slate-300 text-[#8DE3B5] focus:ring-[#8DE3B5]"
+                      className="h-4 w-4 border-slate-300 text-[#A87830] focus:ring-[#A87830]"
                     />
                     Text
                   </label>
@@ -478,7 +478,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                     type="text"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                    className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                     placeholder="Subject line"
                   />
                 </label>
@@ -492,12 +492,12 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
                   rows={8}
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#1a3550] dark:bg-[#071929] dark:text-[#E8EAEE]"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-[#E8EAEE]"
                   placeholder="Message body…"
                 />
               </label>
 
-              <div className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 dark:border-[#1a3550] dark:bg-[#071929]/50">
+              <div className="flex items-start justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 dark:border-[#2E2E2E] dark:bg-[#121212]/50">
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                     Active
@@ -512,8 +512,8 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                   role="switch"
                   aria-checked={isActive}
                   onClick={() => setIsActive((v) => !v)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] ${
-                    isActive ? "bg-[#8DE3B5]" : "bg-slate-300 dark:bg-[#1a3550]"
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
+                    isActive ? "bg-[#A87830]" : "bg-slate-300 dark:bg-[#2E2E2E]"
                   }`}
                 >
                   <span
@@ -524,7 +524,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                 </button>
               </div>
 
-              <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:border-[#1a3550] dark:bg-[#071929]/50 dark:text-slate-400">
+              <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:border-[#2E2E2E] dark:bg-[#121212]/50 dark:text-slate-400">
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
                   Merge tags:
                 </span>{" "}
@@ -537,7 +537,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                 type="button"
                 disabled={saving}
                 onClick={closeModal}
-                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-[#1a3550] dark:text-slate-200 dark:hover:bg-[#102840]"
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:border-[#2E2E2E] dark:text-slate-200 dark:hover:bg-[#242424]"
               >
                 Cancel
               </button>
@@ -545,7 +545,7 @@ export function TemplatesClient({ canManage }: { canManage: boolean }) {
                 type="button"
                 disabled={saving}
                 onClick={() => void onSave()}
-                className="rounded-lg bg-[#8DE3B5] px-4 py-2 text-sm font-semibold text-[#0A2540] hover:opacity-95 disabled:opacity-50"
+                className="rounded-lg bg-[#A87830] px-4 py-2 text-sm font-semibold text-[#161616] hover:opacity-95 disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save"}
               </button>

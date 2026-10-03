@@ -36,7 +36,7 @@ export default async function AttorneyCasesPage({
     return (
       <main className="mx-auto max-w-4xl px-4 py-12 text-sm text-slate-600 dark:text-slate-400">
         <p>Could not load your profile.</p>
-        <Link href="/login" className="mt-4 inline-block text-[#8DE3B5] underline">
+        <Link href="/login" className="mt-4 inline-block text-[#A87830] underline">
           Login
         </Link>
       </main>

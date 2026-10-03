@@ -40,7 +40,7 @@ export function ReminderRowActions({ reminderId }: { reminderId: string }) {
         type="button"
         disabled={pending}
         onClick={onDelete}
-        className="inline-flex rounded-lg border border-red-200 bg-white p-2 text-red-600 shadow-sm transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-red-900/50 dark:bg-[#0d2035] dark:text-red-400 dark:hover:bg-red-950/40 disabled:opacity-50"
+        className="inline-flex rounded-lg border border-red-200 bg-white p-2 text-red-600 shadow-sm transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-red-900/50 dark:bg-[#1C1C1C] dark:text-red-400 dark:hover:bg-red-950/40 disabled:opacity-50"
         title="Delete"
         aria-label="Delete appointment"
       >
@@ -128,7 +128,7 @@ export function AddReminderButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="crm-btn-primary inline-flex shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] focus-visible:ring-offset-2"
+        className="crm-btn-primary inline-flex shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] focus-visible:ring-offset-2"
       >
         Add Appointment
       </button>
@@ -142,7 +142,7 @@ export function AddReminderButton({
           }}
         >
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#1a3550] dark:bg-[#0d2035]"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-slate-200 bg-white p-6 shadow-xl dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
             role="dialog"
             aria-modal="true"
             aria-labelledby="add-reminder-title"
@@ -168,10 +168,10 @@ export function AddReminderButton({
                   value={clientQuery}
                   onChange={(e) => setClientQuery(e.target.value)}
                   placeholder="Search by name…"
-                  className={`mb-2 w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                  className={`mb-2 w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                     fieldErrors.clientId
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                      : "border-slate-200 dark:border-[#1a3550]"
+                      : "border-slate-200 dark:border-[#2E2E2E]"
                   }`}
                   autoComplete="off"
                 />
@@ -184,10 +184,10 @@ export function AddReminderButton({
                     if (c) setClientQuery(c.label);
                   }}
                   required
-                  className={`w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                  className={`w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                     fieldErrors.clientId
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                      : "border-slate-200 dark:border-[#1a3550]"
+                      : "border-slate-200 dark:border-[#2E2E2E]"
                   }`}
                 >
                   <option value="">Select client…</option>
@@ -215,10 +215,10 @@ export function AddReminderButton({
                   name="description"
                   required
                   rows={3}
-                  className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                  className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                     fieldErrors.description
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                      : "border-slate-200 dark:border-[#1a3550]"
+                      : "border-slate-200 dark:border-[#2E2E2E]"
                   }`}
                 />
                 {fieldErrors.description ? (
@@ -238,10 +238,10 @@ export function AddReminderButton({
                   id="apt-due-date"
                   type="date"
                   name="due_date"
-                  className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:bg-[#071929] dark:text-white ${
+                  className={`mt-1 w-full rounded-lg border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:bg-[#121212] dark:text-white ${
                     fieldErrors.dueDate
                       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
-                      : "border-slate-200 dark:border-[#1a3550]"
+                      : "border-slate-200 dark:border-[#2E2E2E]"
                   }`}
                 />
                 {fieldErrors.dueDate ? (
@@ -260,7 +260,7 @@ export function AddReminderButton({
                 <select
                   id="apt-assigned-to"
                   name="assigned_to"
-                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] dark:border-[#1a3550] dark:bg-[#071929] dark:text-white"
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
                 >
                   <option value="">—</option>
                   {teamMembers.map((m) => (
@@ -274,14 +274,14 @@ export function AddReminderButton({
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="crm-btn-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5]"
+                  className="crm-btn-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={pending || !clientId}
-                  className="crm-btn-primary inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8DE3B5] focus-visible:ring-offset-2"
+                  className="crm-btn-primary inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] focus-visible:ring-offset-2"
                 >
                   {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                   {pending ? "Saving…" : "Save"}

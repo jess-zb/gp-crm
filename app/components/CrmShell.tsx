@@ -96,12 +96,12 @@ export function CrmShell({
             collapsed ? "pl-0 lg:pl-16" : "pl-0 lg:pl-56"
           }`}
         >
-          <div className="min-h-screen overflow-x-hidden bg-[#F8FAFC] text-sm text-slate-900 transition-colors duration-200 ease-out dark:bg-[#071929] dark:text-[#E8EAEE]">
-            <div className="sticky top-0 z-30 flex min-h-[52px] items-center gap-2 border-b border-slate-200 bg-white px-2 pb-1.5 pt-[max(0.375rem,env(safe-area-inset-top,0px))] dark:border-[#1a3550] dark:bg-[#0d2035] lg:hidden">
+          <div className="min-h-screen overflow-x-hidden bg-[#F8FAFC] text-sm text-slate-900 transition-colors duration-200 ease-out dark:bg-[#121212] dark:text-[#E8EAEE]">
+            <div className="sticky top-0 z-30 flex min-h-[52px] items-center gap-2 border-b border-slate-200 bg-white px-2 pb-1.5 pt-[max(0.375rem,env(safe-area-inset-top,0px))] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] lg:hidden">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                className="rounded-md p-2 hover:bg-slate-100 dark:hover:bg-[#102840]"
+                className="rounded-md p-2 hover:bg-slate-100 dark:hover:bg-[#242424]"
                 aria-label="Open menu"
               >
                 <Menu className="h-5 w-5 text-slate-600 dark:text-slate-300" />

@@ -9,7 +9,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/login"
-        className="mt-6 inline-flex justify-center text-sm font-medium text-[#8DE3B5] hover:underline"
+        className="mt-6 inline-flex justify-center text-sm font-medium text-[#A87830] hover:underline"
       >
         Go to login
       </Link>

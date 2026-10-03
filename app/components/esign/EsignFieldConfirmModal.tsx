@@ -115,7 +115,7 @@ export function EsignFieldConfirmModal({
               <button
                 type="button"
                 className={`rounded-full px-3 py-1 ${
-                  signMode === "type" ? "bg-[#0A2540] text-[#8DE3B5]" : "bg-slate-100 text-slate-600"
+                  signMode === "type" ? "bg-[#161616] text-[#A87830]" : "bg-slate-100 text-slate-600"
                 }`}
                 onClick={() => setSignMode("type")}
               >
@@ -124,7 +124,7 @@ export function EsignFieldConfirmModal({
               <button
                 type="button"
                 className={`rounded-full px-3 py-1 ${
-                  signMode === "draw" ? "bg-[#0A2540] text-[#8DE3B5]" : "bg-slate-100 text-slate-600"
+                  signMode === "draw" ? "bg-[#161616] text-[#A87830]" : "bg-slate-100 text-slate-600"
                 }`}
                 onClick={() => {
                   setSignMode("draw");
@@ -159,7 +159,7 @@ export function EsignFieldConfirmModal({
               <label className="mt-4 flex items-start gap-2.5 text-sm text-slate-700">
                 <input
                   type="checkbox"
-                  className="mt-1 h-4 w-4 accent-[#0A2540]"
+                  className="mt-1 h-4 w-4 accent-[#161616]"
                   checked={intentOk}
                   onChange={(e) => {
                     setIntentOk(e.target.checked);
@@ -225,7 +225,7 @@ export function EsignFieldConfirmModal({
           </button>
           <button
             type="button"
-            className="rounded-lg bg-[#0A2540] px-4 py-2 text-sm font-semibold text-[#8DE3B5]"
+            className="rounded-lg bg-[#161616] px-4 py-2 text-sm font-semibold text-[#A87830]"
             onClick={() => {
               if (!allowBindChange && bind === "signature") {
                 if (intentCopy && !intentOk) {

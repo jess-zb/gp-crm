@@ -56,7 +56,7 @@ export default async function MidsSettingsPage() {
             <li>
               <Link
                 href="/settings"
-                className="font-medium text-[#8DE3B5] hover:underline"
+                className="font-medium text-[#A87830] hover:underline"
               >
                 Settings
               </Link>

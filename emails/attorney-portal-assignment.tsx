@@ -35,8 +35,8 @@ export default function AttorneyPortalAssignmentEmail({
             <Text style={styles.text}>Hi {attorney.firstName},</Text>
             <Text style={styles.text}>
               {count === 1
-                ? "A new case has been assigned to you in the DebtSupportPros attorney portal."
-                : `${count} new cases have been assigned to you in the DebtSupportPros attorney portal.`}
+                ? "A new case has been assigned to you in the Golden Pathway attorney portal."
+                : `${count} new cases have been assigned to you in the Golden Pathway attorney portal.`}
             </Text>
             {clients.map((c) => (
               <Text key={c.caseUrl} style={styles.text}>
@@ -93,7 +93,7 @@ const styles = {
     margin: "0 0 12px",
   },
   link: {
-    color: "#0A2540",
+    color: "#161616",
     textDecoration: "underline",
   },
 };
