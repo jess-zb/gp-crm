@@ -8,7 +8,7 @@
  * Run: npm run test:perf-invariants
  */
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "path";
 
 const root = process.cwd();
@@ -55,15 +55,16 @@ assert.match(poaAdvance, /awaiting_collection_letter/);
 assert.match(poaAdvance, /\.is\("poa_signed_at", null\)/);
 console.log("  ✓ POA auto-advance still AM + CS; poa_signed_at is first-write-only");
 
-const poaMigrations = readdirSync(join(root, "supabase/migrations"))
-  .filter((f) => f.includes("poa_upload_advance") && f.endsWith(".sql"))
-  .sort();
-assert.ok(poaMigrations.length > 0, "POA upload advance migrations must exist");
-const latestPoaFn = read(`supabase/migrations/${poaMigrations[poaMigrations.length - 1]}`);
-assert.match(latestPoaFn, /welcome_packet/);
-assert.match(latestPoaFn, /client_services/);
-assert.match(latestPoaFn, /awaiting_collection_letter/);
-console.log("  ✓ latest handle_poa_upload still advances AM and CS");
+const functionsSql = read("supabase/migrations/0004_functions.sql");
+const poaFn = functionsSql.slice(
+  functionsSql.indexOf("CREATE FUNCTION public.handle_poa_upload()"),
+  functionsSql.indexOf("CREATE FUNCTION public.insert_auto_reminders_from_templates")
+);
+assert.ok(poaFn.includes("handle_poa_upload"), "handle_poa_upload must live in the squashed functions");
+assert.match(poaFn, /welcome_packet/);
+assert.match(poaFn, /client_services/);
+assert.match(poaFn, /awaiting_collection_letter/);
+console.log("  ✓ handle_poa_upload still advances AM and CS");
 
 assert.match(
   documentsTab,
@@ -121,12 +122,13 @@ assert.doesNotMatch(
 );
 console.log("  ✓ POA upload does not cancel stage appointments");
 
-const listPerfSql = read(
-  "supabase/migrations/20260825180000_clients_list_perf_indexes.sql"
+const tabCountFn = functionsSql.slice(
+  functionsSql.indexOf("CREATE FUNCTION public.crm_client_tab_counts"),
+  functionsSql.indexOf("CREATE FUNCTION public.current_client_id()")
 );
-assert.match(listPerfSql, /SECURITY INVOKER/);
-assert.doesNotMatch(listPerfSql, /SECURITY DEFINER/);
-assert.match(listPerfSql, /crm_client_tab_counts/);
+assert.match(tabCountFn, /SECURITY INVOKER/);
+assert.doesNotMatch(tabCountFn, /SECURITY DEFINER/);
+assert.match(tabCountFn, /crm_client_tab_counts/);
 console.log("  ✓ tab-count RPC is SECURITY INVOKER (RLS still applies)");
 
 assert.match(

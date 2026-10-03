@@ -79,7 +79,7 @@ END;
 $$;
 
 CREATE FUNCTION public.crm_client_tab_counts(p_assigned_to uuid DEFAULT NULL::uuid) RETURNS TABLE(all_count bigint, active_count bigint, archives_count bigint, priority_count bigint)
-    LANGUAGE sql STABLE
+    LANGUAGE sql STABLE SECURITY INVOKER
     SET search_path TO 'public'
     AS $$
   SELECT
