@@ -1,5 +1,5 @@
 /** Staff emails hidden from CRM lists/dropdowns unless the viewer is a developer. */
-export const HIDDEN_FROM_NON_DEV_EMAILS = ["dev@goldenpathway.io"] as const;
+export const HIDDEN_FROM_NON_DEV_EMAILS = ["carolyn@goldenpathway.io"] as const;
 
 export function isHiddenFromRole(
   email: string | null | undefined,
