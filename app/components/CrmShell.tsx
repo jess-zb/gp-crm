@@ -7,7 +7,7 @@ import { Sidebar } from "@/app/components/Sidebar";
 import { ChatWidget, type ChatWidgetUserProfile } from "@/app/components/chat/ChatWidget";
 import { AlertNotification } from "@/app/components/AlertNotification";
 
-const STORAGE_KEY = "zb-sidebar-collapsed";
+const STORAGE_KEY = "gp-sidebar-collapsed";
 
 type Props = {
   children: React.ReactNode;

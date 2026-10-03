@@ -6,7 +6,7 @@ import { CrmProviders } from "@/app/components/CrmProviders";
 import { AttorneySidebar } from "@/app/components/AttorneySidebar";
 
 /** Same key as CrmShell so collapse state matches when switching contexts. */
-const SIDEBAR_COLLAPSED_KEY = "zb-sidebar-collapsed";
+const SIDEBAR_COLLAPSED_KEY = "gp-sidebar-collapsed";
 
 type Props = {
   children: React.ReactNode;

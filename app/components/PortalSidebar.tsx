@@ -5,7 +5,7 @@ import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-const STORAGE_KEY = "zb-theme";
+const STORAGE_KEY = "gp-theme";
 const ACTIVE_BG = "#A87830";
 /** Stand out on both light sidebar and dark sidebar. */
 

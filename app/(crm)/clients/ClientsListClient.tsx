@@ -107,7 +107,7 @@ const STAGE_OPTIONS = ALL_STAGE_ORDER.filter(
   label: STAGE_LABELS[value] ?? value,
 }));
 
-const COLUMN_STORAGE_KEY = "zb-clients-visible-columns";
+const COLUMN_STORAGE_KEY = "gp-clients-visible-columns";
 
 const AVAILABLE_COLUMNS = [
   { id: "client_status", label: "Row status" },

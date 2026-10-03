@@ -12,9 +12,9 @@
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-muted: #94a3b8;
-    --zb-brand: #A87830;
-    --zb-brand-hover: #8C6428;
-    --zb-brand-tint: #F4E8D4;
+    --gp-brand: #A87830;
+    --gp-brand-hover: #8C6428;
+    --gp-brand-tint: #F4E8D4;
 
     /* shadcn-compatible HSL tokens (Tailwind `border-border`) */
     --background: oklch(1 0 0);
@@ -36,12 +36,12 @@
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.145 0 0);
 
-    --zb-dark-bg: #121212;
-    --zb-dark-card: #1C1C1C;
-    --zb-dark-border: #2E2E2E;
-    --zb-dark-text: #e8eaee;
-    --zb-dark-muted: #A87830;
-    --zb-dark-accent: #A87830;
+    --gp-dark-bg: #121212;
+    --gp-dark-card: #1C1C1C;
+    --gp-dark-border: #2E2E2E;
+    --gp-dark-text: #e8eaee;
+    --gp-dark-muted: #A87830;
+    --gp-dark-accent: #A87830;
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
     --chart-1: oklch(0.87 0 0);
@@ -109,8 +109,8 @@
   }
 
   html.dark body {
-    background: var(--zb-dark-bg);
-    color: var(--zb-dark-text);
+    background: var(--gp-dark-bg);
+    color: var(--gp-dark-text);
   }
   .theme {
     --font-heading: var(--font-sans);
@@ -126,7 +126,7 @@
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em];
   }
 
-  .zb-card {
+  .gp-card {
     @apply rounded-lg border border-slate-200 bg-white p-5 transition-[background-color,border-color] duration-150 ease-out dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-[#E8EAEE];
   }
 
@@ -230,23 +230,23 @@
   }
 
   /* ── Typography utilities ── */
-  .zb-page-subtitle {
+  .gp-page-subtitle {
     font-size: 13px;
     font-weight: 400;
     color: #5a8a78;
   }
 
-  .zb-section-subheader {
+  .gp-section-subheader {
     font-size: 14px;
     font-weight: 600;
     color: #0f172a;
   }
 
-  html.dark .zb-section-subheader {
+  html.dark .gp-section-subheader {
     color: #e2f5ef;
   }
 
-  .zb-sidebar-label {
+  .gp-sidebar-label {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
@@ -254,19 +254,19 @@
     color: #7A5620;
   }
 
-  .zb-id {
+  .gp-id {
     font-size: 13px;
     font-weight: 500;
     font-family: monospace;
     color: #00e5b0;
   }
 
-  .zb-muted {
+  .gp-muted {
     font-size: 13px;
     color: #5a8a78;
   }
 
-  .zb-badge-count {
+  .gp-badge-count {
     font-size: 10px;
     font-weight: 700;
     background: #00e5b022;
@@ -320,7 +320,7 @@
   -webkit-overflow-scrolling: touch;
 }
 
-@keyframes zb-mac-notif-enter {
+@keyframes gp-mac-notif-enter {
   from {
     opacity: 0;
     transform: translateX(12px);
@@ -331,8 +331,8 @@
   }
 }
 
-.zb-mac-notif-enter {
-  animation: zb-mac-notif-enter 0.2s ease-out;
+.gp-mac-notif-enter {
+  animation: gp-mac-notif-enter 0.2s ease-out;
 }
 
 @keyframes typingDot {

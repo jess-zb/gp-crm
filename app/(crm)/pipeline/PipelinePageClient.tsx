@@ -34,7 +34,7 @@ export type PipelinePageRow = {
   services_manager: { full_name: string | null } | null;
 };
 
-const COLUMN_STORAGE_KEY = "zb-pipeline-visible-columns";
+const COLUMN_STORAGE_KEY = "gp-pipeline-visible-columns";
 
 const AVAILABLE_COLUMNS = [
   { id: "name", label: "Client Name", required: true as const },

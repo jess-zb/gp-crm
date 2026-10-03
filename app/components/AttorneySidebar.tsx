@@ -15,7 +15,7 @@ import { getRoleDisplayName } from "@/lib/utils/roles";
 import { GearIcon } from "@/components/ui/gear-icon";
 import { NotificationBell } from "@/app/components/NotificationCenter";
 
-const STORAGE_KEY = "zb-theme";
+const STORAGE_KEY = "gp-theme";
 
 type AttorneySidebarProps = {
   displayName: string;
@@ -187,7 +187,7 @@ export function AttorneySidebar({
 
       <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-hidden px-2 pb-2 pt-0 overscroll-contain">
         {!navCollapsed ? (
-          <p className="px-3 pb-1 zb-sidebar-label">Attorney portal</p>
+          <p className="px-3 pb-1 gp-sidebar-label">Attorney portal</p>
         ) : null}
         {NAV.map(({ href, label, Icon, lucide }) => {
           const active = isNavActive(pathname, href);

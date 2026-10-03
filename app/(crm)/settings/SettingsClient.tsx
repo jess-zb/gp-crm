@@ -8,7 +8,7 @@ import { useToast } from "@/app/components/Toast";
 import { EmailSequenceToggle } from "@/app/components/settings/EmailSequenceToggle";
 import { toUserFacingError } from "@/lib/user-facing-error";
 
-const STORAGE_KEY = "zb-theme";
+const STORAGE_KEY = "gp-theme";
 
 const cardClass =
   "rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]";

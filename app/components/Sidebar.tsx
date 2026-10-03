@@ -31,7 +31,7 @@ import {
 } from "@/lib/roles";
 import { getRoleDisplayName } from "@/lib/utils/roles";
 
-const STORAGE_KEY = "zb-theme";
+const STORAGE_KEY = "gp-theme";
 
 type SidebarProps = {
   displayName: string;
@@ -290,7 +290,7 @@ export function Sidebar({
 
       <nav className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto overflow-x-hidden px-2 pb-2 pt-0">
         {!navCollapsed ? (
-          <p className="px-3 pb-1 zb-sidebar-label">
+          <p className="px-3 pb-1 gp-sidebar-label">
             Workspace
           </p>
         ) : null}
@@ -302,7 +302,7 @@ export function Sidebar({
         <div className="mx-3 my-2 border-t border-[#161616]" aria-hidden />
 
         {!navCollapsed ? (
-          <p className="px-3 pb-1 pt-4 zb-sidebar-label">More</p>
+          <p className="px-3 pb-1 pt-4 gp-sidebar-label">More</p>
         ) : null}
 
         {showReports

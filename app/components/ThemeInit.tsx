@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const STORAGE_KEY = "zb-theme";
+const STORAGE_KEY = "gp-theme";
 
 export function ThemeInit() {
   useEffect(() => {

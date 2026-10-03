@@ -130,7 +130,7 @@ export function MidDocumentsClient({
 
   return (
     <div className="space-y-6">
-      <section className="zb-card">
+      <section className="gp-card">
         <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
           Add a document
         </h2>
@@ -197,7 +197,7 @@ export function MidDocumentsClient({
         </form>
       </section>
 
-      <section className="zb-card !p-0">
+      <section className="gp-card !p-0">
         {templates.length === 0 ? (
           <div className="px-5 py-10 text-center">
             <p className="text-sm font-medium text-slate-900 dark:text-white">No documents yet</p>

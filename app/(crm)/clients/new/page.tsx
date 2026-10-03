@@ -299,7 +299,7 @@ export default function NewClientPage() {
       </p>
 
       <form ref={formRef} onSubmit={onSubmit} className="mt-6 w-full min-w-0 space-y-6" noValidate>
-        <section className="zb-card space-y-4">
+        <section className="gp-card space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
             Client information
           </h2>
@@ -459,7 +459,7 @@ export default function NewClientPage() {
           </div>
         </section>
 
-        <section className="zb-card w-full min-w-0 space-y-4">
+        <section className="gp-card w-full min-w-0 space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
             Address
           </h2>
@@ -498,7 +498,7 @@ export default function NewClientPage() {
           </div>
         </section>
 
-        <section className="zb-card space-y-4">
+        <section className="gp-card space-y-4">
           <h2 className="text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-300">
             Case details
           </h2>

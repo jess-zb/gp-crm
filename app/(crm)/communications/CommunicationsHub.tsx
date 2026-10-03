@@ -157,10 +157,10 @@ function deptSubject(departmentName: string) {
   return `dept:${departmentName}`;
 }
 
-const DM_LAST_VIEWED_PREFIX = "zb-last-viewed-dm-";
+const DM_LAST_VIEWED_PREFIX = "gp-last-viewed-dm-";
 /** Legacy key; still read for migration until users get new keys written. */
-const DM_LAST_VIEWED_LEGACY_PREFIX = "zb-hub-team-read:";
-const DEPT_LAST_VIEWED_PREFIX = "zb-last-viewed-dept-";
+const DM_LAST_VIEWED_LEGACY_PREFIX = "gp-hub-team-read:";
+const DEPT_LAST_VIEWED_PREFIX = "gp-last-viewed-dept-";
 
 function dmLastViewedMs(peerId: string): number {
   try {

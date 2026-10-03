@@ -424,7 +424,7 @@ export function NotificationBell({
         {macToasts.map(({ dismissId, notif }) => (
           <div
             key={dismissId}
-            className="pointer-events-auto zb-mac-notif-enter flex max-w-sm gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
+            className="pointer-events-auto gp-mac-notif-enter flex max-w-sm gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
           >
             <button
               type="button"
