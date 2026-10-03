@@ -22,7 +22,7 @@ BEGIN
               cancel_reason = 'superseded by ' || seq.key,
               next_send_at = NULL
           FROM email_sequences s2
-          WHERE e.sequence_id = s2.id
+          WHERE e.sequence_id = s2.id::text
             AND s2.key = ckey
             AND e.client_id = NEW.id
             AND e.status = 'active';
@@ -48,7 +48,7 @@ BEGIN
       WHERE NOT EXISTS (
         SELECT 1 FROM sequence_enrollments
         WHERE client_id = NEW.id
-          AND (sequence_id = seq.id OR sequence_key = seq.key)
+          AND (sequence_id = seq.id::text OR sequence_key = seq.key)
           AND status = 'active'
       );
     END LOOP;
