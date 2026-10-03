@@ -8,6 +8,8 @@ CREATE TRIGGER comm_templates_updated_at BEFORE UPDATE ON public.comm_templates 
 
 CREATE TRIGGER esign_requests_updated_at BEFORE UPDATE ON public.esign_requests FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
+CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 CREATE TRIGGER on_client_created AFTER INSERT ON public.clients FOR EACH ROW EXECUTE FUNCTION public.create_default_checklist();
 
 CREATE TRIGGER on_collection_letter_upload AFTER INSERT ON public.documents FOR EACH ROW EXECUTE FUNCTION public.handle_collection_letter_upload();
