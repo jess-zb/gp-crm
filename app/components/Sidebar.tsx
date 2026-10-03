@@ -346,7 +346,7 @@ export function Sidebar({
               type="button"
               onClick={() => applyTheme("light")}
               className={`flex h-8 w-full items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out ${
-                !dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
+                !dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:bg-[#161616] hover:text-white"
               }`}
               aria-label="Light mode"
               aria-pressed={!dark}
@@ -357,7 +357,7 @@ export function Sidebar({
               type="button"
               onClick={() => applyTheme("dark")}
               className={`flex h-8 w-full items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out ${
-                dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
+                dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:bg-[#161616] hover:text-white"
               }`}
               aria-label="Dark mode"
               aria-pressed={dark}
@@ -366,7 +366,7 @@ export function Sidebar({
             </button>
             <a
               href="/api/auth/signout"
-              className="flex h-8 w-full items-center justify-center rounded-md text-[#6B9E80] transition-colors duration-200 ease-out hover:text-white"
+              className="flex h-8 w-full items-center justify-center rounded-md text-[#C8C2B8] transition-colors duration-200 ease-out hover:text-white"
               title="Sign out"
               aria-label="Sign out"
             >
@@ -383,14 +383,14 @@ export function Sidebar({
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-white">{firstNameOnly}</p>
-              <p className="truncate text-xs text-[#6B9E80]">{getRoleDisplayName(role)}</p>
+              <p className="truncate text-xs text-[#C8C2B8]">{getRoleDisplayName(role)}</p>
             </div>
             <div className="flex shrink-0 items-center gap-0.5">
               <button
                 type="button"
                 onClick={() => applyTheme("light")}
                 className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-xs transition-colors duration-200 ease-out ${
-                  !dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:text-white"
+                  !dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:text-white"
                 }`}
                 aria-label="Light mode"
                 aria-pressed={!dark}
@@ -401,7 +401,7 @@ export function Sidebar({
                 type="button"
                 onClick={() => applyTheme("dark")}
                 className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-xs transition-colors duration-200 ease-out ${
-                  dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:text-white"
+                  dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:text-white"
                 }`}
                 aria-label="Dark mode"
                 aria-pressed={dark}
@@ -410,7 +410,7 @@ export function Sidebar({
               </button>
               <a
                 href="/api/auth/signout"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#6B9E80] transition-colors duration-200 ease-out hover:text-white"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-[#C8C2B8] transition-colors duration-200 ease-out hover:text-white"
                 title="Sign out"
                 aria-label="Sign out"
               >

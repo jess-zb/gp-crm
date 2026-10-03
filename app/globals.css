@@ -141,7 +141,7 @@
   }
 
   html.dark .crm-page-title {
-    color: #e2f5ef;
+    color: #E8EAEE;
   }
 
   .crm-btn-primary {
@@ -174,7 +174,7 @@
   }
 
   .crm-table-td {
-    @apply border-b border-slate-100 px-4 py-2.5 text-[13px] font-normal text-slate-700 dark:border-[#2E2E2E] dark:text-[#e2f5ef];
+    @apply border-b border-slate-100 px-4 py-2.5 text-[13px] font-normal text-slate-700 dark:border-[#2E2E2E] dark:text-[#E8EAEE];
   }
 
   .crm-table-row {
@@ -182,7 +182,7 @@
   }
 
   .crm-table-td-strong {
-    @apply text-[13px] font-medium text-slate-900 dark:text-[#e2f5ef];
+    @apply text-[13px] font-medium text-slate-900 dark:text-[#E8EAEE];
   }
 
   .crm-tab-row {
@@ -210,7 +210,7 @@
   }
 
   .crm-modal-title {
-    @apply mb-1 text-[14px] font-semibold text-slate-900 dark:text-[#e2f5ef];
+    @apply mb-1 text-[14px] font-semibold text-slate-900 dark:text-[#E8EAEE];
   }
 
   .crm-modal-subtitle {
@@ -243,7 +243,7 @@
   }
 
   html.dark .gp-section-subheader {
-    color: #e2f5ef;
+    color: #E8EAEE;
   }
 
   .gp-sidebar-label {

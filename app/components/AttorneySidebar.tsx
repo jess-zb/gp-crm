@@ -172,7 +172,7 @@ export function AttorneySidebar({
         <button
           type="button"
           onClick={onToggleCollapsed}
-          className="hidden w-full shrink-0 items-center justify-center border-t border-[#161616] py-1.5 text-[#6B9E80] transition-colors duration-200 ease-out hover:bg-[#161616] hover:text-white lg:flex"
+          className="hidden w-full shrink-0 items-center justify-center border-t border-[#161616] py-1.5 text-[#C8C2B8] transition-colors duration-200 ease-out hover:bg-[#161616] hover:text-white lg:flex"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           aria-expanded={!collapsed}
@@ -259,7 +259,7 @@ export function AttorneySidebar({
               type="button"
               onClick={() => applyTheme("light")}
               className={`flex h-8 w-full items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out ${
-                !dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
+                !dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:bg-[#161616] hover:text-white"
               }`}
               aria-label="Light mode"
               aria-pressed={!dark}
@@ -270,7 +270,7 @@ export function AttorneySidebar({
               type="button"
               onClick={() => applyTheme("dark")}
               className={`flex h-8 w-full items-center justify-center rounded-md text-sm transition-colors duration-200 ease-out ${
-                dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
+                dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:bg-[#161616] hover:text-white"
               }`}
               aria-label="Dark mode"
               aria-pressed={dark}
@@ -280,7 +280,7 @@ export function AttorneySidebar({
             <button
               type="button"
               onClick={() => void handleSignOut()}
-              className="flex h-8 w-full items-center justify-center rounded-md text-[#6B9E80] transition-colors duration-200 ease-out hover:text-white"
+              className="flex h-8 w-full items-center justify-center rounded-md text-[#C8C2B8] transition-colors duration-200 ease-out hover:text-white"
               title="Sign out"
               aria-label="Sign out"
             >
@@ -297,14 +297,14 @@ export function AttorneySidebar({
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[13px] font-semibold text-white">{firstNameOnly}</p>
-              <p className="truncate text-[11px] text-[#6B9E80]">{roleLabel}</p>
+              <p className="truncate text-[11px] text-[#C8C2B8]">{roleLabel}</p>
             </div>
             <div className="flex shrink-0 items-center gap-0.5">
               <button
                 type="button"
                 onClick={() => applyTheme("light")}
                 className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-xs transition-colors duration-200 ease-out ${
-                  !dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
+                  !dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:bg-[#161616] hover:text-white"
                 }`}
                 aria-label="Light mode"
                 aria-pressed={!dark}
@@ -315,7 +315,7 @@ export function AttorneySidebar({
                 type="button"
                 onClick={() => applyTheme("dark")}
                 className={`inline-flex h-7 w-7 items-center justify-center rounded-md text-xs transition-colors duration-200 ease-out ${
-                  dark ? "bg-[#161616] text-white" : "text-[#6B9E80] hover:bg-[#161616] hover:text-white"
+                  dark ? "bg-[#161616] text-white" : "text-[#C8C2B8] hover:bg-[#161616] hover:text-white"
                 }`}
                 aria-label="Dark mode"
                 aria-pressed={dark}
@@ -325,7 +325,7 @@ export function AttorneySidebar({
               <button
                 type="button"
                 onClick={() => void handleSignOut()}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#6B9E80] transition-colors duration-200 ease-out hover:text-white"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#C8C2B8] transition-colors duration-200 ease-out hover:text-white"
                 title="Sign out"
                 aria-label="Sign out"
               >
