@@ -63,19 +63,17 @@ function pageJumps(role: string): { href: string; label: string }[] {
     { href: "/clients", label: "Clients" },
     { href: "/pipeline", label: "Pipeline" },
     { href: "/reminders", label: "Appointments" },
+    { href: "/knowledge-base", label: "Knowledge Base" },
   ];
-  if (canAccessAttorneyQueue(role)) {
-    pages.push({ href: "/admin/attorney-queue", label: "Attorney Queue" });
-  }
-  if (canAccessReports(role)) pages.push({ href: "/reports", label: "Reports" });
   if (canAccessTeamPage(role)) pages.push({ href: "/team", label: "Team" });
   if (isDevOrAdmin(role)) {
     pages.push({ href: "/esign-documents", label: "E-Sign Documents" });
   }
-  pages.push(
-    { href: "/knowledge-base", label: "Knowledge Base" },
-    { href: "/settings", label: "Settings" }
-  );
+  if (canAccessAttorneyQueue(role)) {
+    pages.push({ href: "/admin/attorney-queue", label: "Attorney Queue" });
+  }
+  if (canAccessReports(role)) pages.push({ href: "/reports", label: "Reports" });
+  pages.push({ href: "/settings", label: "Settings" });
   return pages;
 }
 

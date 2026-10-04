@@ -29,6 +29,7 @@ export type TeamActivityRow = {
   performed_by_name: string | null;
   new_value: { stage?: string } | null;
   client: {
+    id?: string;
     first_name: string | null;
     last_name: string | null;
   } | null;

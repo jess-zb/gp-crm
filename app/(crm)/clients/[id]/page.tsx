@@ -7,16 +7,18 @@ import {
   canEditAttorneyAssignment,
   canReassignClient,
   canViewAssignedAttorneyField,
+  isDev,
 } from "@/lib/roles";
 import { isPoaDocumentType } from "@/lib/clients/poa-upload-advance";
 import { hasCcAuthorizationOnRecord } from "@/lib/workflow/stage-blockers";
-import { AccountTabForm, type AccountTabClient } from "./AccountTabForm";
+import { type AccountTabClient } from "./AccountTabForm";
+import { ClientContactColumn } from "./ClientContactColumn";
 import { BillingTabContent } from "./BillingTabContent";
 import { ClientRightSidebar, type SidebarCommNoteRow } from "./ClientRightSidebar";
 import { listUpcomingEmailsForClient } from "@/lib/email/upcoming-for-client";
 import { ClientSettingsTab, type ClientSettingsTabClient } from "./ClientSettingsTab";
 import { refundPrefillFromCards } from "@/lib/refunds/prefill";
-import { ClientStageHeader } from "./ClientStageHeader";
+import { ClientStageHeader, MissingPaperworkSlot } from "./ClientStageHeader";
 import { ClientViewLogger } from "./ClientViewLogger";
 import { CommunicationsTab } from "./CommunicationsTab";
 import { DocumentsTab, type DocumentListItem } from "./DocumentsTab";
@@ -29,10 +31,12 @@ import { loadHiddenActors, redactActorName } from "@/lib/auth/hidden-actor";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 import { formatDateTime } from "@/lib/utils/date";
 import { ClientBackButton } from "./ClientBackButton";
-import { EsignDripSection } from "./EsignDripSection";
+import { ClientEsignSection } from "./ClientEsignSection";
+import { ClientMidSelect } from "./ClientMidSelect";
 import { canShowEsignActions } from "@/lib/esign/types";
 
 const MAIN_TABS_ALL = [
+  { id: "overview", label: "Overview" },
   { id: "account", label: "Account" },
   { id: "billing", label: "Cards" },
   { id: "documents", label: "Documents" },
@@ -49,7 +53,13 @@ const MAIN_TABS = MAIN_TABS_ALL.filter((t) => t.id !== "portal");
 
 // Tabs actually rendered in the tab bar. "billing" (Cards) is hidden from all
 // roles; the underlying feature, data query, and client_cards table remain intact.
-const VISIBLE_TABS = MAIN_TABS.filter((t) => t.id !== "billing");
+const VISIBLE_TABS = [
+  { id: "overview", label: "Overview" },
+  { id: "communications", label: "Activity" },
+  { id: "documents", label: "Documents" },
+  { id: "campaigns", label: "Drips" },
+  { id: "settings", label: "Settings" },
+] as const;
 
 type MainTab = (typeof MAIN_TABS_ALL)[number]["id"];
 
@@ -69,7 +79,9 @@ type DocRow = {
 };
 
 function tabHref(clientId: string, tab: MainTab) {
-  return tab === "account" ? `/clients/${clientId}` : `/clients/${clientId}?tab=${tab}`;
+  return tab === "overview" || tab === "account"
+    ? `/clients/${clientId}`
+    : `/clients/${clientId}?tab=${tab}`;
 }
 
 function tabClass(active: boolean) {
@@ -156,7 +168,7 @@ export default async function ClientProfilePage({
   if (profile.role === "client") redirect("/portal");
   if (profile.role === "attorney") redirect("/attorney/cases");
 
-  const tabRaw = sp.tab ?? "account";
+  const tabRaw = sp.tab ?? "overview";
   const tabNormalized =
     tabRaw === "email"
       ? "campaigns"
@@ -165,7 +177,8 @@ export default async function ClientProfilePage({
         : tabRaw;
   const tab: MainTab = MAIN_TABS.some((t) => t.id === tabNormalized)
     ? (tabNormalized as MainTab)
-    : "account";
+    : "overview";
+  const view: MainTab = tab === "account" ? "overview" : tab;
 
   const { data: client, error: clientErr } = await supabase
     .from("clients")
@@ -266,6 +279,13 @@ export default async function ClientProfilePage({
       role?: string | null;
     } | null
   );
+
+  const { data: esignFlag, error: esignFlagError } = await supabase
+    .from("staff_feature_flags")
+    .select("visible")
+    .eq("key", "client_esign_section")
+    .maybeSingle();
+  const esignSectionVisible = !esignFlagError && esignFlag?.visible === true;
 
   const canReassign = canReassignClient(profile.role);
   const canEditAttorney = canEditAttorneyAssignment(profile.role);
@@ -565,6 +585,13 @@ export default async function ClientProfilePage({
     spouseFirst = parts[0] ?? "";
     spouseLast = parts.length > 1 ? parts.slice(1).join(" ") : "";
   }
+  const secondaryDisplay = [spouseFirst, spouseLast].filter(Boolean).join(" ");
+  const secondaryNick = String(c.spouse_nickname ?? "").trim();
+  const secondaryName = secondaryDisplay
+    ? secondaryNick
+      ? `${secondaryDisplay} (${secondaryNick})`
+      : secondaryDisplay
+    : secondaryNick || null;
 
   const attorneyRow = c.attorney as
     | { full_name: string | null; email: string | null }
@@ -628,28 +655,26 @@ export default async function ClientProfilePage({
   }));
 
   return (
-    <main className="mx-auto min-w-0 max-w-[1600px] overflow-x-hidden px-4 py-6 sm:px-6 sm:py-8">
+    <main className="min-w-0">
       <ClientViewLogger clientId={clientId} userId={user.id} userName={performerName} />
 
-      <div className="mb-4">
-        <ClientBackButton />
-      </div>
-
-      <nav className="mb-6 text-sm text-slate-600 dark:text-slate-400">
-        <Link href="/dashboard" className="font-medium hover:text-[#A87830]">
-          Dashboard
-        </Link>
-        <span className="mx-2 text-slate-400">/</span>
-        <Link href="/clients" className="font-medium hover:text-[#A87830]">
-          Clients
-        </Link>
-        <span className="mx-2 text-slate-400">/</span>
-        <span className="font-semibold text-slate-900 dark:text-slate-200">{displayName}</span>
-      </nav>
+      <div className="flex flex-col lg:min-h-screen lg:flex-row">
+        <aside className="w-full shrink-0 border-b border-slate-200 bg-white px-4 py-4 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] lg:w-[320px] lg:border-b-0 lg:border-r">
+          <div className="mb-3">
+            <ClientBackButton />
+          </div>
+          <nav className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+            <Link href="/clients" className="font-medium hover:text-[#A87830]">
+              Clients
+            </Link>
+            <span className="mx-2 text-slate-400">/</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-200">{displayName}</span>
+          </nav>
 
       <ClientStageHeader
         displayName={displayName}
-        midName={midNameFromEmbed((c as { mids?: unknown }).mids)}
+        nickname={(c.nickname as string | null) ?? null}
+        secondaryName={secondaryName}
         clientId={clientId}
         stage={(c.stage as string | null) ?? null}
         performerId={user.id}
@@ -668,6 +693,7 @@ export default async function ClientProfilePage({
         poaSignedAt={(c.poa_signed_at as string | null) ?? null}
         hasPoaDocument={hasPoaDocument}
         hasCcAuthorization={hasCcAuthorization}
+        attorneyName={attorneyRow?.full_name?.trim() || null}
         refundPrefill={refundPrefillFromCards(
           (cardsRaw ?? []) as {
             charge_amount_cents?: number | null;
@@ -676,37 +702,84 @@ export default async function ClientProfilePage({
           null
         )}
       />
+          <ClientContactColumn
+            clientId={clientId}
+            client={accountClient}
+            accountRevision={String((c.updated_at as string | null) ?? "")}
+            createdAt={(c.created_at as string | null) ?? null}
+            updatedAt={(c.updated_at as string | null) ?? null}
+            clientRecordId={c.id as string}
+          />
+        </aside>
 
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <div className="order-1 min-w-0 flex-1 space-y-8">
-          <div className="-mx-4 overflow-x-auto overflow-y-hidden border-b border-slate-200 px-4 pb-px [-webkit-overflow-scrolling:touch] dark:border-[#2E2E2E] sm:-mx-6 sm:px-6 md:mx-0 md:overflow-visible md:px-0">
-            <nav className="flex min-w-max gap-0 md:min-w-0">
-              {VISIBLE_TABS.map((t) => (
-                <Link
-                  key={t.id}
-                  href={tabHref(clientId, t.id)}
-                  className={tabClass(tab === t.id)}
-                >
-                  {t.label}
-                </Link>
-              ))}
-            </nav>
+        <div className="min-w-0 flex-1 px-4 py-4 sm:px-6">
+          <div className="flex flex-col border-b border-slate-200 dark:border-[#2E2E2E] lg:flex-row lg:items-end lg:gap-3">
+            <div className="min-w-0 overflow-x-auto lg:flex-1">
+              <nav className="flex min-w-max gap-0">
+                {VISIBLE_TABS.map((t) => (
+                  <Link
+                    key={t.id}
+                    href={tabHref(clientId, t.id)}
+                    className={tabClass(view === t.id)}
+                  >
+                    {t.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+            <ClientMidSelect
+              clientId={clientId}
+              midId={(c.mid_id as string | null) ?? null}
+              midName={midNameFromEmbed((c as { mids?: unknown }).mids)}
+            />
           </div>
 
+          <div className="mt-6">
           <ErrorBoundary>
-            {tab === "account" ? (
-              <AccountTabForm
-                key={clientId}
-                clientId={clientId}
-                client={accountClient}
-                accountRevision={String((c.updated_at as string | null) ?? "")}
-              />
+            {view === "overview" ? (
+              <div>
+                <MissingPaperworkSlot />
+                <ClientRightSidebar
+                  layout="main"
+                  showAccountInfo={false}
+                  clientId={clientId}
+                  clientStage={(c.stage as string | null) ?? null}
+                  reminders={remindersForSidebar}
+                  auditPerformedByName={performerName}
+                  commNotes={commNotesForSidebar}
+                  currentUserId={user.id}
+                  currentRole={profile.role}
+                  staffOptions={sidebarStaffOptions.map((m) => ({
+                    id: m.id as string,
+                    full_name: m.full_name as string | null,
+                  }))}
+                  accountInfo={{
+                    created_at: (c.created_at as string | null) ?? null,
+                    id: c.id as string,
+                    verbal_password: (c.verbal_password as string | null) ?? null,
+                    updated_at: (c.updated_at as string | null) ?? null,
+                    assigned_to: (c.assigned_to as string | null) ?? null,
+                    assigned_user: assignedUser
+                      ? { full_name: assignedUser.full_name ?? null }
+                      : null,
+                    attorney: attorneyRow
+                      ? {
+                          full_name: attorneyRow.full_name ?? null,
+                          email: attorneyRow.email ?? null,
+                        }
+                      : null,
+                  }}
+                />
+              </div>
             ) : null}
 
-            {tab === "documents" ? (
+            {view === "documents" ? (
               <div className="space-y-4">
                 {isEsignFeatureEnabled() && canUseEsignStaffUi(profile.role) ? (
-                  <EsignDripSection
+                  <ClientEsignSection
+                    key={`${clientId}-${String(c.mid_id ?? "")}`}
+                    initiallyVisible={esignSectionVisible}
+                    canToggle={isDev(profile.role)}
                     clientId={clientId}
                     clientFirstName={
                       String(c.first_name ?? "").trim() || String(c.nickname ?? "").trim()
@@ -730,7 +803,7 @@ export default async function ClientProfilePage({
               </div>
             ) : null}
 
-            {tab === "campaigns" ? (
+            {view === "campaigns" ? (
               <EmailActivityTabClient
                 clientId={clientId}
                 userRole={profile.role}
@@ -740,7 +813,7 @@ export default async function ClientProfilePage({
               />
             ) : null}
 
-            {tab === "communications" ? (
+            {view === "communications" ? (
               <CommunicationsTab
                 clientId={clientId}
                 initialRows={communicationRows}
@@ -757,7 +830,7 @@ export default async function ClientProfilePage({
               />
             ) : null}
 
-            {tab === "billing" ? (
+            {view === "billing" ? (
               <BillingTabContent
                 clientId={clientId}
                 userRole={profile.role}
@@ -786,7 +859,7 @@ export default async function ClientProfilePage({
               />
             ) : null}
 
-            {tab === "settings" ? (
+            {view === "settings" ? (
               <ClientSettingsTab
                 key={`settings-${String(c.updated_at ?? c.id)}`}
                 clientId={clientId}
@@ -803,38 +876,8 @@ export default async function ClientProfilePage({
                       />
             ) : null}
           </ErrorBoundary>
+          </div>
         </div>
-
-        <ClientRightSidebar
-          className="order-2"
-          clientId={clientId}
-          clientStage={(c.stage as string | null) ?? null}
-          reminders={remindersForSidebar}
-          auditPerformedByName={performerName}
-          commNotes={commNotesForSidebar}
-          currentUserId={user.id}
-          currentRole={profile.role}
-          staffOptions={sidebarStaffOptions.map((m) => ({
-            id: m.id as string,
-            full_name: m.full_name as string | null,
-          }))}
-          accountInfo={{
-            created_at: (c.created_at as string | null) ?? null,
-            id: c.id as string,
-            verbal_password: (c.verbal_password as string | null) ?? null,
-            updated_at: (c.updated_at as string | null) ?? null,
-                    assigned_to: (c.assigned_to as string | null) ?? null,
-            assigned_user: assignedUser
-              ? { full_name: assignedUser.full_name ?? null }
-              : null,
-            attorney: attorneyRow
-              ? {
-                  full_name: attorneyRow.full_name ?? null,
-                  email: attorneyRow.email ?? null,
-                }
-              : null,
-          }}
-        />
       </div>
     </main>
   );

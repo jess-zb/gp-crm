@@ -1,7 +1,12 @@
-import { DashboardClientTable } from "./DashboardClientTable";
-import { TodayAppointments } from "./TodayAppointments";
-import { getTimeOfDay } from "./dashboard-ui";
+import { clientDisplayName, countAppointmentsOn, daysInStage } from "./dashboard-ui";
+import { RoleDashboard } from "./RoleDashboard";
 import type { DashboardClientRow, TodayAppointmentRow } from "./dashboard-types";
+
+function daysLabel(iso?: string | null) {
+  const days = daysInStage(iso);
+  if (days == null) return "Account Manager";
+  return days === 1 ? "1 day in Account Manager" : `${days} days in Account Manager`;
+}
 
 export function AccountsDashboard({
   firstName,
@@ -14,37 +19,37 @@ export function AccountsDashboard({
   rnaMyClients: DashboardClientRow[];
   myApptToday: TodayAppointmentRow[];
 }) {
-  const name = firstName?.trim() || "there";
+  const rnaIds = new Set(rnaMyClients.map((client) => client.id));
 
   return (
-    <>
-      <div className="mb-6">
-        <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Good {getTimeOfDay()}, {name} 👋
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Here&apos;s your account manager queue for today.
-        </p>
-      </div>
-
-      <DashboardClientTable
-        title="My Account Manager Clients"
-        clients={myAmClients}
-        emptyMessage="No clients in your Account Manager queue"
-        columns={["name", "phone", "sub_status", "days_in_stage"]}
-        stageColor="account_manager"
-      />
-
-      <DashboardClientTable
-        title="RNA — Needs Contact"
-        subtitle="These clients haven't answered. Try reaching them now."
-        clients={rnaMyClients}
-        emptyMessage="No RNA clients ✓"
-        columns={["name", "phone", "days_in_stage"]}
-        alertColor="red"
-      />
-
-      <TodayAppointments appointments={myApptToday} />
-    </>
+    <RoleDashboard
+      firstName={firstName}
+      stats={[
+        { label: "in Account Manager", value: myAmClients.length },
+        { label: "need a call", value: rnaMyClients.length },
+        { label: "Appointments Today", value: countAppointmentsOn(myApptToday) },
+      ]}
+      tableTitle="My clients"
+      tableHref="/clients"
+      rows={myAmClients.map((client) => ({
+        id: client.id,
+        href: `/clients/${client.id}`,
+        name: clientDisplayName(client),
+        detail: client.phone_mobile?.trim() || daysLabel(client.stage_entered_at),
+        status: rnaIds.has(client.id) ? "Needs a call" : "In progress",
+        tone: rnaIds.has(client.id) ? "red" : "slate",
+      }))}
+      emptyTable="No clients are assigned to you in Account Manager."
+      appointments={myApptToday}
+      sideTitle="Needs a call"
+      sideHref="/clients"
+      sideItems={rnaMyClients.map((client) => ({
+        id: client.id,
+        href: `/clients/${client.id}`,
+        title: clientDisplayName(client),
+        detail: client.phone_mobile?.trim() || "Ring no answer. Try them again.",
+      }))}
+      emptySide="Nobody on your list is waiting on a call."
+    />
   );
 }

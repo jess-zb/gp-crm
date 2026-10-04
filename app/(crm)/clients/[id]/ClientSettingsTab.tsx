@@ -16,6 +16,7 @@ import {
   type DepartmentMemberOption,
 } from "@/lib/team/department-members";
 import { updateClientSettings } from "./actions";
+import { SettingsMenuSelect } from "./SettingsMenuSelect";
 
 export type ClientSettingsTabClient = {
   stage: string | null;
@@ -31,6 +32,28 @@ type StaffOption = DepartmentMemberOption;
 type AttorneyOption = StaffOption & {
   is_default_attorney?: boolean | null;
 };
+
+function ReadOnlySetting({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail?: string | null;
+}) {
+  return (
+    <div className="w-full max-w-xs text-sm">
+      <span className="mb-1.5 block font-medium text-slate-700 dark:text-slate-300">{label}</span>
+      <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-slate-800 dark:border-[#3A3A3A] dark:bg-[#121212] dark:text-slate-200">
+        {value}
+        {detail ? (
+          <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-slate-400">{detail}</span>
+        ) : null}
+      </p>
+    </div>
+  );
+}
 
 export function ClientSettingsTab({
   clientId,
@@ -135,106 +158,66 @@ export function ClientSettingsTab({
         <input type="hidden" name="clientId" value={clientId} />
         <input type="hidden" name="stage" value={initialStage} />
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="flex flex-col gap-5">
           {canReassignClient ? (
-            <label className="block text-sm md:col-span-2">
-              <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
-              <select
-                name="assigned_to"
-                defaultValue={client.assigned_to ?? ""}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
-              >
-                <option value="">Unassigned</option>
-                {accountsOptions.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.full_name?.trim() || s.id.slice(0, 8)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
+            <SettingsMenuSelect
+              name="assigned_to"
+              label="Accounts"
+              defaultValue={client.assigned_to ?? ""}
+              emptyLabel="Unassigned"
+              options={accountsOptions.map((person) => ({
+                value: person.id,
+                label: person.full_name?.trim() || person.id.slice(0, 8),
+              }))}
+            />
+          ) : (
+            <ReadOnlySetting
+              label="Accounts"
+              value={assigneeName ?? "—"}
+              detail={assigneeName && assigneeRole ? getRoleDisplayName(assigneeRole) : null}
+            />
+          )}
           {canReassignClient ? (
-            <label className="block text-sm md:col-span-2">
-              <span className="font-medium text-slate-700 dark:text-slate-300">Services</span>
-              <select
-                name="assigned_services_id"
-                defaultValue={client.assigned_services_id ?? ""}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900 shadow-sm dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
-              >
-                <option value="">Unassigned</option>
-                {servicesOptions.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.full_name?.trim() || s.id.slice(0, 8)}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-
-          {!canReassignClient ? (
-            <>
-              <div className="text-sm md:col-span-2">
-                <span className="font-medium text-slate-700 dark:text-slate-300">Accounts</span>
-                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200">
-                  {assigneeName ?? "—"}
-                  {assigneeName && assigneeRole ? (
-                    <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
-                      {getRoleDisplayName(assigneeRole)}
-                    </span>
-                  ) : null}
-                </p>
-              </div>
-              <div className="text-sm md:col-span-2">
-                <span className="font-medium text-slate-700 dark:text-slate-300">Services</span>
-                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-slate-800 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200">
-                  {servicesAssigneeName ?? "—"}
-                </p>
-              </div>
-            </>
-          ) : null}
+            <SettingsMenuSelect
+              name="assigned_services_id"
+              label="Services"
+              defaultValue={client.assigned_services_id ?? ""}
+              emptyLabel="Unassigned"
+              options={servicesOptions.map((person) => ({
+                value: person.id,
+                label: person.full_name?.trim() || person.id.slice(0, 8),
+              }))}
+            />
+          ) : (
+            <ReadOnlySetting label="Services" value={servicesAssigneeName ?? "—"} />
+          )}
 
           {canViewAssignedAttorneyField ? (
             isDevOrAdmin(userRole) ? (
-              <label className="block text-sm md:col-span-2">
-                <span className="text-xs font-medium text-gray-600 dark:text-slate-400">
-                  Assigned Attorney
-                </span>
-                <select
-                  name="attorney_id"
-                  defaultValue={client.attorney_id ?? ""}
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-slate-900 focus:border-green-500 focus:outline-none dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white dark:focus:border-green-500"
-                >
-                  <option value="">No attorney assigned</option>
-                  {attorneyOptions.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.full_name?.trim() || a.id.slice(0, 8)}
-                      {a.is_default_attorney ? " (Default)" : ""}
-                    </option>
-                  ))}
-                </select>
-                <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
-                  When a collection letter is uploaded, the attorney will automatically be notified
-                  through their portal.
-                </p>
-              </label>
+              <SettingsMenuSelect
+                name="attorney_id"
+                label="Assigned Attorney"
+                defaultValue={client.attorney_id ?? ""}
+                emptyLabel="No attorney assigned"
+                options={attorneyOptions.map((attorney) => ({
+                  value: attorney.id,
+                  label: `${attorney.full_name?.trim() || attorney.id.slice(0, 8)}${
+                    attorney.is_default_attorney ? " (Default)" : ""
+                  }`,
+                }))}
+              />
             ) : (
-              <div className="text-sm md:col-span-2">
-                <span className="text-xs font-medium text-gray-600 dark:text-slate-400">
-                  Assigned Attorney
-                </span>
-                <p className="mt-1 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-gray-700 dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200">
-                  {client.attorney_id
+              <ReadOnlySetting
+                label="Assigned Attorney"
+                value={
+                  client.attorney_id
                     ? client.attorney?.full_name?.trim() ||
                       client.attorney?.email?.trim() ||
-                      attorneyOptions.find((a) => a.id === client.attorney_id)?.full_name?.trim() ||
+                      attorneyOptions.find((attorney) => attorney.id === client.attorney_id)?.full_name?.trim() ||
                       "—"
-                    : "—"}
-                </p>
-                <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
-                  When a collection letter is uploaded, the attorney will automatically be notified
-                  through their portal.
-                </p>
-              </div>
+                    : "—"
+                }
+              />
             )
           ) : null}
         </div>

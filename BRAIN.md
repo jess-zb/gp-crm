@@ -53,3 +53,24 @@ The sidebar card on a client profile (CS Intro, Tracking Update, Welcome Packet 
 There is no progress bar on the client header. The stage dropdown stays. When the next stage is blocked, the header shows “Missing before {next stage}” and the click goes to the missing item: Documents → E-Sign for an unsigned credit card authorization, or the upload form with POA already selected.
 
 The magnifying glass on a client is now a command menu for the whole CRM (`⌘K` / `Ctrl+K`). It jumps to the same pages as the sidebar, gated the same way, and searches clients. Escape or the backdrop closes it. The shortcut sits on a small magnifying-glass control in the bottom-right corner, beside chat. Search covers every client, active or archived, in any stage. A phone typed as digits still matches a formatted number, and a spouse name matches too.
+
+### 2026-10-03 — Client E-Sign section is hidden until a Dev shows it
+
+The E-Sign card on a client's Documents tab is hidden. A Dev sees Show E-Sign, and Hide once it is open. That choice is stored in `staff_feature_flags` (`client_esign_section`) and applies to every staff member. Signing links and the E-Sign Documents editor stay available. Uploads on the Documents tab stay visible.
+
+### 2026-10-03 — Knowledge Base is a role walkthrough
+
+Staff articles live in `knowledge_base_articles`, grouped by `category`. The starter set is replaced, including the article that said a missing card authorization does not block leaving Account Manager. The guide is organized as Start here, Account Managers, Client Services, Working a client, and Admins. Pictures are files in `public/kb`. Attorneys still cannot open this page; their portal is Cases. The guide does not use the word Developer. The Start here titles are Learning Guide, Navigate System, Roles & Departments, and Word Dictionary.
+
+### 2026-10-03 — Dashboard, sidebar, and client profile
+
+Each staff role gets one dashboard: greeting, three counts, a work list, the week of appointments, and a follow-up list.
+
+- Admins see Missing CC, Clients Moved, and Appointments Today. The list is clients missing a credit card authorization. The side list is who changed stage today.
+- Account Managers see their Account Manager clients, who needs a call, and their appointments.
+- Client Services sees their clients, POA overdue, and their appointments. Someone in both departments sees the Account Manager dashboard.
+- A missing card authorization is what blocks leaving Account Manager. The dashboard does not say otherwise.
+
+Sidebar order is Dashboard, Clients, Pipeline, Appointments, Knowledge Base, then Operations: Team, E-Sign Documents, Attorney Queue, Reports, Settings. The role under a person's name wraps onto its own line so it is not cut off.
+
+On a client, the MID menu sits with the tabs and reads `MID · {name}`. Edit beside Account Manager opens Settings. Contact order is verbal password, then email and phones. The missing-paperwork link stays on Overview only. Assignment menus on Settings are the searchable list with a check on the selected row. There is no attorney helper sentence under Assigned Attorney.

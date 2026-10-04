@@ -57,6 +57,8 @@ export function ClientRightSidebar({
   currentUserId,
   currentRole,
   className = "",
+  layout = "sidebar",
+  showAccountInfo = true,
 }: {
   clientId: string;
   /** Current pipeline stage — drives workflow department / keys on new reminders */
@@ -68,6 +70,9 @@ export function ClientRightSidebar({
   staffOptions: { id: string; full_name: string | null }[];
   currentUserId: string;
   currentRole: string;
+  /** `main` fills the Overview column. `sidebar` is the narrow rail. */
+  layout?: "sidebar" | "main";
+  showAccountInfo?: boolean;
   accountInfo: {
     created_at: string | null;
     id: string;
@@ -467,7 +472,11 @@ export function ClientRightSidebar({
 
   return (
     <aside
-      className={`w-full shrink-0 space-y-6 lg:min-w-[320px] lg:w-80 ${className}`}
+      className={
+        layout === "main"
+          ? `w-full space-y-6 ${className}`
+          : `w-full shrink-0 space-y-6 lg:min-w-[320px] lg:w-80 ${className}`
+      }
     >
       <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-3 flex items-center justify-between gap-2">
@@ -592,13 +601,13 @@ export function ClientRightSidebar({
         ) : null}
       </section>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <div className="mb-3 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => toggleSection("appts")}
             aria-expanded={openSections.appts}
-            className="flex items-center gap-1.5 rounded text-sm font-bold text-slate-900 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-white dark:hover:text-slate-200"
+            className="flex items-center gap-1.5 rounded text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:text-slate-200"
           >
             <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openSections.appts ? "" : "-rotate-90"}`} aria-hidden />
             Appointments
@@ -849,6 +858,7 @@ export function ClientRightSidebar({
         </div>
       ) : null}
 
+      {showAccountInfo ? (
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <button
           type="button"
@@ -908,6 +918,7 @@ export function ClientRightSidebar({
         </>
         ) : null}
       </section>
+      ) : null}
 
       {commModal === "call" ? (
         <div
@@ -1269,11 +1280,13 @@ export function ClientRightSidebar({
         </div>
       ) : null}
 
-      <div className="mt-4 border-t border-gray-100 pt-4 dark:border-[#2E2E2E]">
-        <p className="text-xs text-gray-400 dark:text-slate-500">
-          Client ID: <span className="font-mono">{accountInfo.id}</span>
-        </p>
-      </div>
+      {showAccountInfo ? (
+        <div className="mt-4 border-t border-gray-100 pt-4 dark:border-[#2E2E2E]">
+          <p className="text-xs text-gray-400 dark:text-slate-500">
+            Client ID: <span className="font-mono">{accountInfo.id}</span>
+          </p>
+        </div>
+      ) : null}
 
       <EditAppointmentModal
         open={editingReminder !== null}

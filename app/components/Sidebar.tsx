@@ -126,16 +126,9 @@ export function Sidebar({
       core.push(
         { href: "/clients", label: "Clients", Icon: UsersGroupIcon },
         { href: "/pipeline", label: "Pipeline", Icon: GitBranch, lucide: true },
-        { href: "/reminders", label: "Appointments", Icon: FilledBellIcon }
+        { href: "/reminders", label: "Appointments", Icon: FilledBellIcon },
+        { href: "/knowledge-base", label: "Knowledge Base", Icon: BookOpen, lucide: true }
       );
-      if (canAccessAttorneyQueue(role)) {
-        core.push({
-          href: "/admin/attorney-queue",
-          label: "Attorney Queue",
-          Icon: Scale,
-          lucide: true,
-        });
-      }
     }
     return core;
   }, [role]);
@@ -303,17 +296,9 @@ export function Sidebar({
         <div className="mx-3 my-2 border-t border-[#161616]" aria-hidden />
 
         {!navCollapsed ? (
-          <p className="px-3 pb-1 pt-4 gp-sidebar-label">More</p>
+          <p className="px-3 pb-1 pt-4 gp-sidebar-label">Operations</p>
         ) : null}
 
-        {showReports
-          ? renderLink(
-              "/reports",
-              "Reports",
-              ChartBarIcon,
-              isNavActive(pathname, "/reports")
-            )
-          : null}
         {showTeam
           ? renderLink("/team", "Team", UsersIcon, isNavActive(pathname, "/team"))
           : null}
@@ -326,13 +311,21 @@ export function Sidebar({
               true
             )
           : null}
-        {role !== "attorney"
+        {canAccessAttorneyQueue(role)
           ? renderLink(
-              "/knowledge-base",
-              "Knowledge Base",
-              BookOpen,
-              isNavActive(pathname, "/knowledge-base"),
+              "/admin/attorney-queue",
+              "Attorney Queue",
+              Scale,
+              isNavActive(pathname, "/admin/attorney-queue"),
               true
+            )
+          : null}
+        {showReports
+          ? renderLink(
+              "/reports",
+              "Reports",
+              ChartBarIcon,
+              isNavActive(pathname, "/reports")
             )
           : null}
         {renderLink(
@@ -348,7 +341,7 @@ export function Sidebar({
           <div className="flex flex-col items-center gap-2">
             <div
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#A87830] text-xs font-semibold text-[#161616]"
-              title={displayName}
+              title={`${displayName} · ${getRoleDisplayName(role)}`}
             >
               {initials}
             </div>
@@ -384,18 +377,20 @@ export function Sidebar({
             </a>
           </div>
         ) : (
-          <div className="flex items-center gap-2.5">
-            <div
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#A87830] text-xs font-semibold text-[#161616]"
-              title={displayName}
-            >
-              {initials}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#A87830] text-xs font-semibold text-[#161616]"
+                title={displayName}
+              >
+                {initials}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-white">{firstNameOnly}</p>
+                <p className="text-xs leading-snug text-[#C8C2B8]">{getRoleDisplayName(role)}</p>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-white">{firstNameOnly}</p>
-              <p className="truncate text-xs text-[#C8C2B8]">{getRoleDisplayName(role)}</p>
-            </div>
-            <div className="flex shrink-0 items-center gap-0.5">
+            <div className="flex items-center justify-end gap-0.5">
               <button
                 type="button"
                 onClick={() => applyTheme("light")}

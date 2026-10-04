@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   ChevronRight,
   Loader2,
+  Pencil,
   PenLine,
   Upload,
   UserCheck,
@@ -148,9 +150,23 @@ type AssignmentFlowState = {
   };
 };
 
+/** Overview-only mount point for the missing-paperwork notice. */
+export function MissingPaperworkSlot() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const host = ref.current;
+    window.dispatchEvent(new CustomEvent("gp-missing-banner-host", { detail: host }));
+    return () => {
+      window.dispatchEvent(new CustomEvent("gp-missing-banner-host", { detail: null }));
+    };
+  }, []);
+  return <div ref={ref} />;
+}
+
 export function ClientStageHeader({
   displayName,
-  midName = null,
+  nickname = null,
+  secondaryName = null,
   clientId,
   stage: stageFromServer,
   performerId,
@@ -167,9 +183,11 @@ export function ClientStageHeader({
   hasPoaDocument: hasPoaDocumentFromServer,
   hasCcAuthorization: hasCcAuthorizationFromServer,
   refundPrefill,
+  attorneyName = null,
 }: {
   displayName: string;
-  midName?: string | null;
+  nickname?: string | null;
+  secondaryName?: string | null;
   clientId: string;
   stage: string | null;
   performerId: string;
@@ -190,6 +208,7 @@ export function ClientStageHeader({
   hasCcAuthorization?: boolean;
   /** Starting values for the Refund Requested fields, derived from the client's cards. */
   refundPrefill?: RefundPrefill;
+  attorneyName?: string | null;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -840,6 +859,16 @@ export function ClientStageHeader({
     }
   }
 
+  const [missingHost, setMissingHost] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    const onHost = (event: Event) => {
+      const host = (event as CustomEvent<HTMLElement | null>).detail ?? null;
+      setMissingHost(host);
+    };
+    window.addEventListener("gp-missing-banner-host", onHost);
+    return () => window.removeEventListener("gp-missing-banner-host", onHost);
+  }, []);
+
   const stageDropdownOpts = getStageDropdownOptions(stage);
   const showStageSelect = Boolean(
     canUseStageDropdown(userRole) &&
@@ -849,113 +878,119 @@ export function ClientStageHeader({
   );
 
   return (
-    <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="crm-page-title text-2xl tracking-tight sm:text-3xl">{displayName}</h1>
-        </div>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          {midName?.trim() ? `MID · ${midName.trim()}` : "No MID"}
-        </p>
-
-        <div className="mt-2 flex items-center gap-0">
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
-              Account Manager
-            </span>
-            <span className="truncate text-sm font-medium text-gray-800 dark:text-slate-100">
-              {accountsUser?.full_name?.trim() ? (
-                accountsUser.full_name.trim()
-              ) : (
-                <span className="text-xs italic text-gray-400 dark:text-slate-500">Unassigned</span>
-              )}
-            </span>
-          </div>
-
-          <div className="mx-4 h-8 w-px shrink-0 bg-gray-200 dark:bg-[#2E2E2E]" />
-
-          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-slate-500">
-              Client Services
-            </span>
-            <span className="truncate text-sm font-medium text-gray-800 dark:text-slate-100">
-              {servicesUser?.full_name?.trim() ? (
-                servicesUser.full_name.trim()
-              ) : (
-                <span className="text-xs italic text-gray-400 dark:text-slate-500">Unassigned</span>
-              )}
-            </span>
-          </div>
-        </div>
-
-        {missingBeforeNext ? (
-          <Link
-            href={missingBeforeNext.href}
-            className="mt-3 inline-flex max-w-xl items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100 dark:hover:bg-amber-950/60"
-          >
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
-            <span>
-              <span className="font-semibold">{missingBeforeNext.title}. </span>
-              {missingBeforeNext.detail}
-            </span>
-          </Link>
+    <div className="flex flex-col gap-3">
+      <div className="min-w-0">
+        <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-100">
+          {displayName}
+          {nickname?.trim() ? (
+            <span className="text-sm font-normal text-slate-600 dark:text-slate-300"> ({nickname.trim()})</span>
+          ) : null}
+        </h1>
+        {secondaryName?.trim() ? (
+          <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{secondaryName.trim()}</p>
         ) : null}
-
-      </div>
-
-      <div className="flex shrink-0 flex-wrap items-center gap-2 self-start">
-        {showStageSelect && stageDropdownOpts ? (
-          <select
-            value={current}
-            onChange={(e) =>
-              void handleDropdownStageChange(e.target.value, e.currentTarget)
-            }
-            disabled={loading !== null}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
-            aria-label="Client stage"
-          >
-            {stageDropdownOpts.map((opt) => (
-              <option key={opt.value} value={opt.value} disabled={opt.disabled}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <StagePill stage={current} />
-        )}
-        {isClosed ? (
-          <span className="inline-flex items-center rounded-full bg-slate-200 px-4 py-2 text-sm font-bold text-slate-800 dark:bg-slate-700 dark:text-slate-100">
-            Case Closed
-          </span>
-        ) : (
-          <>
-            {canCancel ? (
-              <button
-                type="button"
-                onClick={() => {
-                  if (current === "retention") {
-                    openCancelReasonModal(false);
-                  } else {
-                    setShowCancelConfirmModal(true);
-                  }
-                }}
-                disabled={
-                  loading !== null || cancelling || movingToRetention
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {showStageSelect && stageDropdownOpts ? (
+            <select
+              value={current}
+              onChange={(e) =>
+                void handleDropdownStageChange(e.target.value, e.currentTarget)
+              }
+              disabled={loading !== null}
+              className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 focus:border-[#A87830] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-200"
+              aria-label="Client stage"
+            >
+              {stageDropdownOpts.map((opt) => (
+                <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <StagePill stage={current} />
+          )}
+          {isClosed ? (
+            <span className="inline-flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-bold text-slate-800 dark:bg-slate-700 dark:text-slate-100">
+              Case Closed
+            </span>
+          ) : canCancel ? (
+            <button
+              type="button"
+              onClick={() => {
+                if (current === "retention") {
+                  openCancelReasonModal(false);
+                } else {
+                  setShowCancelConfirmModal(true);
                 }
-                className="flex items-center gap-2 rounded-lg border border-red-400 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] disabled:opacity-50 dark:hover:bg-red-950/30"
-                title="Cancel client"
-                aria-label="Cancel client"
+              }}
+              disabled={loading !== null || cancelling || movingToRetention}
+              className="inline-flex items-center gap-1 rounded-lg border border-red-300 px-2.5 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] disabled:opacity-50 dark:hover:bg-red-950/30"
+              title="Cancel client"
+              aria-label="Cancel client"
+            >
+              {cancelling || movingToRetention ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <X className="h-3.5 w-3.5" />
+              )}
+              Cancel
+            </button>
+          ) : null}
+        </div>
+
+        {missingBeforeNext && missingHost
+          ? createPortal(
+              <Link
+                href={missingBeforeNext.href}
+                className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950 hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-100 dark:hover:bg-amber-950/60"
               >
-                {cancelling || movingToRetention ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <X className="h-4 w-4" />
-                )}
-                Cancel
-              </button>
-            ) : null}
-          </>
-        )}
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+                <span>
+                  <span className="font-semibold">{missingBeforeNext.title}. </span>
+                  {missingBeforeNext.detail}
+                </span>
+              </Link>,
+              missingHost
+            )
+          : null}
+
+        <div className="mt-4 border-t border-slate-100 pt-3 dark:border-[#2E2E2E]">
+        <dl className="space-y-2">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                Account Manager
+              </dt>
+              <Link
+                href={`/clients/${clientId}?tab=settings`}
+                className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold text-[#A87830] hover:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:hover:bg-[#2A2418]"
+              >
+                <Pencil className="h-3.5 w-3.5" aria-hidden />
+                Edit
+              </Link>
+            </div>
+            <dd className="text-sm text-slate-800 dark:text-slate-100">
+              {accountsUser?.full_name?.trim() || "Unassigned"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+              Client Services
+            </dt>
+            <dd className="text-sm text-slate-800 dark:text-slate-100">
+              {servicesUser?.full_name?.trim() || "Unassigned"}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+              Attorney
+            </dt>
+            <dd className="text-sm text-slate-800 dark:text-slate-100">
+              {attorneyName?.trim() || "—"}
+            </dd>
+          </div>
+        </dl>
+        </div>
       </div>
 
       {showCancelConfirmModal ? (

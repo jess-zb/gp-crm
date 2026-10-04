@@ -1,7 +1,12 @@
-import { DashboardClientTable } from "./DashboardClientTable";
-import { TodayAppointments } from "./TodayAppointments";
-import { getTimeOfDay } from "./dashboard-ui";
+import { clientDisplayName, countAppointmentsOn, daysInStage } from "./dashboard-ui";
+import { RoleDashboard } from "./RoleDashboard";
 import type { DashboardClientRow, TodayAppointmentRow } from "./dashboard-types";
+
+function daysLabel(iso?: string | null) {
+  const days = daysInStage(iso);
+  if (days == null) return "Client Services";
+  return days === 1 ? "1 day in Client Services" : `${days} days in Client Services`;
+}
 
 export function ServicesDashboard({
   firstName,
@@ -14,37 +19,41 @@ export function ServicesDashboard({
   poaOverdue: DashboardClientRow[];
   myApptToday: TodayAppointmentRow[];
 }) {
-  const name = firstName?.trim() || "there";
+  const overdueIds = new Set(poaOverdue.map((client) => client.id));
 
   return (
-    <>
-      <div className="mb-6">
-        <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-          Good {getTimeOfDay()}, {name} 👋
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Here&apos;s your client services queue for today.
-        </p>
-      </div>
-
-      <DashboardClientTable
-        title="My Client Services Clients"
-        clients={mySvcClients}
-        emptyMessage="No clients in Client Services assigned to you"
-        columns={["name", "phone", "poa_status", "days_in_stage"]}
-        stageColor="client_services"
-      />
-
-      <DashboardClientTable
-        title="POA Follow-Up Overdue"
-        subtitle="21+ days in Client Services with no signed POA received"
-        clients={poaOverdue}
-        emptyMessage="All POAs received ✓"
-        columns={["name", "phone", "days_in_stage"]}
-        alertColor="red"
-      />
-
-      <TodayAppointments appointments={myApptToday} />
-    </>
+    <RoleDashboard
+      firstName={firstName}
+      stats={[
+        { label: "in Client Services", value: mySvcClients.length },
+        { label: "POA overdue", value: poaOverdue.length },
+        { label: "Appointments Today", value: countAppointmentsOn(myApptToday) },
+      ]}
+      tableTitle="My clients"
+      tableHref="/clients"
+      rows={mySvcClients.map((client) => {
+        const signed = Boolean(client.poa_signed_at);
+        const overdue = overdueIds.has(client.id);
+        return {
+          id: client.id,
+          href: signed ? `/clients/${client.id}` : `/clients/${client.id}?tab=documents&upload=poa_document`,
+          name: clientDisplayName(client),
+          detail: daysLabel(client.stage_entered_at),
+          status: signed ? "POA signed" : overdue ? "POA overdue" : "No POA",
+          tone: signed ? "green" : overdue ? "red" : "amber",
+        } as const;
+      })}
+      emptyTable="No clients are assigned to you in Client Services."
+      appointments={myApptToday}
+      sideTitle="POA follow-up"
+      sideHref="/clients"
+      sideItems={poaOverdue.map((client) => ({
+        id: client.id,
+        href: `/clients/${client.id}?tab=documents&upload=poa_document`,
+        title: clientDisplayName(client),
+        detail: "21+ days in Client Services with no signed POA.",
+      }))}
+      emptySide="No POA follow-ups are overdue."
+    />
   );
 }

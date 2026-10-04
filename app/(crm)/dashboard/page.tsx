@@ -7,10 +7,8 @@ import { DashboardNotificationPermission } from "./DashboardNotificationPermissi
 import { AdminDashboard } from "./AdminDashboard";
 import { AccountsDashboard } from "./AccountsDashboard";
 import { ServicesDashboard } from "./ServicesDashboard";
-import { DashboardClientTable } from "./DashboardClientTable";
 import { loadHiddenActors, redactActorName } from "@/lib/auth/hidden-actor";
 import type {
-  AlertClientRow,
   DashboardClientRow,
   TeamActivityRow,
   TodayAppointmentRow,
@@ -75,23 +73,21 @@ export default async function DashboardPage() {
   if (!profile) redirect("/login");
 
   const isAdmin = ["dev", "admin"].includes(profile.role || "");
-  const isDev = profile.role === "dev";
   const isAccounts = !isAdmin && !!profile.is_accounts;
   const isServices =
     !isAdmin && !!profile.is_services && !profile.is_accounts;
 
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
-  const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
   const todayStartISO = todayStart.toISOString();
-  const todayEndISO = todayEnd.toISOString();
-  const sevenDaysAgo = new Date(
-    Date.now() - 7 * 24 * 60 * 60 * 1000
-  ).toISOString();
-  const fourteenDaysAgo = new Date(
-    Date.now() - 14 * 24 * 60 * 60 * 1000
-  ).toISOString();
+  const weekStart = new Date(todayStart);
+  const weekday = weekStart.getDay();
+  weekStart.setDate(weekStart.getDate() + (weekday === 0 ? -6 : 1 - weekday));
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59, 999);
+  const weekStartISO = weekStart.toISOString();
+  const weekEndISO = weekEnd.toISOString();
   const twentyOneDaysAgo = new Date(
     Date.now() - 21 * 24 * 60 * 60 * 1000
   ).toISOString();
@@ -99,10 +95,6 @@ export default async function DashboardPage() {
   const firstName = profile.full_name?.split(" ")[0];
 
   let teamActivity: TeamActivityRow[] = [];
-  let rnaClients: AlertClientRow[] = [];
-  let stuckClients: AlertClientRow[] = [];
-  let missingPoa: AlertClientRow[] = [];
-
   let missingCcAuth: DashboardClientRow[] = [];
 
   let myAmClients: DashboardClientRow[] = [];
@@ -112,11 +104,12 @@ export default async function DashboardPage() {
   let poaOverdue: DashboardClientRow[] = [];
 
   let myApptToday: TodayAppointmentRow[] = [];
+  let movedToday = 0;
 
   if (isAdmin) {
     const admin = createServiceClient();
 
-    const [teamActivityRes, rnaRes, stuckRes, missingPoaRes] =
+    const [teamActivityRes, apptRes, movedCountRes, funnelRes] =
       await Promise.all([
       admin
         .from("audit_log")
@@ -125,7 +118,7 @@ export default async function DashboardPage() {
           action, new_value, created_at,
           performed_by,
           performed_by_name,
-          client:client_id(first_name, last_name)
+          client:client_id(id, first_name, last_name)
         `
         )
         .eq("action", "stage_advanced")
@@ -133,27 +126,31 @@ export default async function DashboardPage() {
         .order("created_at", { ascending: false })
         .limit(15),
       admin
-        .from("clients")
-        .select("id, first_name, last_name, stage_entered_at")
-        .eq("stage", "account_manager")
-        .eq("sub_status", "rna")
-        .eq("is_active", true)
-        .limit(5),
+        .from("reminders")
+        .select(
+          `
+          id, description, due_date,
+          appointment_type,
+          client:client_id(id, first_name, last_name)
+        `
+        )
+        .eq("completed", false)
+        .eq("cancelled", false)
+        .gte("due_date", weekStartISO)
+        .lte("due_date", weekEndISO)
+        .order("due_date", { ascending: true })
+        .limit(80),
+      admin
+        .from("audit_log")
+        .select("id", { count: "exact", head: true })
+        .eq("action", "stage_advanced")
+        .gte("created_at", todayStartISO),
       admin
         .from("clients")
-        .select("id, first_name, last_name, stage, stage_entered_at")
+        .select("id, first_name, last_name, phone_mobile, stage_entered_at, stage")
         .eq("is_active", true)
-        .in("stage", ["account_manager", "lead"])
-        .lt("stage_entered_at", sevenDaysAgo)
-        .limit(5),
-      admin
-        .from("clients")
-        .select("id, first_name, last_name, stage_entered_at")
-        .eq("stage", "client_services")
-        .eq("is_active", true)
-        .is("poa_signed_at", null)
-        .lt("stage_entered_at", fourteenDaysAgo)
-        .limit(5),
+        .in("stage", ["lead", "account_manager", "client_services"])
+        .order("stage_entered_at", { ascending: true }),
     ]);
 
     const hiddenActors = await loadHiddenActors(profile.role);
@@ -167,20 +164,10 @@ export default async function DashboardPage() {
         performed_by_name: redactActorName(row.performed_by_name, actorId, hiddenActors),
       };
     });
-    rnaClients = (rnaRes.data ?? []) as AlertClientRow[];
-    stuckClients = (stuckRes.data ?? []) as AlertClientRow[];
-    missingPoa = (missingPoaRes.data ?? []) as AlertClientRow[];
-  }
+    myApptToday = asTodayAppointments(apptRes.data ?? []);
+    movedToday = movedCountRes.count ?? teamActivity.length;
 
-  if (isDev) {
-    const admin = createServiceClient();
-    const { data: funnelClients } = await admin
-      .from("clients")
-      .select("id, first_name, last_name, phone_mobile, stage_entered_at, stage")
-      .eq("is_active", true)
-      .in("stage", ["lead", "account_manager", "client_services"])
-      .order("stage_entered_at", { ascending: true });
-
+    const funnelClients = funnelRes.data;
     const clientIds = funnelClients?.map((c) => c.id as string) ?? [];
     const { data: ccAuthDocs } =
       clientIds.length > 0
@@ -229,8 +216,9 @@ export default async function DashboardPage() {
           )
           .eq("assigned_to", profile.id)
           .eq("completed", false)
-          .gte("due_date", todayStartISO)
-          .lte("due_date", todayEndISO)
+          .eq("cancelled", false)
+          .gte("due_date", weekStartISO)
+          .lte("due_date", weekEndISO)
           .order("due_date", { ascending: true }),
       ]);
 
@@ -270,8 +258,9 @@ export default async function DashboardPage() {
           )
           .eq("assigned_to", profile.id)
           .eq("completed", false)
-          .gte("due_date", todayStartISO)
-          .lte("due_date", todayEndISO)
+          .eq("cancelled", false)
+          .gte("due_date", weekStartISO)
+          .lte("due_date", weekEndISO)
           .order("due_date", { ascending: true }),
       ]);
 
@@ -289,21 +278,11 @@ export default async function DashboardPage() {
       <main className="mx-auto w-full max-w-7xl flex-1 overflow-y-auto p-6">
         {isAdmin ? (
           <AdminDashboard
+            firstName={firstName}
             teamActivity={teamActivity}
-            rnaClients={rnaClients}
-            stuckClients={stuckClients}
-            missingPoa={missingPoa}
-          />
-        ) : null}
-
-        {isDev ? (
-          <DashboardClientTable
-            title="Missing CC Authorization"
-            subtitle="A warning only. A missing card authorization does not stop a stage change. Leaving Account Manager still requires a signed Welcome Packet."
-            clients={missingCcAuth}
-            emptyMessage="All active funnel clients have CC authorization on file ✓"
-            columns={["name", "phone", "days_in_stage"]}
-            alertColor="amber"
+            missingCcAuth={missingCcAuth}
+            appointments={myApptToday}
+            movedToday={movedToday}
           />
         ) : null}
 
