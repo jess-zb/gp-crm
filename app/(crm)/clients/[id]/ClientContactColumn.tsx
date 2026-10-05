@@ -109,7 +109,6 @@ export function ClientContactColumn({
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               <AccountTabForm
-                key={`${clientId}-${accountRevision}`}
                 clientId={clientId}
                 client={client}
                 accountRevision={accountRevision}

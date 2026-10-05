@@ -20,6 +20,10 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-05 — Client edits wait until you leave the field
+
+Editing a client does not save between keystrokes. **Save Changes** writes the form. Closing the edit dialog, hiding the tab, or leaving the page also writes whatever is still unsaved. A refresh while the dialog is open does not replace the text still being typed.
+
 ### 2026-10-05 — Overview and Communications stay readable
 
 Communications shows the full message for a call, text, email, or note. There is no character cutoff and no Show more.

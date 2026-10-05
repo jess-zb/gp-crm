@@ -189,7 +189,6 @@ export function AccountTabForm({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showSaved = useCallback((field: string) => {
     setSavedField(field);
@@ -204,7 +203,7 @@ export function AccountTabForm({
   );
 
   useEffect(() => {
-    // Don't overwrite in-progress edits — auto-save pushes a new accountRevision while the user may still be typing.
+    // A refresh while the editor is open must not replace what the user is still typing.
     if (isDirtyRef.current) return;
     const next = formDataFromClient(client);
     setFormData(next);
@@ -324,17 +323,6 @@ export function AccountTabForm({
     [clientId, originalValues, router, showSaved, toast]
   );
 
-  useEffect(() => {
-    if (!isDirty) return;
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      void persistFullAccount({ quiet: true, skipRefresh: true });
-    }, 800);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [formData, isDirty, persistFullAccount]);
-
   const persistRef = useRef<() => Promise<void>>(async () => {});
 
   useEffect(() => {
@@ -343,6 +331,12 @@ export function AccountTabForm({
       await persistFullAccount({ quiet: true });
     };
   }, [persistFullAccount]);
+
+  useEffect(() => {
+    return () => {
+      void persistRef.current();
+    };
+  }, []);
 
   useEffect(() => {
     const onVisibility = () => {

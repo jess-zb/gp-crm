@@ -21,3 +21,6 @@ alwaysApply: false
    with that department checked. The hidden dev account stays off the lists.
    Show the person's name, or their email when the name is blank. Render the
    open menu outside overflow clipping so the names stay visible.
+6. Editing a client does not save on a timer while someone is typing.
+   Save on **Save Changes**, when the edit dialog closes, or when they leave
+   the page. Do not remount the form on each server refresh while it is open.
