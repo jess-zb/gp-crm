@@ -16,12 +16,17 @@ alwaysApply: false
 
 ## Delete lock
 
+- Removing a file from a client profile **archives** it (`archived_at` /
+  `archived_by`). The `documents` row and the `client-documents` object stay.
+  The profile stops showing the file. Do not call `storage.remove` for a filed
+  document.
 - **Locked for everyone:** Collection Letter and POA (`poa_document`, `poa`,
-  `poa_signed`, `power_of_attorney`).
+  `poa_signed`, `power_of_attorney`). These cannot be archived or deleted.
 - **Not locked:** CC Authorization (manual uploads). Signed e-sign files stay
   undeletable via `esign_requests`, including signed CC Auth.
 - Enforce in the UI, `deleteOwnClientDocument` / `deleteClientDocument`, and RLS
-  (`lock_permanent_client_document_deletes`). Check e-sign protection with the
+  (`lock_permanent_client_document_deletes`, `Hide archived documents`,
+  `No hard delete of client documents`). Check e-sign protection with the
   **service role**, not staff RLS.
 
 ## E-Sign

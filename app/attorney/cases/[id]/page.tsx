@@ -122,6 +122,7 @@ export default async function AttorneyCaseDetailPage({
       "id, file_name, document_type, mime_type, created_at, is_collection_letter"
     )
     .eq("client_id", clientId)
+    .is("archived_at", null)
     .order("created_at", { ascending: false });
 
   if (docsErr) {

@@ -80,6 +80,7 @@ export async function GET(
       .from("documents")
       .select("file_name, storage_path, mime_type")
       .eq("id", documentId)
+      .is("archived_at", null)
       .maybeSingle();
 
     if (docErr || !doc?.storage_path) {

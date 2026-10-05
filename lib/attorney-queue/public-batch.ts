@@ -117,7 +117,8 @@ export async function loadPublicAttorneyBatch(
       .select(
         "id, client_id, file_name, document_type, is_collection_letter, mime_type"
       )
-      .in("id", documentIds);
+      .in("id", documentIds)
+      .is("archived_at", null);
 
     if (docsErr) {
       return { ok: false, reason: "error", message: docsErr.message };
@@ -215,6 +216,7 @@ export async function createPublicBatchDocumentSignedUrl(
     .from("documents")
     .select("file_name, storage_path")
     .eq("id", args.documentId)
+    .is("archived_at", null)
     .maybeSingle();
 
   if (docErr || !doc?.storage_path) {

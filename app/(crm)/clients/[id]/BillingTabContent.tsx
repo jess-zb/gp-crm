@@ -17,8 +17,6 @@ import {
 } from "@/lib/roles";
 import { useMidNames } from "@/lib/hooks/use-mids";
 
-const BUCKET = "client-documents";
-
 const AUTH_COLORS: Record<string, string> = {
   pre_auth: "bg-yellow-100 text-yellow-700",
   pending: "bg-gray-100 text-gray-600",
@@ -351,26 +349,6 @@ export function BillingTabContent({
     if (!window.confirm("Are you sure you want to delete this card?")) return;
     setBusyCardId(c.id);
     const supabase = createClient();
-    if (c.collection_letter_doc_id && c.collection_letter_storage_path) {
-      const { error: stErr } = await supabase.storage
-        .from(BUCKET)
-        .remove([c.collection_letter_storage_path]);
-      if (stErr) {
-        toast.error(toUserFacingError(stErr.message));
-        setBusyCardId(null);
-        return;
-      }
-      const { error: delDoc } = await supabase
-        .from("documents")
-        .delete()
-        .eq("id", c.collection_letter_doc_id)
-        .eq("client_id", clientId);
-      if (delDoc) {
-        toast.error(toUserFacingError(delDoc.message));
-        setBusyCardId(null);
-        return;
-      }
-    }
     const { error } = await supabase.from("client_cards").delete().eq("id", c.id).eq("client_id", clientId);
     setBusyCardId(null);
     if (error) {
@@ -416,25 +394,17 @@ export function BillingTabContent({
     if (!window.confirm("Remove this collection letter from the card?")) return;
     setBusyCardId(c.id);
     const supabase = createClient();
-    const { error: stErr } = await supabase.storage
-      .from(BUCKET)
-      .remove([c.collection_letter_storage_path]);
-    if (stErr) {
-      toast.error(toUserFacingError(stErr.message));
-      setBusyCardId(null);
-      return;
-    }
     const { error: delErr } = await supabase
-      .from("documents")
-      .delete()
-      .eq("id", c.collection_letter_doc_id)
+      .from("client_cards")
+      .update({ collection_letter_doc_id: null })
+      .eq("id", c.id)
       .eq("client_id", clientId);
     setBusyCardId(null);
     if (delErr) {
       toast.error(toUserFacingError(delErr.message));
       return;
     }
-    toast.success("Collection letter removed");
+    toast.success("Collection letter removed from this card");
     router.refresh();
   };
 

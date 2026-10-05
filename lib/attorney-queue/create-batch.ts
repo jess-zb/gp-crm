@@ -94,7 +94,8 @@ export async function createAttorneyBatch(args: {
   const { data: docs, error: docErr } = await args.supabase
     .from("documents")
     .select("id, client_id, document_type, is_collection_letter, file_name")
-    .in("id", allDocIds);
+    .in("id", allDocIds)
+    .is("archived_at", null);
 
   if (docErr) {
     return { ok: false, error: docErr.message };

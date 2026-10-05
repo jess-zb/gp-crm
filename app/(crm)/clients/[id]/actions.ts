@@ -564,6 +564,66 @@ export async function uploadClientDocument(
   }
 }
 
+type StaffSupabase = Awaited<ReturnType<typeof createClient>>;
+
+/**
+ * Hide a file on the client profile and keep the row plus the storage object.
+ */
+async function archiveClientDocument(
+  supabase: StaffSupabase,
+  args: {
+    clientId: string;
+    docId: string;
+    userId: string;
+    performerName: string;
+    doc: {
+      file_name?: string | null;
+      document_type?: string | null;
+      is_collection_letter?: boolean | null;
+    };
+  }
+): Promise<ClientActionResult> {
+  if (isPermanentClientDocument(args.doc)) {
+    return { ok: false, error: PERMANENT_DOCUMENT_DELETE_ERROR };
+  }
+  if (await isEsignProtectedDocument(args.docId)) {
+    return { ok: false, error: ESIGN_FILE_DELETE_ERROR };
+  }
+
+  const { error } = await supabase
+    .from("documents")
+    .update({
+      archived_at: new Date().toISOString(),
+      archived_by: args.userId,
+    })
+    .eq("id", args.docId)
+    .eq("client_id", args.clientId)
+    .is("archived_at", null);
+
+  if (error) {
+    console.error("[archiveClientDocument] database error:", error.message);
+    return { ok: false, error: toUserFacingError(error.message) };
+  }
+
+  const { error: auditErr } = await supabase.from("audit_log").insert({
+    client_id: args.clientId,
+    action: "document_deleted",
+    new_value: {
+      document_id: args.docId,
+      file_name: args.doc.file_name ?? null,
+      document_type: args.doc.document_type ?? null,
+    },
+    performed_by: args.userId,
+    performed_by_name: args.performerName,
+  });
+  if (auditErr) {
+    console.warn("[archiveClientDocument] audit_log error:", auditErr.message);
+  }
+
+  revalidatePath(`/clients/${args.clientId}`);
+  return { ok: true };
+}
+
 export async function deleteClientDocument(
   formData: FormData
 ): Promise<ClientActionResult> {
@@ -574,14 +634,14 @@ export async function deleteClientDocument(
   }
 
   try {
-    const { supabase, profile } = await requireStaffClient(clientId);
+    const { supabase, profile, user } = await requireStaffClient(clientId);
     if (!canDeleteDocuments(profile.role)) {
       return { ok: false, error: "Unauthorized" };
     }
 
     const { data: doc, error: fetchErr } = await supabase
       .from("documents")
-      .select("storage_path, document_type, is_collection_letter")
+      .select("storage_path, file_name, document_type, is_collection_letter")
       .eq("id", docId)
       .eq("client_id", clientId)
       .maybeSingle();
@@ -595,34 +655,13 @@ export async function deleteClientDocument(
       return { ok: false, error: "Document not found" };
     }
 
-    if (isPermanentClientDocument(doc)) {
-      return { ok: false, error: PERMANENT_DOCUMENT_DELETE_ERROR };
-    }
-
-    if (await isEsignProtectedDocument(docId)) {
-      return { ok: false, error: ESIGN_FILE_DELETE_ERROR };
-    }
-
-    const { error: remErr } = await supabase.storage
-      .from(DOC_BUCKET)
-      .remove([doc.storage_path]);
-    if (remErr) {
-      console.error("[deleteClientDocument] storage remove error:", remErr.message);
-    }
-
-    const { error: delErr } = await supabase
-      .from("documents")
-      .delete()
-      .eq("id", docId)
-      .eq("client_id", clientId);
-
-    if (delErr) {
-      console.error("[deleteClientDocument] database error:", delErr.message);
-      return { ok: false, error: toUserFacingError(delErr.message) };
-    }
-
-    revalidatePath(`/clients/${clientId}`);
-    return { ok: true };
+    return archiveClientDocument(supabase, {
+      clientId,
+      docId,
+      userId: user.id,
+      performerName: profile.full_name?.trim() || user.email || "Staff",
+      doc,
+    });
   } catch (err) {
     console.error("[deleteClientDocument] unexpected error:", err);
     return { ok: false, error: "Something went wrong" };
@@ -709,7 +748,7 @@ export async function deleteOwnClientDocument(
     const userId = user?.id ?? "";
     const { data: doc, error: fetchErr } = await supabase
       .from("documents")
-      .select("storage_path, uploaded_by, document_type, is_collection_letter")
+      .select("storage_path, file_name, uploaded_by, document_type, is_collection_letter")
       .eq("id", docId)
       .eq("client_id", clientId)
       .maybeSingle();
@@ -717,24 +756,13 @@ export async function deleteOwnClientDocument(
     if (doc.uploaded_by !== userId && !canDeleteDocuments(profile.role)) {
       return { ok: false, error: "Unauthorized" };
     }
-    if (isPermanentClientDocument(doc)) {
-      return { ok: false, error: PERMANENT_DOCUMENT_DELETE_ERROR };
-    }
-    if (await isEsignProtectedDocument(docId)) {
-      return { ok: false, error: ESIGN_FILE_DELETE_ERROR };
-    }
-    if (doc.storage_path) {
-      const { error: stErr } = await supabase.storage.from(DOC_BUCKET).remove([doc.storage_path]);
-      if (stErr) console.warn("[deleteOwnClientDocument] storage remove:", stErr.message);
-    }
-    const { error } = await supabase
-      .from("documents")
-      .delete()
-      .eq("id", docId)
-      .eq("client_id", clientId);
-    if (error) return { ok: false, error: toUserFacingError(error.message) };
-    revalidatePath(`/clients/${clientId}`);
-    return { ok: true };
+    return archiveClientDocument(supabase, {
+      clientId,
+      docId,
+      userId,
+      performerName: profile.full_name?.trim() || user?.email || "Staff",
+      doc,
+    });
   } catch (err) {
     console.error("[deleteOwnClientDocument] error:", err);
     return { ok: false, error: "Something went wrong" };

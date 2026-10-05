@@ -57,6 +57,7 @@ export async function GET(request: Request) {
       .from("documents")
       .select("client_id, file_name, storage_path, mime_type")
       .eq("id", documentId)
+      .is("archived_at", null)
       .maybeSingle();
 
     if (docErr || !doc?.storage_path) {

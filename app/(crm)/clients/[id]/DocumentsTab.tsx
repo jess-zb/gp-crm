@@ -135,6 +135,7 @@ export function DocumentsTab({
       `
       )
       .eq("client_id", clientId)
+      .is("archived_at", null)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -333,7 +334,7 @@ export function DocumentsTab({
 
   const onDelete = async (row: DocumentListItem) => {
     if (!canDeleteRow(row)) return;
-    if (!window.confirm(`Delete "${row.file_name}" permanently?`)) return;
+    if (!window.confirm(`Delete "${row.file_name}"? It will be removed from this client.`)) return;
     setDeletingId(row.id);
     const result = await deleteOwnClientDocument(clientId, row.id);
     if (!result.ok) {

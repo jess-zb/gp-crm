@@ -112,6 +112,7 @@ export const ACTION_LABELS: Record<string, string> = {
 
   // Documents
   document_uploaded: "File Uploaded",
+  document_deleted: "File Deleted",
   audio_recording_uploaded: "Audio Recording Uploaded",
   collection_letter_uploaded: "Collection Letter Uploaded",
   poa_uploaded: "POA Uploaded",
@@ -231,6 +232,10 @@ export function formatAuditDescription(
     const file = typeof o?.file_name === "string" ? o.file_name.trim() : "";
     const docType = typeof o?.document_type === "string" ? o.document_type : "";
     return `Document uploaded: ${file || docType || "document"}`;
+  }
+  if (action === "document_deleted") {
+    const file = typeof o?.file_name === "string" ? o.file_name.trim() : "";
+    return `Document deleted: ${file || "file"}`;
   }
   if (action === "call_auto_logged") {
     const direction = typeof o?.direction === "string" ? o.direction : "";

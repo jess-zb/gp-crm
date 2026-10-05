@@ -112,6 +112,7 @@ export async function fetchAttorneyQueue(
       "id, client_id, file_name, document_type, is_collection_letter, created_at"
     )
     .in("client_id", clientIds)
+    .is("archived_at", null)
     .order("created_at", { ascending: false });
 
   if (docErr) {

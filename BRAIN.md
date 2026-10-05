@@ -20,6 +20,12 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-05 — Deleted client files are archived
+
+Removing a file from a client profile sets `documents.archived_at` and leaves the storage object in `client-documents`. The profile, attorney case, and client portal no longer show it. Activity records `document_deleted`. Collection letters, POA files, and signed e-sign files still cannot be removed. Authenticated users cannot hard-delete a document row or a storage object that still has a row.
+
+Code: `archiveClientDocument` in `app/(crm)/clients/[id]/actions.ts`. Migration: `0024_archive_client_documents.sql`.
+
 ### 2026-10-03 — Account Manager exit is a signed CC authorization
 
 A client cannot move from `account_manager` into a later pipeline stage until a `cc_authorization` document is on file. The blocked Advance dialog links to Documents → E-Sign and to Upload with CC Authorization already selected. There is no bypass.

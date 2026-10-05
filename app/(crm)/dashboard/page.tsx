@@ -176,6 +176,7 @@ export default async function DashboardPage() {
             .select("client_id")
             .in("client_id", clientIds)
             .eq("document_type", "cc_authorization")
+            .is("archived_at", null)
         : { data: [] as { client_id: string }[] };
 
     const ccAuthClientIds = new Set(

@@ -121,6 +121,7 @@ export default function PortalPage() {
         "id, file_name, storage_path, mime_type, document_type, created_at, is_collection_letter"
       )
       .eq("client_id", cid)
+      .is("archived_at", null)
       .order("created_at", { ascending: false });
 
     const filtered =

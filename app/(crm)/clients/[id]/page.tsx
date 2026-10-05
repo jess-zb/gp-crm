@@ -304,6 +304,7 @@ export default async function ClientProfilePage({
       .from("documents")
       .select("*")
       .eq("client_id", clientId)
+      .is("archived_at", null)
       .order("created_at", { ascending: false }),
     supabase
       .from("client_cards")
