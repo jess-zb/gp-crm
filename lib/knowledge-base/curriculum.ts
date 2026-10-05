@@ -89,10 +89,11 @@ You may not see every item. If a page is missing, your login is not allowed to o
 
 Your first name is on the first line. Your role is on the second line, such as Admin, Attorney, or User. The sun and moon switch light and dark. The arrow signs you out.
 
-## Two buttons in the bottom-right
+## The bottom-right corner
 
-1. The magnifying glass searches every client and jumps to a page. Type a name, a phone number, or a spouse's name.
-2. The speech bubble opens messages with other staff. It is not email to the client.
+1. The clock shows the current Arizona time.
+2. The magnifying glass searches every client and jumps to a page. Type a name, a phone number, or a spouse's name.
+3. The speech bubble opens messages with other staff. It is not email to the client.
 
 Press **Escape** to close search or messages.
 `,
@@ -421,7 +422,7 @@ Admins add a MID and its PDFs from **E-Sign Documents** in the sidebar. Open tha
 
 1. Click **Appointments** in the sidebar.
 2. Click **Add Appointment** at the top right.
-3. Choose the client, the date and time, and a short description of why you are calling. Enter the date and time in the client's time zone, from their state and ZIP. The appointment then shows that time, Arizona time, and the time on your own computer.
+3. Choose the client, the date and time, and a short description of why you are calling. Enter the date and time in the client's time zone, from their state and ZIP. The appointment shows that time and the time on your own computer. Current Arizona time stays in the bottom-right corner.
 4. Save.
 
 **Sales** and **Service** filter the list. **All Types** narrows it further. The two buttons on the right switch between the list and the calendar. Mark an appointment complete when the call happened. Delete it only if it was created by mistake.

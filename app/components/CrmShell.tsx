@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 import { CrmProviders } from "@/app/components/CrmProviders";
 import { Sidebar } from "@/app/components/Sidebar";
 import { ChatWidget, type ChatWidgetUserProfile } from "@/app/components/chat/ChatWidget";
+import { ArizonaClock } from "@/app/components/ArizonaClock";
 import { AlertNotification } from "@/app/components/AlertNotification";
 import { CommandMenu, CommandMenuTrigger } from "@/app/components/CommandMenu";
 
@@ -122,7 +123,12 @@ export function CrmShell({
               right: "calc(1rem + env(safe-area-inset-right, 0px))",
             }}
           >
+          <div
+            className="pointer-events-auto flex items-center gap-2"
+          >
+            <ArizonaClock />
             <CommandMenuTrigger />
+          </div>
           </div>
         )}
       </div>

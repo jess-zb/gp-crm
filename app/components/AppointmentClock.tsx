@@ -46,7 +46,6 @@ function ClockLines({
   const client = timeZoneForClient(state, zip);
   const format = withDate ? formatZonedDateTime : formatZonedClock;
   const clientText = client ? format(instant, client.timeZone) : "Add a state on the client";
-  const arizonaText = format(instant, OFFICE_TZ);
   const yourText = localTimeZone ? format(instant, localTimeZone) : null;
 
   return (
@@ -54,10 +53,6 @@ function ClockLines({
       <span className="block">
         <span className="text-slate-400 dark:text-slate-500">Client </span>
         {clientText}
-      </span>
-      <span className="block">
-        <span className="text-slate-400 dark:text-slate-500">Arizona </span>
-        {arizonaText}
       </span>
       {yourText ? (
         <span className="block">
@@ -96,7 +91,7 @@ export function AppointmentClockPreview({
   );
 }
 
-/** Saved appointment: client time, Arizona time, and the viewer's own clock. */
+/** Saved appointment: the client's clock and the viewer's own clock. */
 export function AppointmentWhen({
   iso,
   state,

@@ -34,6 +34,10 @@ A request without the key is rejected. The key is checked by its hash, and it is
 
 Code: `app/api/leads/route.ts`, `lib/leads/`.
 
+### 2026-10-05 — Arizona time lives in the corner
+
+Current Arizona time is a clock in the bottom-right, beside search and messages. Appointments still show the client's time and the viewer's own clock. They do not repeat Arizona on every row.
+
 ### 2026-10-05 — Appointments are booked in the client's time
 
 Supersedes the same-day note that the appointment fields are the Arizona clock. The date and time you enter are the client's time, from their state and ZIP. Each appointment then shows three clocks: the client's time, Arizona time, and the time on the computer of the person looking at it. Arizona stays the office day for the dashboard. A client with no state is booked in Arizona until a state is added.

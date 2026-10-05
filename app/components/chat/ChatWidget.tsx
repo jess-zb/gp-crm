@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { MessageCircleIcon } from "@/components/ui/message-circle-icon";
 import { CommandMenuTrigger } from "@/app/components/CommandMenu";
+import { ArizonaClock } from "@/app/components/ArizonaClock";
 import { createClient } from "@/lib/supabase/client";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 
@@ -1096,6 +1097,7 @@ export function ChatWidget({
       ) : null}
 
       <div className="pointer-events-auto flex items-center gap-2">
+        <ArizonaClock />
         <CommandMenuTrigger />
         <button
           type="button"
