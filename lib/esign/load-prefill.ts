@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 import { midNameFromEmbed } from "@/lib/mids/queries";
+import { departmentMembershipOr } from "@/lib/team/department-members";
 import type { EsignClientPrefill } from "./map-client-prefill";
 import { formatCityStateZip, formatFullAddress } from "./map-client-prefill";
 import { formatUsd } from "./money";
@@ -12,8 +13,8 @@ export async function loadAdvisorOptions(
   const { data, error } = await admin
     .from("profiles")
     .select("full_name, email, role, is_accounts, is_active")
-    .eq("is_accounts", true)
     .eq("is_active", true)
+    .or(departmentMembershipOr("is_accounts"))
     .order("full_name", { ascending: true });
   let rows: { full_name: string | null; email: string | null }[] = data ?? [];
   if (error) {

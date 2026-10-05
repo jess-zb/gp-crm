@@ -101,7 +101,6 @@ export function ClientRightSidebar({
   const [commModal, setCommModal] = useState<SidebarCommModal>(null);
   const [noteText, setNoteText] = useState("");
   const [savingNote, setSavingNote] = useState(false);
-  const [detailNote, setDetailNote] = useState<SidebarCommNoteRow | null>(null);
   const [localCommNotes, setLocalCommNotes] = useState<SidebarCommNoteRow[]>(commNotes);
   const [openSections, setOpenSections] = useState<{ notes: boolean; appts: boolean; account: boolean }>({
     notes: true,
@@ -329,21 +328,35 @@ export function ClientRightSidebar({
       setSavingNote(false);
       return;
     }
-    const { error } = await supabase.from("communications").insert({
-      client_id: clientId,
-      type: "note",
-      direction: "internal",
-      body,
-      recorded_by: user.id,
-      sent_at: sbLoggedAtIso || new Date().toISOString(),
-      subject: null,
-      duration_seconds: null,
-    });
+    const { data: saved, error } = await supabase
+      .from("communications")
+      .insert({
+        client_id: clientId,
+        type: "note",
+        direction: "internal",
+        body,
+        recorded_by: user.id,
+        sent_at: sbLoggedAtIso || new Date().toISOString(),
+        subject: null,
+        duration_seconds: null,
+      })
+      .select("id, body, sent_at, is_pinned")
+      .single();
     setSavingNote(false);
-    if (error) {
-      toast.error(toUserFacingError(error.message));
+    if (error || !saved) {
+      toast.error(toUserFacingError(error?.message ?? "Could not save the note."));
       return;
     }
+    setLocalCommNotes((prev) => [
+      {
+        id: saved.id,
+        body: saved.body ?? body,
+        sent_at: saved.sent_at,
+        author_name: auditPerformedByName,
+        is_pinned: !!saved.is_pinned,
+      },
+      ...prev.filter((note) => note.id !== saved.id),
+    ]);
     toast.success("Note saved");
     setNoteText("");
     closeSidebarCommModal();
@@ -357,9 +370,6 @@ export function ClientRightSidebar({
     setLocalCommNotes((prev) =>
       prev.map((n) => (n.id === noteId ? { ...n, is_pinned: newPinned } : n))
     );
-    if (detailNote?.id === noteId) {
-      setDetailNote((prev) => prev ? { ...prev, is_pinned: newPinned } : prev);
-    }
     const supabase = createClient();
     const { data, error } = await supabase
       .from("communications")
@@ -371,9 +381,6 @@ export function ClientRightSidebar({
       setLocalCommNotes((prev) =>
         prev.map((n) => (n.id === noteId ? { ...n, is_pinned: !newPinned } : n))
       );
-      if (detailNote?.id === noteId) {
-        setDetailNote((prev) => prev ? { ...prev, is_pinned: !newPinned } : prev);
-      }
       toast.error("Failed to update pin");
     }
   }
@@ -482,129 +489,6 @@ export function ClientRightSidebar({
         <div className="mb-3 flex items-center justify-between gap-2">
           <button
             type="button"
-            onClick={() => toggleSection("notes")}
-            aria-expanded={openSections.notes}
-            className="flex items-center gap-1.5 rounded text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:text-slate-200"
-          >
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openSections.notes ? "" : "-rotate-90"}`} aria-hidden />
-            Notes
-          </button>
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => openSidebarCommModal("call")}
-              title="Add Call"
-              aria-label="Add Call"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-blue-950/30 dark:hover:text-blue-400"
-            >
-              <Phone className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => openSidebarCommModal("sms")}
-              title="Add Text"
-              aria-label="Add Text"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-green-50 hover:text-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-green-950/30 dark:hover:text-green-400"
-            >
-              <MessageSquare className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => openSidebarCommModal("email")}
-              title="Add Email"
-              aria-label="Add Email"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-purple-50 hover:text-purple-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-purple-950/30 dark:hover:text-purple-400"
-            >
-              <Mail className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => openSidebarCommModal("note")}
-              title="Add Note"
-              aria-label="Add Note"
-              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-[#2a3f2c] dark:hover:text-slate-200"
-            >
-              <Plus className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-        {openSections.notes ? (
-        <>
-        {!localCommNotes.length ? (
-          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
-            No notes yet. Use the icons above to log a call, text, email, or internal note.
-          </p>
-        ) : (
-          <ul className="max-h-96 space-y-3 overflow-y-auto">
-            {[...localCommNotes]
-              .sort((a, b) => {
-                if (a.is_pinned && !b.is_pinned) return -1;
-                if (!a.is_pinned && b.is_pinned) return 1;
-                return new Date(b.sent_at ?? 0).getTime() - new Date(a.sent_at ?? 0).getTime();
-              })
-              .map((n) => (
-                <li key={n.id}>
-                  <div
-                    className={`group relative w-full rounded-lg border p-3 text-left transition ${
-                      n.is_pinned
-                        ? "border-amber-300 bg-amber-50/80 dark:border-amber-700/60 dark:bg-amber-950/20"
-                        : "border-slate-100 bg-slate-50/80 hover:bg-slate-100 dark:border-[#2E2E2E] dark:bg-[#121212]/40 dark:hover:bg-[#242424]"
-                    }`}
-                  >
-                    {n.is_pinned ? (
-                      <span className="absolute right-2 top-2 flex items-center gap-0.5 rounded px-1 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
-                        <Pin className="h-3 w-3 fill-current" aria-hidden />
-                        Pinned
-                      </span>
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={() => setDetailNote(n)}
-                      className="w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
-                    >
-                      <p className={`break-words pr-14 text-sm ${n.is_pinned ? "text-amber-900 dark:text-amber-100" : "text-slate-800 dark:text-slate-200"}`}>
-                        {truncateNote(n.body)}
-                      </p>
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                        {n.author_name}
-                        <span className="mx-1">·</span>
-                        <ClientFormattedDate iso={n.sent_at} pattern="MM/dd/yy h:mm a" />
-                      </p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void handleToggleNotePin(n.id)}
-                      title={n.is_pinned ? "Unpin note" : "Pin note"}
-                      aria-label={n.is_pinned ? "Unpin note" : "Pin note"}
-                      className={`absolute bottom-2 right-2 rounded p-1 text-xs transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
-                        n.is_pinned
-                          ? "text-amber-500 opacity-100 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
-                          : "text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400"
-                      }`}
-                    >
-                      <Pin className={`h-3 w-3 ${n.is_pinned ? "fill-current" : ""}`} aria-hidden />
-                    </button>
-                  </div>
-                </li>
-              ))}
-          </ul>
-        )}
-        <div className="mt-3 text-center">
-          <Link
-            href={`/clients/${clientId}?tab=communications`}
-            className="text-xs font-semibold text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
-          >
-            View all notes
-          </Link>
-        </div>
-        </>
-        ) : null}
-      </section>
-
-      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <button
-            type="button"
             onClick={() => toggleSection("appts")}
             aria-expanded={openSections.appts}
             className="flex items-center gap-1.5 rounded text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:text-slate-200"
@@ -705,6 +589,128 @@ export function ClientRightSidebar({
             </table>
           </div>
         )}
+        </>
+        ) : null}
+      </section>
+
+      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => toggleSection("notes")}
+            aria-expanded={openSections.notes}
+            className="flex items-center gap-1.5 rounded text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-400 dark:hover:text-slate-200"
+          >
+            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openSections.notes ? "" : "-rotate-90"}`} aria-hidden />
+            Notes
+          </button>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => openSidebarCommModal("call")}
+              title="Add Call"
+              aria-label="Add Call"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-blue-950/30 dark:hover:text-blue-400"
+            >
+              <Phone className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => openSidebarCommModal("sms")}
+              title="Add Text"
+              aria-label="Add Text"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-green-50 hover:text-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-green-950/30 dark:hover:text-green-400"
+            >
+              <MessageSquare className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => openSidebarCommModal("email")}
+              title="Add Email"
+              aria-label="Add Email"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-purple-50 hover:text-purple-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-purple-950/30 dark:hover:text-purple-400"
+            >
+              <Mail className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => openSidebarCommModal("note")}
+              title="Add Note"
+              aria-label="Add Note"
+              className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:text-slate-500 dark:hover:bg-[#2a3f2c] dark:hover:text-slate-200"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+        {openSections.notes ? (
+        <>
+        {!localCommNotes.length ? (
+          <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
+            No notes yet. Use the icons above to log a call, text, email, or internal note.
+          </p>
+        ) : (
+          <ul className="max-h-96 space-y-3 overflow-y-auto">
+            {[...localCommNotes]
+              .sort((a, b) => {
+                if (a.is_pinned && !b.is_pinned) return -1;
+                if (!a.is_pinned && b.is_pinned) return 1;
+                return new Date(b.sent_at ?? 0).getTime() - new Date(a.sent_at ?? 0).getTime();
+              })
+              .map((n) => (
+                <li key={n.id}>
+                  <div
+                    className={`group relative w-full rounded-lg border p-3 text-left transition ${
+                      n.is_pinned
+                        ? "border-amber-300 bg-amber-50/80 dark:border-amber-700/60 dark:bg-amber-950/20"
+                        : "border-slate-100 bg-slate-50/80 hover:bg-slate-100 dark:border-[#2E2E2E] dark:bg-[#121212]/40 dark:hover:bg-[#242424]"
+                    }`}
+                  >
+                    {n.is_pinned ? (
+                      <span className="absolute right-2 top-2 flex items-center gap-0.5 rounded px-1 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                        <Pin className="h-3 w-3 fill-current" aria-hidden />
+                        Pinned
+                      </span>
+                    ) : null}
+                    <Link
+                      href={`/clients/${clientId}?tab=communications#comm-${n.id}`}
+                      className="block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
+                    >
+                      <p className={`line-clamp-2 break-words pr-14 text-sm ${n.is_pinned ? "text-amber-900 dark:text-amber-100" : "text-slate-800 dark:text-slate-200"}`}>
+                        {truncateNote(n.body)}
+                      </p>
+                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                        {n.author_name}
+                        <span className="mx-1">·</span>
+                        <ClientFormattedDate iso={n.sent_at} pattern="MM/dd/yy h:mm a" />
+                      </p>
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => void handleToggleNotePin(n.id)}
+                      title={n.is_pinned ? "Unpin note" : "Pin note"}
+                      aria-label={n.is_pinned ? "Unpin note" : "Pin note"}
+                      className={`absolute bottom-2 right-2 rounded p-1 text-xs transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
+                        n.is_pinned
+                          ? "text-amber-500 opacity-100 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
+                          : "text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-500 dark:text-slate-600 dark:hover:text-amber-400"
+                      }`}
+                    >
+                      <Pin className={`h-3 w-3 ${n.is_pinned ? "fill-current" : ""}`} aria-hidden />
+                    </button>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        )}
+        <div className="mt-3 text-center">
+          <Link
+            href={`/clients/${clientId}?tab=communications`}
+            className="text-xs font-semibold text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
+          >
+            View all notes
+          </Link>
+        </div>
         </>
         ) : null}
       </section>
@@ -1228,54 +1234,6 @@ export function ClientRightSidebar({
                 )}
               </button>
             </div>
-          </div>
-        </div>
-      ) : null}
-
-      {detailNote ? (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4"
-          role="dialog"
-          aria-modal="true"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setDetailNote(null);
-          }}
-        >
-          <div
-            className="max-h-[min(80vh,28rem)] w-full max-w-md overflow-y-auto rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Note</h3>
-              <button
-                type="button"
-                onClick={() => void handleToggleNotePin(detailNote.id)}
-                title={detailNote.is_pinned ? "Unpin note" : "Pin note"}
-                aria-label={detailNote.is_pinned ? "Unpin note" : "Pin note"}
-                className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
-                  detailNote.is_pinned
-                    ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:hover:bg-amber-950/70"
-                    : "bg-slate-100 text-slate-500 hover:bg-amber-50 hover:text-amber-600 dark:bg-[#242424] dark:text-slate-400 dark:hover:text-amber-400"
-                }`}
-              >
-                <Pin className={`h-3 w-3 ${detailNote.is_pinned ? "fill-current" : ""}`} aria-hidden />
-                {detailNote.is_pinned ? "Pinned" : "Pin"}
-              </button>
-            </div>
-            <p className="mt-3 whitespace-pre-wrap break-words text-sm text-slate-800 dark:text-slate-200">
-              {detailNote.body}
-            </p>
-            <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-              {detailNote.author_name} ·{" "}
-              <ClientFormattedDate iso={detailNote.sent_at} pattern="MM/dd/yy h:mm a" />
-            </p>
-            <button
-              type="button"
-              onClick={() => setDetailNote(null)}
-              className="mt-4 w-full rounded-lg border border-slate-200 py-2 text-sm font-semibold text-slate-700 dark:border-[#2E2E2E] dark:text-slate-200"
-            >
-              Close
-            </button>
           </div>
         </div>
       ) : null}

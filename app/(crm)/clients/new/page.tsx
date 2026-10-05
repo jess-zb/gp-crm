@@ -8,6 +8,10 @@ import { useToast } from "@/app/components/Toast";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { AddressFields } from "@/components/AddressFields";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
+import {
+  belongsToDepartment,
+  departmentMembershipOr,
+} from "@/lib/team/department-members";
 import { enrollWelcomeLeadForNewClientAction } from "./enroll-actions";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { useMids } from "@/lib/hooks/use-mids";
@@ -18,6 +22,7 @@ type TeamOption = {
   id: string;
   full_name: string | null;
   email: string | null;
+  role?: string | null;
   is_accounts?: boolean | null;
 };
 
@@ -89,9 +94,9 @@ export default function NewClientPage() {
       }
       const { data, error: qErr } = await supabase
         .from("profiles")
-        .select("id, full_name, email, is_accounts")
+        .select("id, full_name, email, role, is_accounts")
         .eq("is_active", true)
-        .eq("is_accounts", true)
+        .or(departmentMembershipOr("is_accounts"))
         .order("full_name", { ascending: true });
 
       if (!cancelled) {
@@ -99,7 +104,7 @@ export default function NewClientPage() {
           const rows = (data as TeamOption[]).filter(
             (t) => !isHiddenFromRole(t.email, viewerRole)
           );
-          setTeam(rows.filter((t) => !!t.is_accounts));
+          setTeam(rows.filter((t) => belongsToDepartment(t, "is_accounts")));
         }
         setLoadingTeam(false);
       }

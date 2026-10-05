@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Shuffle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
+import { departmentMembershipOr } from "@/lib/team/department-members";
 import { ModalOverlay } from "@/app/components/ModalOverlay";
 
 export type AssignmentDepartment = "accounts" | "services";
@@ -36,7 +37,7 @@ export function AssignmentModal({
       setTeamMembers([]);
       return;
     }
-    const col = department === "accounts" ? "is_accounts" : "is_services";
+    const flag = department === "accounts" ? "is_accounts" : "is_services";
     const supabase = createClient();
     void (async () => {
       const { data: auth } = await supabase.auth.getUser();
@@ -47,8 +48,8 @@ export function AssignmentModal({
       const { data, error } = await supabase
         .from("profiles")
         .select("id, full_name, email, role")
-        .eq(col, true)
         .eq("is_active", true)
+        .or(departmentMembershipOr(flag))
         .order("full_name", { ascending: true });
       if (error) {
         console.error("[AssignmentModal] profiles:", error.message);

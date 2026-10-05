@@ -143,6 +143,7 @@ export default async function ReportsPage() {
     id: p.id as string,
     full_name: p.full_name as string | null,
     email: p.email as string | null,
+    role: (p.role as string | null) ?? null,
     is_accounts: !!(p.is_accounts as boolean | null),
     is_services: !!(p.is_services as boolean | null),
   }));

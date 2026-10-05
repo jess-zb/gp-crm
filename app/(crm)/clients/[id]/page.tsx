@@ -34,6 +34,7 @@ import { ClientBackButton } from "./ClientBackButton";
 import { ClientEsignSection } from "./ClientEsignSection";
 import { ClientMidSelect } from "./ClientMidSelect";
 import { canShowEsignActions } from "@/lib/esign/types";
+import { eitherDepartmentMembershipOr } from "@/lib/team/department-members";
 
 const MAIN_TABS_ALL = [
   { id: "overview", label: "Overview" },
@@ -461,10 +462,10 @@ export default async function ClientProfilePage({
       ? supabase
           .from("profiles")
           .select(
-            "id, full_name, email, is_accounts, is_services"
+            "id, full_name, email, role, is_accounts, is_services"
           )
           .eq("is_active", true)
-          .or("is_accounts.eq.true,is_services.eq.true")
+          .or(eitherDepartmentMembershipOr())
           .not(
             "email",
             "in",
@@ -477,6 +478,7 @@ export default async function ClientProfilePage({
                 id: string;
                 full_name: string | null;
                 email: string | null;
+                role: string | null;
                 is_accounts: boolean | null;
                 is_services: boolean | null;
               }[]
@@ -827,6 +829,7 @@ export default async function ClientProfilePage({
                   stageKey: String(c.stage ?? "lead"),
                 }}
                 currentUserId={user.id}
+                currentUserName={performerName}
                 isAdminOrDev={profile.role === "dev" || profile.role === "admin"}
               />
             ) : null}

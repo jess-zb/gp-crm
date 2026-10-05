@@ -114,12 +114,12 @@ The role is the second line under your name in the sidebar.
 
 ## Department
 
-A department is a checkbox an admin sets on **Team**. There are exactly two.
+A department is a checkbox an admin sets on **Team** for a User. There are exactly two.
 
 - **Account Managers** work the client while the file is in the Account Manager stage.
 - **Client Services** work the client after that, until the signed POA is on file and the file can move on.
 
-One person can be in both departments. If you are in both, and you are not an admin, your dashboard is the Account Manager dashboard.
+One person can be in both departments. Admins are already in both, so they show up on Account Manager and Client Services lists without those checkboxes. If you are in both, and you are not an admin, your dashboard is the Account Manager dashboard.
 
 ## What you should open
 
@@ -202,7 +202,7 @@ If every box says zero, you have no one in Account Manager assigned to you. That
 3. Fill in the primary first and last name. Nickname is optional. If there is a spouse, use the secondary name fields. The spouse stays on this same file.
 4. Enter email and a 10-digit mobile phone.
 5. Enter the street, city, state, and ZIP. Start typing the street and pick the matching address if one appears.
-6. Choose the **Account Manager**. The list is only people marked as Account Managers on Team. If the list is empty, stop and ask an admin.
+6. Choose the **Account Manager**. The list is people marked as Account Managers on Team, plus every admin. If the list is empty, stop and ask an admin.
 7. Choose the **MID**. This is required. The client keeps that MID. It decides which signature documents they are offered.
 8. Enter the **verbal password**. This is the word the client will use when they call, so you know it is them.
 9. Save. You land on the new client's page.
@@ -456,7 +456,7 @@ If automatic emails are paused, the notice is on Message Templates. It is not on
 ## People
 
 1. On the left, click **Edit** next to Account Manager. The Settings tab opens.
-2. **Accounts** is the Account Manager. **Services** is Client Services. **Assigned Attorney** is the attorney.
+2. **Accounts** is the Account Manager. **Client Services** is the Client Services assignee. **Assigned Attorney** is the attorney.
 3. Each menu is a short list with a search box. The row with the check is the current person.
 4. Save.
 
@@ -515,7 +515,7 @@ Do not delete a client to hide a mistake. Tell an admin.
     category: "Admins",
     title: "What admins see",
     sortOrder: 410,
-    body: `Admins do not get the Account Manager dashboard or the Client Services dashboard, even if those department boxes are checked. You get the leadership page.
+    body: `Admins do not get the Account Manager dashboard or the Client Services dashboard, even if those department boxes are checked. You get the leadership page. Admins still show up on both the Account Manager list and the Client Services list, so a file in either department can be assigned to an admin.
 
 ![The leadership dashboard](/kb/dashboard.png)
 
@@ -541,10 +541,10 @@ On a client's Documents tab, **Show E-Sign** and **Hide** turn that card on or o
 1. Open **Team**.
 2. Click **Invite Team Member** and use their work email. They set their own password from the invite. Do not share your password.
 3. Set the role. Use Admin only for someone who should see reports, refunds, and the attorney queue. Use User for Account Managers and Client Services.
-4. Check **Account Managers**, **Client Services**, or both. This is the department. The role by itself does not assign clients to them.
+4. For a User, check **Account Managers**, **Client Services**, or both. That is their department. Admins are already in both lists.
 5. Save.
 
-The assignee lists on a new client only include people with the matching department checked. An empty Account Manager list means nobody is checked, not that the form is broken.
+The assignee lists include people with the matching department checked, and every admin. An empty Account Manager list means nobody is checked and there is no admin, not that the form is broken.
 
 Attorneys are a role of their own. They do not use the staff sidebar. After you create an attorney, they sign in and land on Cases.
 `,

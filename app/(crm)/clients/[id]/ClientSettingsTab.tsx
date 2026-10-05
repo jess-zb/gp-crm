@@ -33,6 +33,14 @@ type AttorneyOption = StaffOption & {
   is_default_attorney?: boolean | null;
 };
 
+function staffLabel(person: {
+  id: string;
+  full_name?: string | null;
+  email?: string | null;
+}): string {
+  return person.full_name?.trim() || person.email?.trim() || person.id.slice(0, 8);
+}
+
 function ReadOnlySetting({
   label,
   value,
@@ -167,7 +175,7 @@ export function ClientSettingsTab({
               emptyLabel="Unassigned"
               options={accountsOptions.map((person) => ({
                 value: person.id,
-                label: person.full_name?.trim() || person.id.slice(0, 8),
+                label: staffLabel(person),
               }))}
             />
           ) : (
@@ -180,16 +188,16 @@ export function ClientSettingsTab({
           {canReassignClient ? (
             <SettingsMenuSelect
               name="assigned_services_id"
-              label="Services"
+              label="Client Services"
               defaultValue={client.assigned_services_id ?? ""}
               emptyLabel="Unassigned"
               options={servicesOptions.map((person) => ({
                 value: person.id,
-                label: person.full_name?.trim() || person.id.slice(0, 8),
+                label: staffLabel(person),
               }))}
             />
           ) : (
-            <ReadOnlySetting label="Services" value={servicesAssigneeName ?? "—"} />
+            <ReadOnlySetting label="Client Services" value={servicesAssigneeName ?? "—"} />
           )}
 
           {canViewAssignedAttorneyField ? (

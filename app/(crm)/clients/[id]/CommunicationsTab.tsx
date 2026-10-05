@@ -154,30 +154,12 @@ function defaultTimeStr() {
   return laNowHm24();
 }
 
-function bodyPreview(body: string | null, max = 150) {
-  const b = body?.trim() ?? "";
-  if (!b) return "—";
-  return b.length > max ? `${b.slice(0, max)}…` : b;
-}
-
-function NoteBody({ body }: { body: string }) {
-  const [expanded, setExpanded] = useState(body.length <= 500);
-
+function MessageBody({ body }: { body: string | null }) {
+  const text = body?.trim() ?? "";
   return (
-    <div>
-      <p className="text-sm text-gray-700 whitespace-pre-wrap break-words dark:text-slate-200">
-        {expanded ? body : `${body.slice(0, 500)}…`}
-      </p>
-      {body.length > 500 ? (
-        <button
-          type="button"
-          onClick={() => setExpanded((e) => !e)}
-          className="text-xs text-[#A87830] hover:underline mt-1 dark:text-[#7fbf6f]"
-        >
-          {expanded ? "Show less" : "Show more"}
-        </button>
-      ) : null}
-    </div>
+    <p className="mt-1 whitespace-pre-wrap break-words text-sm text-slate-800 dark:text-slate-200">
+      {text || "—"}
+    </p>
   );
 }
 
@@ -237,6 +219,7 @@ export function CommunicationsTab({
   activityLog,
   templateMergeContext,
   currentUserId,
+  currentUserName,
   isAdminOrDev,
 }: {
   clientId: string;
@@ -246,6 +229,7 @@ export function CommunicationsTab({
   activityLog: ClientActivityLogEntry[];
   templateMergeContext: TemplateMergeContext;
   currentUserId: string;
+  currentUserName: string;
   isAdminOrDev: boolean;
 }) {
   const router = useRouter();
@@ -257,6 +241,7 @@ export function CommunicationsTab({
   const [editingCommBody, setEditingCommBody] = useState("");
   const [editCommSaving, setEditCommSaving] = useState(false);
   const [deletingCommId, setDeletingCommId] = useState<string | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
 
   const [templates, setTemplates] = useState<CommTemplateOption[]>([]);
   const [emailTplId, setEmailTplId] = useState("");
@@ -441,21 +426,50 @@ export function CommunicationsTab({
     }
 
     setSaving(true);
-    const { error } = await supabase.from("communications").insert(insert);
+    const { data: saved, error } = await supabase
+      .from("communications")
+      .insert(insert)
+      .select(
+        "id, type, direction, subject, body, sent_at, duration_seconds, recorded_by, is_pinned"
+      )
+      .single();
     setSaving(false);
 
-    if (error) {
-      toast.error(toUserFacingError(error.message));
+    if (error || !saved) {
+      toast.error(toUserFacingError(error?.message ?? "Could not save."));
       return;
     }
 
+    const savedRow: CommunicationListRow = {
+      id: saved.id,
+      type: saved.type,
+      direction: saved.direction,
+      subject: saved.subject,
+      body: saved.body,
+      sent_at: saved.sent_at,
+      duration_seconds: saved.duration_seconds,
+      recorded_by: saved.recorded_by,
+      loggedByName: currentUserName,
+      is_pinned: saved.is_pinned ?? false,
+    };
+    setLocalRows((prev) => [savedRow, ...prev.filter((row) => row.id !== savedRow.id)]);
     toast.success("Saved");
     closeModal();
+    window.requestAnimationFrame(() => {
+      document.getElementById(`comm-${savedRow.id}`)?.scrollIntoView({ block: "center" });
+    });
     router.refresh();
-    // optimistic: server refresh will sync real data
   }
 
   const [localRows, setLocalRows] = useState<CommunicationListRow[]>(initialRows);
+
+  useEffect(() => {
+    setLocalRows((current) => {
+      const serverIds = new Set(initialRows.map((row) => row.id));
+      const pending = current.filter((row) => !serverIds.has(row.id));
+      return [...initialRows, ...pending];
+    });
+  }, [initialRows]);
 
   const rows = [...localRows].sort((a, b) => {
     if (a.is_pinned && !b.is_pinned) return -1;
@@ -464,6 +478,16 @@ export function CommunicationsTab({
     const tb = new Date(b.sent_at ?? 0).getTime();
     return tb - ta;
   });
+
+  useEffect(() => {
+    const raw = window.location.hash.replace(/^#/, "");
+    if (!raw.startsWith("comm-")) return;
+    setHighlightId(raw.slice("comm-".length));
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(raw)?.scrollIntoView({ block: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [initialRows]);
 
   async function handleTogglePin(commId: string) {
     const row = localRows.find((r) => r.id === commId);
@@ -552,7 +576,10 @@ export function CommunicationsTab({
           {rows.map((c) => (
             <li
               key={c.id}
-              className={`group rounded-lg border p-4 ${
+              id={`comm-${c.id}`}
+              className={`group scroll-mt-24 rounded-lg border p-4 ${
+                highlightId === c.id ? "ring-2 ring-[#A87830]" : ""
+              } ${
                 c.is_pinned
                   ? "border-amber-300 bg-amber-50/60 dark:border-amber-700/50 dark:bg-amber-950/20"
                   : "border-slate-200 bg-slate-50/80 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]/80"
@@ -623,13 +650,11 @@ export function CommunicationsTab({
                           </div>
                         </div>
                       ) : (
-                        <NoteBody body={c.body ?? ""} />
+                        <MessageBody body={c.body} />
                       )}
                     </div>
                   ) : (
-                    <p className="mt-1 text-sm text-slate-800 dark:text-slate-200">
-                      {bodyPreview(c.body)}
-                    </p>
+                    <MessageBody body={c.body} />
                   )}
                   <div className="mt-2 flex flex-wrap gap-3">
                     {c.type === "note" && (c.recorded_by === currentUserId || isAdminOrDev) && editingCommId !== c.id ? (

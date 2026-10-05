@@ -14,11 +14,13 @@ import {
 import { getStageConfig, PIPELINE_STAGE_ORDER } from "@/lib/constants/stages";
 import { REPORTS_VELOCITY_ORDER } from "@/lib/reports/constants";
 import type { StageVelocityRow } from "@/lib/reports/stage-velocity";
+import { belongsToDepartment } from "@/lib/team/department-members";
 
 export type ReportsTeamMember = {
   id: string;
   full_name: string | null;
   email: string | null;
+  role: string | null;
   is_accounts: boolean;
   is_services: boolean;
 };
@@ -44,16 +46,16 @@ function getSinceIso(range: DateRangeKey): string {
 
 function getDepartmentLabel(m: ReportsTeamMember): string {
   const parts: string[] = [];
-  if (m.is_accounts) parts.push("Account Manager");
-  if (m.is_services) parts.push("Client Services");
+  if (belongsToDepartment(m, "is_accounts")) parts.push("Account Manager");
+  if (belongsToDepartment(m, "is_services")) parts.push("Client Services");
   if (parts.length === 0) return "—";
   return parts.join(", ");
 }
 
 function matchesDept(m: ReportsTeamMember, dept: DeptFilterKey): boolean {
   if (dept === "all") return true;
-  if (dept === "accounts") return m.is_accounts;
-  return m.is_services;
+  if (dept === "accounts") return belongsToDepartment(m, "is_accounts");
+  return belongsToDepartment(m, "is_services");
 }
 
 export function ReportsClient({

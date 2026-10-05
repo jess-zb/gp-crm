@@ -20,11 +20,27 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-05 — Overview and Communications stay readable
+
+Communications shows the full message for a call, text, email, or note. There is no character cutoff and no Show more.
+
+Overview lists Appointments, then Notes. A note on Overview stays short. Clicking it opens Communications on that same message. Saving a communication or an overview note puts it on the list immediately. A refresh is not required to see it.
+
+Client Services and Account Manager menus include every admin, plus anyone checked for that department. The hidden dev account stays off those lists. The menu opens above the page so the names are not clipped.
+
+Rule: `.cursor/rules/client-profile-comms.mdc`.
+
 ### 2026-10-05 — Deleted client files are archived
 
 Removing a file from a client profile sets `documents.archived_at` and leaves the storage object in `client-documents`. The profile, attorney case, and client portal no longer show it. Activity records `document_deleted`. Collection letters, POA files, and signed e-sign files still cannot be removed. Authenticated users cannot hard-delete a document row or a storage object that still has a row.
 
 Code: `archiveClientDocument` in `app/(crm)/clients/[id]/actions.ts`. Migration: `0024_archive_client_documents.sql`.
+
+### 2026-10-05 — Admins are in both departments
+
+An admin appears on every Account Manager list and every Client Services list: new client, client Settings, the stage assignment prompt, Reports department filters, and the e-sign Account Manager names. The department checkboxes on Team are for Users. An admin does not need them checked. The leadership dashboard is unchanged.
+
+Code: `belongsToDepartment` in `lib/team/department-members.ts`.
 
 ### 2026-10-03 — Account Manager exit is a signed CC authorization
 

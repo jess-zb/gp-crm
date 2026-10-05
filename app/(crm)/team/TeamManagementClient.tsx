@@ -569,6 +569,12 @@ export function TeamManagementClient({
               </button>
             </div>
 
+            {editRole === "admin" && isAdminViewer ? (
+              <p className="border-t border-slate-100 pt-3 text-sm text-slate-600 dark:border-[#2E2E2E] dark:text-slate-400">
+                Admins are included in both Account Managers and Client Services.
+              </p>
+            ) : null}
+
             {editRole === "acct_manager" && isAdminViewer ? (
               <div className="border-t border-slate-100 pt-3 dark:border-[#2E2E2E]">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">

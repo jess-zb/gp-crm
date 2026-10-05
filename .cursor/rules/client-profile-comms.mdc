@@ -1,0 +1,23 @@
+---
+description: Client profile overview order, full communications, and assignee names
+globs: app/(crm)/clients/[id]/CommunicationsTab.tsx,app/(crm)/clients/[id]/ClientRightSidebar.tsx,app/(crm)/clients/[id]/ClientSettingsTab.tsx,app/(crm)/clients/[id]/SettingsMenuSelect.tsx,app/(crm)/clients/[id]/AssignmentModal.tsx,lib/team/department-members.ts
+alwaysApply: false
+---
+
+# Client profile overview and communications
+
+## Invariants — do not regress
+
+1. Communications bodies (calls, texts, emails, notes) show the full text.
+   No character cap and no Show more / Show less.
+2. Overview notes stay short. Clicking one opens Communications at
+   `#comm-{id}` and scrolls to that full message. Do not open a full-note
+   modal on Overview.
+3. Overview order is Appointments, then Notes.
+4. Saving a communication or an overview note adds that row to the list on
+   screen immediately. `router.refresh()` alone is not enough: the list is
+   local state copied from server props.
+5. Account Manager and Client Services menus include every admin and anyone
+   with that department checked. The hidden dev account stays off the lists.
+   Show the person's name, or their email when the name is blank. Render the
+   open menu outside overflow clipping so the names stay visible.
