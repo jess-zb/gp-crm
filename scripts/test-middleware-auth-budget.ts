@@ -29,6 +29,7 @@ assert.equal(isMiddlewarePublicPath("/sign/abc"), true);
 assert.equal(isMiddlewarePublicPath("/api/sign/complete"), true);
 assert.equal(isMiddlewarePublicPath("/attorney-batch/tok"), true);
 assert.equal(isMiddlewarePublicPath("/api/attorney-batch/x"), true);
+assert.equal(isMiddlewarePublicPath("/api/leads"), true);
 assert.equal(isMiddlewarePublicPath("/clients"), false);
 assert.equal(isMiddlewarePublicPath("/api/clients/documents/upload-init"), false);
 console.log("  ✓ public paths skip Auth; CRM routes do not");

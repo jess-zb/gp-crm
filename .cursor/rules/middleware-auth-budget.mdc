@@ -17,7 +17,9 @@ That 504s *every* matched path (`/clients`, `/dashboard`, uploads, etc.).
    Do **not** `redirect` to `/login` because Auth was slow. Pass through; pages
    re-check the session.
 3. **Public paths first** — `/sign`, `/api/sign`, `/attorney-batch`,
-   `/api/attorney-batch` must return before any Auth call.
+   `/api/attorney-batch`, and `/api/leads` must return before any Auth call.
+   `/api/leads` is the partner lead intake route. It authenticates with
+   `LEADS_API_KEY` inside the handler, not with a CRM session.
 4. **Attorney dual gate** — `app/(crm)/layout.tsx` redirects `role === "attorney"`
    to `/attorney/cases`. Middleware allowlist for document download is unchanged
    (see `attorney-portal-middleware.mdc`).

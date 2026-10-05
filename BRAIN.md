@@ -20,6 +20,20 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-05 — Partner lead intake stays private
+
+Do not put these instructions in the Knowledge Base, a public page, or an email. The API key is not written in this file.
+
+`POST https://goldenpathway.vercel.app/api/leads` accepts one client `.txt` file per request. Send `Authorization: Bearer` or `X-Api-Key`. The secret is `LEADS_API_KEY`, stored only in the Vercel project environment and in local `.env.local`. If it is unset, every request is refused.
+
+The body is the text file. Name it with `X-File-Name: CLIENT NAME.txt`, or upload it as multipart field `file`. Each file creates a new lead, even when the name or phone was sent before. Nothing is looked up or updated.
+
+Copied onto the lead: first name, last name, mobile phone, a second phone only when it is different, street, city, state, ZIP, and email. Names, street, and city are Title Case. State is two letters. Email is lowercase. The original file is saved on Documents as Enrolled Cards. Other lines in the file stay in that file. These leads do not start the welcome emails.
+
+A request without the key is rejected. The key is checked by its hash, and it is never read from the URL. A correct key can create at most 60 leads in a minute and 2,000 in a day. Past that, the route returns 429. If the limit cannot be checked, the route refuses the lead. A body that is not the text file is refused.
+
+Code: `app/api/leads/route.ts`, `lib/leads/`.
+
 ### 2026-10-05 — Client edits wait until you leave the field
 
 Editing a client does not save between keystrokes. **Save Changes** writes the form. Closing the edit dialog, hiding the tab, or leaving the page also writes whatever is still unsaved. A refresh while the dialog is open does not replace the text still being typed.

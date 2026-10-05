@@ -13,7 +13,8 @@ export function isMiddlewarePublicPath(pathname: string): boolean {
     matchesPath(pathname, "/attorney-batch") ||
     matchesPath(pathname, "/api/attorney-batch") ||
     matchesPath(pathname, "/sign") ||
-    matchesPath(pathname, "/api/sign")
+    matchesPath(pathname, "/api/sign") ||
+    matchesPath(pathname, "/api/leads")
   );
 }
 
