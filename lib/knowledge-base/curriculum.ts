@@ -331,7 +331,7 @@ The MID is not repeated in this column. It is the menu on the right of the tabs,
 
 ## The right side
 
-The tabs are Overview, Activity, Documents, Drips, and Settings. The MID menu sits on that same bar on a computer. On a phone, the tabs come first and the MID menu is on the next line, so the tabs are not covered.
+The tabs are Overview, Documents, Drips, and Settings. The MID menu sits on that same bar on a computer. On a phone, the tabs come first and the MID menu is on the next line, so the tabs are not covered.
 
 Use **Back to Clients** at the top when you are done. Do not use the browser back button if a box is still open. Close the box first.
 `,
@@ -349,17 +349,17 @@ If the next stage is blocked, a notice appears at the top of Overview. It is a l
 - A missing credit card authorization opens Documents for that signature.
 - A missing POA opens the upload form with POA already selected.
 
-The notice is only on Overview. If you are on Activity or Documents, you will not see it. Go back to Overview.
+The notice is only on Overview. If you are on Documents, you will not see it. Go back to Overview.
 
 ## Notes
 
-Notes are on Overview, under that notice. Write what happened on the call in plain sentences. Another person should be able to pick up the file without asking you.
+Notes are on Overview, under Appointments. The small icons log a call, text, email, or note. Those entries stack in this section, shortened until you click one, which opens the full message in place.
 
 Do not put a card number in a note. Do not put a password other than the verbal password the form already stores.
 
-## Activity
+## Activity log
 
-**Activity** is the history of emails and stage changes for people who are allowed to see it. Admins see the fuller activity log. If you do not see a log you expected, that is the permission, not a broken page.
+The activity log is under that list, still on Overview. It is the history of what happened on the file, such as stage changes. There is no separate Activity tab.
 `,
   },
   {
@@ -421,7 +421,7 @@ Admins add a MID and its PDFs from **E-Sign Documents** in the sidebar. Open tha
 
 1. Click **Appointments** in the sidebar.
 2. Click **Add Appointment** at the top right.
-3. Choose the client, the date and time, and a short description of why you are calling.
+3. Choose the client, the date and time, and a short description of why you are calling. Enter the date and time in the client's time zone, from their state and ZIP. The appointment then shows that time, Arizona time, and the time on your own computer.
 4. Save.
 
 **Sales** and **Service** filter the list. **All Types** narrows it further. The two buttons on the right switch between the list and the calendar. Mark an appointment complete when the call happened. Delete it only if it was created by mistake.
@@ -468,7 +468,7 @@ The attorney line does not mean the attorney was emailed just because a letter w
 
 ## MID
 
-The MID menu is on the tab bar, to the right of Overview, Activity, Documents, Drips, and Settings. On a phone it is under the tabs.
+The MID menu is on the tab bar, to the right of Overview, Documents, Drips, and Settings. On a phone it is under the tabs.
 
 1. Open the menu.
 2. Choose **MID ·** and the name.
@@ -542,7 +542,8 @@ On a client's Documents tab, **Show E-Sign** and **Hide** turn that card on or o
 2. Click **Invite Team Member** and use their work email. They set their own password from the invite. Do not share your password.
 3. Set the role. Use Admin only for someone who should see reports, refunds, and the attorney queue. Use User for Account Managers and Client Services.
 4. For a User, check **Account Managers**, **Client Services**, or both. That is their department. Admins are already in both lists.
-5. Save.
+5. Set **Direct line**. That number shows next to their name wherever they are the Account Manager or the Client Services person.
+6. Save.
 
 The assignee lists include people with the matching department checked, and every admin. An empty Account Manager list means nobody is checked and there is no admin, not that the form is broken.
 

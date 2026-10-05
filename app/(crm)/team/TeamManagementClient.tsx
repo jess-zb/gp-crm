@@ -10,6 +10,7 @@ import { toUserFacingError } from "@/lib/user-facing-error";
 import { STARRED_EMAILS, STARRED_MEDALS } from "@/lib/team/starred";
 import { getRoleDisplayName } from "@/lib/utils/roles";
 import type { DeptProfileField } from "./DeptCheckbox";
+import { normalizeDirectLine } from "@/lib/team/direct-line";
 
 export type TeamMemberRow = {
   id: string;
@@ -19,6 +20,7 @@ export type TeamMemberRow = {
   is_active: boolean | null;
   is_accounts: boolean;
   is_services: boolean;
+  direct_line: string | null;
 };
 
 const DEPARTMENTS: { key: DeptProfileField; label: string }[] = [
@@ -128,6 +130,7 @@ export function TeamManagementClient({
     is_accounts: false,
     is_services: false,
   });
+  const [editDirectLine, setEditDirectLine] = useState("");
 
   const isDevViewer = viewerProfileRole === "dev";
   const isAdminViewer =
@@ -167,6 +170,7 @@ export function TeamManagementClient({
       is_accounts: m.is_accounts,
       is_services: m.is_services,
     });
+    setEditDirectLine(m.direct_line ?? "");
   }
 
   function saveEdit() {
@@ -182,9 +186,11 @@ export function TeamManagementClient({
       return;
     }
     startTransition(async () => {
+      const directLine = normalizeDirectLine(editDirectLine);
       const patch: Record<string, unknown> = {
         role: editRole,
         is_active: editActive,
+        direct_line: directLine,
       };
       if (editRole === "acct_manager") {
         patch.is_accounts = editDepts.is_accounts;
@@ -303,6 +309,11 @@ export function TeamManagementClient({
                         <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                           {m.email ?? "—"}
                         </p>
+                        {m.direct_line?.trim() ? (
+                          <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                            {m.direct_line.trim()}
+                          </p>
+                        ) : null}
                       </div>
                     </div>
                   </td>
@@ -524,7 +535,10 @@ export function TeamManagementClient({
               Edit member
             </h2>
             <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-              {editRow.full_name ?? editRow.email}
+              {editRow.full_name?.trim() || "—"}
+            </p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {editRow.email ?? "—"}
             </p>
             <label className="mt-4 block text-sm">
               <span className="font-medium text-slate-700 dark:text-slate-300">
@@ -594,6 +608,23 @@ export function TeamManagementClient({
                 </div>
               </div>
             ) : null}
+
+            <label className="mt-3 block border-t border-slate-100 pt-3 text-sm dark:border-[#2E2E2E]">
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                Direct line
+              </span>
+              <input
+                type="tel"
+                value={editDirectLine}
+                onChange={(e) => setEditDirectLine(e.target.value)}
+                placeholder="(555) 010-1234"
+                autoComplete="off"
+                className="crm-input mt-1"
+              />
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                Shown next to their name when they are the Account Manager or Client Services person.
+              </p>
+            </label>
 
             <div className="mt-6 flex justify-end gap-2">
               <button

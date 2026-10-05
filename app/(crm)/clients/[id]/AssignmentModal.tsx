@@ -5,6 +5,7 @@ import { Loader2, Shuffle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
 import { departmentMembershipOr } from "@/lib/team/department-members";
+import { staffNameWithDirectLine } from "@/lib/team/direct-line";
 import { ModalOverlay } from "@/app/components/ModalOverlay";
 
 export type AssignmentDepartment = "accounts" | "services";
@@ -18,7 +19,13 @@ export type AssignmentModalProps = {
   onSkip: () => void;
 };
 
-type TeamMember = { id: string; full_name: string | null; email: string | null; role: string | null };
+type TeamMember = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  role: string | null;
+  direct_line: string | null;
+};
 
 export function AssignmentModal({
   open,
@@ -47,7 +54,7 @@ export function AssignmentModal({
       const viewerRole = (me?.role as string | null) ?? "";
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, full_name, email, role")
+        .select("id, full_name, email, role, direct_line")
         .eq("is_active", true)
         .or(departmentMembershipOr(flag))
         .order("full_name", { ascending: true });
@@ -91,7 +98,7 @@ export function AssignmentModal({
           <option value="">Select team member...</option>
           {teamMembers.map((m) => (
             <option key={m.id} value={m.id}>
-              {m.full_name?.trim() || m.email || m.id}
+              {staffNameWithDirectLine(m.full_name, m.direct_line, m.email || m.id)}
             </option>
           ))}
         </select>

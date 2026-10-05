@@ -1,5 +1,9 @@
+import { OFFICE_TZ } from "@/lib/time/office";
+import { partsInZone } from "@/lib/time/zoned";
+import { officeTodayYmd } from "@/lib/time/office-calendar";
+
 export function getTimeOfDay(): string {
-  const h = new Date().getHours();
+  const h = partsInZone(new Date(), OFFICE_TZ).hour;
   if (h < 12) return "morning";
   if (h < 17) return "afternoon";
   return "evening";
@@ -19,13 +23,9 @@ export function daysInStage(iso?: string | null): number | null {
 }
 
 export function countAppointmentsOn(rows: { due_date: string | null }[], day = new Date()): number {
+  const todayKey = officeTodayYmd(day);
   return rows.filter((row) => {
     if (!row.due_date) return false;
-    const value = new Date(row.due_date);
-    return (
-      value.getFullYear() === day.getFullYear() &&
-      value.getMonth() === day.getMonth() &&
-      value.getDate() === day.getDate()
-    );
+    return officeTodayYmd(new Date(row.due_date)) === todayKey;
   }).length;
 }

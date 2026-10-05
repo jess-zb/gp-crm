@@ -26,7 +26,7 @@ const PIPELINE_COUNT_STAGES = [
 ] as const;
 
 const PIPELINE_SELECT =
-  "id, first_name, last_name, phone_mobile, email, stage, created_at, stage_entered_at, is_active, dnc_reason, assigned_to, assigned_services_id, assigned_user:profiles!assigned_to(full_name), services_manager:profiles!assigned_services_id(full_name)";
+  "id, first_name, last_name, phone_mobile, email, stage, created_at, stage_entered_at, is_active, dnc_reason, assigned_to, assigned_services_id, assigned_user:profiles!assigned_to(full_name, direct_line), services_manager:profiles!assigned_services_id(full_name, direct_line)";
 
 function parseActiveStage(raw: string | undefined): PipelinePageStage {
   const s = (raw ?? "").trim();
@@ -117,26 +117,30 @@ export default async function PipelinePage({
 
   const clients: PipelinePageRow[] = (rows ?? []).map((r) => {
     const auRaw = r.assigned_user as
-      | { full_name: string | null }
-      | { full_name: string | null }[]
+      | { full_name: string | null; direct_line?: string | null }
+      | { full_name: string | null; direct_line?: string | null }[]
       | null
       | undefined;
-    const au: { full_name: string | null } | null = Array.isArray(auRaw)
+    const au: { full_name: string | null; direct_line: string | null } | null = Array.isArray(auRaw)
       ? auRaw[0]
-        ? { full_name: auRaw[0].full_name ?? null }
+        ? { full_name: auRaw[0].full_name ?? null, direct_line: auRaw[0].direct_line?.trim() || null }
         : null
-      : auRaw ?? null;
+      : auRaw
+        ? { full_name: auRaw.full_name ?? null, direct_line: auRaw.direct_line?.trim() || null }
+        : null;
 
     const smRaw = r.services_manager as
-      | { full_name: string | null }
-      | { full_name: string | null }[]
+      | { full_name: string | null; direct_line?: string | null }
+      | { full_name: string | null; direct_line?: string | null }[]
       | null
       | undefined;
-    const sm: { full_name: string | null } | null = Array.isArray(smRaw)
+    const sm: { full_name: string | null; direct_line: string | null } | null = Array.isArray(smRaw)
       ? smRaw[0]
-        ? { full_name: smRaw[0].full_name ?? null }
+        ? { full_name: smRaw[0].full_name ?? null, direct_line: smRaw[0].direct_line?.trim() || null }
         : null
-      : smRaw ?? null;
+      : smRaw
+        ? { full_name: smRaw.full_name ?? null, direct_line: smRaw.direct_line?.trim() || null }
+        : null;
 
     return {
       id: r.id as string,

@@ -6,6 +6,8 @@ import { inferPipelineFromClientStage, type PipelineKind } from "@/lib/reminders
 import { AppointmentsView, type AppointmentRow } from "./AppointmentsView";
 import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
+import { staffNameWithDirectLine } from "@/lib/team/direct-line";
+import { officeDayStartIso, officeTodayYmd } from "@/lib/time/office-calendar";
 
 const SERVICE_PIPELINE_STAGES = new Set([
   "client_services",
@@ -47,12 +49,12 @@ export default async function RemindersPage() {
 
   const deptProfile = await getCurrentProfile(supabase);
 
-  const todayStartUtc = `${new Date().toISOString().split("T")[0]}T00:00:00.000Z`;
+  const todayStartUtc = officeDayStartIso(officeTodayYmd()) ?? new Date().toISOString();
 
   const { data: rawReminders, error: remErr } = await supabase
     .from("reminders")
     .select(
-      "id, description, due_date, completed, appointment_type, pipeline_type, assigned_to, notes, client:client_id(id, first_name, last_name, stage, phone_mobile, assigned_to, assigned_services_id), assigned:assigned_to(full_name)"
+      "id, description, due_date, completed, appointment_type, pipeline_type, assigned_to, notes, client:client_id(id, first_name, last_name, stage, state, zip_code, phone_mobile, assigned_to, assigned_services_id), assigned:assigned_to(full_name, direct_line)"
     )
     .eq("completed", false)
     .eq("cancelled", false)
@@ -129,10 +131,16 @@ export default async function RemindersPage() {
       client_id: cid,
       clientName: cid ? clientName : "—",
       clientStage: clientStage,
-      assigneeName: (assignedObj?.full_name as string | null)?.trim() || "—",
+      assigneeName: staffNameWithDirectLine(
+        assignedObj?.full_name as string | null,
+        assignedObj?.direct_line as string | null,
+        "—"
+      ),
       assigned_to: (r.assigned_to as string | null) ?? null,
       appointment_type: (r.appointment_type as string | null) ?? null,
       pipeline_type,
+      clientState: (clientObj?.state as string | null) ?? null,
+      clientZip: (clientObj?.zip_code as string | null) ?? null,
       notes: (r.notes as string | null) ?? null,
     };
   });

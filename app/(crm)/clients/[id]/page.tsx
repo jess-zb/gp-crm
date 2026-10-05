@@ -20,7 +20,6 @@ import { ClientSettingsTab, type ClientSettingsTabClient } from "./ClientSetting
 import { refundPrefillFromCards } from "@/lib/refunds/prefill";
 import { ClientStageHeader, MissingPaperworkSlot } from "./ClientStageHeader";
 import { ClientViewLogger } from "./ClientViewLogger";
-import { CommunicationsTab } from "./CommunicationsTab";
 import { DocumentsTab, type DocumentListItem } from "./DocumentsTab";
 import { EmailActivityTabClient } from "./EmailActivityTabClient";
 import { canUseEsignStaffUi, isEsignFeatureEnabled } from "@/lib/esign/config";
@@ -41,7 +40,6 @@ const MAIN_TABS_ALL = [
   { id: "account", label: "Account" },
   { id: "billing", label: "Cards" },
   { id: "documents", label: "Documents" },
-  { id: "communications", label: "Activity" },
   { id: "campaigns", label: "Drips" },
   { id: "portal", label: "Portal Messages" },
   { id: "settings", label: "Settings" },
@@ -56,7 +54,6 @@ const MAIN_TABS = MAIN_TABS_ALL.filter((t) => t.id !== "portal");
 // roles; the underlying feature, data query, and client_cards table remain intact.
 const VISIBLE_TABS = [
   { id: "overview", label: "Overview" },
-  { id: "communications", label: "Activity" },
   { id: "documents", label: "Documents" },
   { id: "campaigns", label: "Drips" },
   { id: "settings", label: "Settings" },
@@ -173,9 +170,11 @@ export default async function ClientProfilePage({
   const tabNormalized =
     tabRaw === "email"
       ? "campaigns"
-      : tabRaw === "letters" || tabRaw === "packets"
-        ? "documents"
-        : tabRaw;
+        : tabRaw === "letters" || tabRaw === "packets"
+          ? "documents"
+          : tabRaw === "communications" || tabRaw === "activity"
+            ? "overview"
+            : tabRaw;
   const tab: MainTab = MAIN_TABS.some((t) => t.id === tabNormalized)
     ? (tabNormalized as MainTab)
     : "overview";
@@ -184,7 +183,7 @@ export default async function ClientProfilePage({
   const { data: client, error: clientErr } = await supabase
     .from("clients")
     .select(
-      `${CLIENT_SELECT}, mids(name), attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role, email), services_manager:profiles!assigned_services_id(full_name, role, email)`
+      `${CLIENT_SELECT}, mids(name), attorney:profiles!attorney_id(full_name, email), assigned_user:profiles!assigned_to(full_name, role, email, direct_line), services_manager:profiles!assigned_services_id(full_name, role, email, direct_line)`
     )
     .eq("id", clientId)
     .maybeSingle();
@@ -236,14 +235,14 @@ export default async function ClientProfilePage({
     c.assigned_to
       ? supabase
           .from("profiles")
-          .select("id, full_name, email, role")
+          .select("id, full_name, email, role, direct_line")
           .eq("id", String(c.assigned_to))
           .maybeSingle()
       : Promise.resolve({ data: null }),
     c.assigned_services_id
       ? supabase
           .from("profiles")
-          .select("id, full_name, email, role")
+          .select("id, full_name, email, role, direct_line")
           .eq("id", String(c.assigned_services_id))
           .maybeSingle()
       : Promise.resolve({ data: null }),
@@ -259,10 +258,20 @@ export default async function ClientProfilePage({
     (!!(viewerDeptFlags?.is_services) && !c.assigned_services_id);
 
   const visibleStaffName = (
-    row: { id: string; full_name: string | null; email?: string | null; role?: string | null } | null
+    row: {
+      id: string;
+      full_name: string | null;
+      email?: string | null;
+      role?: string | null;
+      direct_line?: string | null;
+    } | null
   ) => {
     if (!row || isHiddenProfile(row, profile.role)) return null;
-    return { id: row.id, full_name: row.full_name };
+    return {
+      id: row.id,
+      full_name: row.full_name,
+      direct_line: row.direct_line?.trim() || null,
+    };
   };
   const accountsUserForHeader = visibleStaffName(
     accountsProfileRow as {
@@ -270,6 +279,7 @@ export default async function ClientProfilePage({
       full_name: string | null;
       email?: string | null;
       role?: string | null;
+      direct_line?: string | null;
     } | null
   );
   const servicesUserForHeader = visibleStaffName(
@@ -278,6 +288,7 @@ export default async function ClientProfilePage({
       full_name: string | null;
       email?: string | null;
       role?: string | null;
+      direct_line?: string | null;
     } | null
   );
 
@@ -426,10 +437,6 @@ export default async function ClientProfilePage({
       is_pinned: (c.is_pinned as boolean | null) ?? false,
     }));
 
-  const hasRingCentralAutoLog = (communicationsRaw ?? []).some(
-    (row) => !!(row as { ringcentral_call_id?: string | null }).ringcentral_call_id
-  );
-
   const docs = (documents ?? []) as DocRow[];
   const hasPoaDocument = docs.some((d) =>
     isPoaDocumentType((d.document_type ?? "").trim())
@@ -462,7 +469,7 @@ export default async function ClientProfilePage({
       ? supabase
           .from("profiles")
           .select(
-            "id, full_name, email, role, is_accounts, is_services"
+            "id, full_name, email, role, is_accounts, is_services, direct_line"
           )
           .eq("is_active", true)
           .or(eitherDepartmentMembershipOr())
@@ -481,6 +488,7 @@ export default async function ClientProfilePage({
                 role: string | null;
                 is_accounts: boolean | null;
                 is_services: boolean | null;
+                direct_line: string | null;
               }[]
             | null,
         }),
@@ -502,7 +510,7 @@ export default async function ClientProfilePage({
         }),
     supabase
       .from("profiles")
-      .select("id, full_name, email, role")
+      .select("id, full_name, email, role, direct_line")
       .in("role", ["dev", "admin", "acct_manager", "manager"])
       .eq("is_active", true)
       .order("full_name", { ascending: true }),
@@ -520,7 +528,7 @@ export default async function ClientProfilePage({
       const { data: missingStaff } = await supabase
         .from("profiles")
         .select(
-          "id, full_name, email, role, is_accounts, is_services"
+          "id, full_name, email, role, is_accounts, is_services, direct_line"
         )
         .in("id", missingIds);
       if (missingStaff?.length) {
@@ -540,7 +548,12 @@ export default async function ClientProfilePage({
   const attorneyOptions = attys ?? [];
 
   const assignedUser = c.assigned_user as
-    | { full_name: string | null; role: string | null; email?: string | null }
+    | {
+        full_name: string | null;
+        role: string | null;
+        email?: string | null;
+        direct_line?: string | null;
+      }
     | null
     | undefined;
   const assigneeName = isHiddenProfile(
@@ -552,30 +565,24 @@ export default async function ClientProfilePage({
   const assigneeRole = (assignedUser?.role as string | null) ?? null;
 
   const servicesAssigneeName = servicesUserForHeader?.full_name?.trim() || null;
+  const assigneeDirectLine = accountsUserForHeader?.direct_line?.trim() || null;
+  const servicesAssigneeDirectLine =
+    servicesUserForHeader?.direct_line?.trim() || null;
 
   const displayName =
     `${String(c.first_name ?? "")} ${String(c.last_name ?? "")}`.trim() || "Client";
 
   const performerName = profile.full_name?.trim() || user.email || "Staff";
 
-  const _allSidebarNotes = (communicationsRaw ?? []).filter(
-    (row) => (row.type as string) === "note" && !isLegacySystemNote(row)
-  );
-  const _pinnedSidebarNotes = _allSidebarNotes.filter((row) => !!(row.is_pinned as boolean));
-  const _unpinnedSidebarNotes = _allSidebarNotes
-    .filter((row) => !(row.is_pinned as boolean))
-    .slice(0, 3);
-  const commNotesForSidebar: SidebarCommNoteRow[] = [
-    ..._pinnedSidebarNotes,
-    ..._unpinnedSidebarNotes,
-  ].map((row) => ({
-    id: row.id as string,
-    body: String(row.body ?? ""),
-    sent_at: row.sent_at as string | null,
-    author_name: row.recorded_by
-      ? nameById[row.recorded_by as string]?.trim() || "System"
-      : "System",
-    is_pinned: (row.is_pinned as boolean | null) ?? false,
+  const commNotesForSidebar: SidebarCommNoteRow[] = communicationRows.map((row) => ({
+    id: row.id,
+    type: row.type,
+    direction: row.direction,
+    subject: row.subject,
+    body: row.body ?? "",
+    sent_at: row.sent_at,
+    author_name: row.loggedByName?.trim() || "System",
+    is_pinned: row.is_pinned,
   }));
 
   const rawSf = (c.spouse_first_name as string | null) ?? null;
@@ -750,11 +757,13 @@ export default async function ClientProfilePage({
                   reminders={remindersForSidebar}
                   auditPerformedByName={performerName}
                   commNotes={commNotesForSidebar}
+                  activityLog={activityLogData}
                   currentUserId={user.id}
                   currentRole={profile.role}
                   staffOptions={sidebarStaffOptions.map((m) => ({
                     id: m.id as string,
                     full_name: m.full_name as string | null,
+                    direct_line: (m.direct_line as string | null)?.trim() || null,
                   }))}
                   accountInfo={{
                     created_at: (c.created_at as string | null) ?? null,
@@ -771,6 +780,8 @@ export default async function ClientProfilePage({
                           email: attorneyRow.email ?? null,
                         }
                       : null,
+                    state: (c.state as string | null) ?? null,
+                    zip_code: (c.zip_code as string | null) ?? null,
                   }}
                 />
               </div>
@@ -816,24 +827,6 @@ export default async function ClientProfilePage({
               />
             ) : null}
 
-            {view === "communications" ? (
-              <CommunicationsTab
-                clientId={clientId}
-                initialRows={communicationRows}
-                hasRingCentralAutoLog={hasRingCentralAutoLog}
-                activityLog={activityLogData}
-                templateMergeContext={{
-                  clientName: displayName,
-                  firstName: String(c.first_name ?? "").trim(),
-                  assignedUser: assigneeName?.trim() || "—",
-                  stageKey: String(c.stage ?? "lead"),
-                }}
-                currentUserId={user.id}
-                currentUserName={performerName}
-                isAdminOrDev={profile.role === "dev" || profile.role === "admin"}
-              />
-            ) : null}
-
             {view === "billing" ? (
               <BillingTabContent
                 clientId={clientId}
@@ -876,7 +869,9 @@ export default async function ClientProfilePage({
                 attorneyOptions={attorneyOptions}
                 assigneeName={assigneeName}
                 assigneeRole={assigneeRole}
+                assigneeDirectLine={assigneeDirectLine}
                 servicesAssigneeName={servicesAssigneeName}
+                servicesAssigneeDirectLine={servicesAssigneeDirectLine}
                       />
             ) : null}
           </ErrorBoundary>

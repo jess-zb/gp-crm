@@ -34,6 +34,24 @@ A request without the key is rejected. The key is checked by its hash, and it is
 
 Code: `app/api/leads/route.ts`, `lib/leads/`.
 
+### 2026-10-05 — Appointments are booked in the client's time
+
+Supersedes the same-day note that the appointment fields are the Arizona clock. The date and time you enter are the client's time, from their state and ZIP. Each appointment then shows three clocks: the client's time, Arizona time, and the time on the computer of the person looking at it. Arizona stays the office day for the dashboard. A client with no state is booked in Arizona until a state is added.
+
+The two appointments already on file were entered as the client's clock and had been stored on an Eastern computer clock. Gloria Jackson is 10:00 AM Pacific on October 6. Daniel Holter is 11:00 AM Pacific on October 7.
+
+### 2026-10-05 — Appointments use Arizona time and the client's clock
+
+Superseded the same day by the entry above. The fields are the client's time, not Arizona.
+
+### 2026-10-05 — Staff direct lines travel with the name
+
+Team → Edit member stores a direct line on the profile. That number shows with the person's name wherever they appear as the Account Manager or the Client Services assignee: the client profile, the clients list, the pipeline, settings, assignment menus, appointments, and reports. A blank line stays hidden.
+
+### 2026-10-05 — Communications live in Overview Notes
+
+The Activity tab is gone. Calls, texts, emails, and notes accumulate in Overview, under **Notes**, with the same title and small icon buttons. Each entry stays short until it is clicked, then the full message opens in that row. The activity log sits under that list. This supersedes the earlier line that sent a note click to a Communications tab.
+
 ### 2026-10-05 — Client edits wait until you leave the field
 
 Editing a client does not save between keystrokes. **Save Changes** writes the form. Closing the edit dialog, hiding the tab, or leaving the page also writes whatever is still unsaved. A refresh while the dialog is open does not replace the text still being typed.
@@ -59,6 +77,28 @@ Code: `archiveClientDocument` in `app/(crm)/clients/[id]/actions.ts`. Migration:
 An admin appears on every Account Manager list and every Client Services list: new client, client Settings, the stage assignment prompt, Reports department filters, and the e-sign Account Manager names. The department checkboxes on Team are for Users. An admin does not need them checked. The leadership dashboard is unchanged.
 
 Code: `belongsToDepartment` in `lib/team/department-members.ts`.
+
+### 2026-10-05 — Each partner text file is a new lead
+
+The partner export copies only first name, last name, mobile phone, a different second phone, street, city, state, ZIP, and email. Names, street, and city are stored with the same Title Case used on e-sign (`toTitleCaseName`). State is the two-letter abbreviation. Email is lowercase. The original `.txt` is stored on Documents as `upload` (Enrolled Cards). The document name is Title Case (`Gloria Weaver.txt`). A repeated name or phone creates another lead. The API does not look up or update an existing client. Card numbers, the verbal password, date of birth, and the rest of the sheet stay in that file.
+
+This supersedes the same-day note that a matching phone would attach the file to the existing client and that cards would be written onto the client.
+
+Code: `lib/leads/parse-partner-export.ts`, `lib/leads/save-partner-export.ts`.
+
+### 2026-10-05 — Partner leads can arrive as the downloaded text file
+
+Superseded the same day by the entry above. A matching phone no longer attaches to an existing client, and cards are no longer copied onto the client.
+
+The same `POST /api/leads` key accepts the partner's `.txt` export (`text/plain`, a multipart `file`, or JSON `{ "text" }`). The CRM fills the lead from that file: name, phones, address, email, date of birth, SSN, and verbal password. Each card is stored as bank name, last four, card type, and charge amount. The full card number and security code are not copied onto the card row. The original file is saved on Documents as type `other`. A matching phone attaches the file to the existing client. This import cancels the automatic welcome email so the file does not start a drip. The earlier JSON field body still works.
+
+Code: `lib/leads/parse-partner-export.ts`, `lib/leads/save-partner-export.ts`.
+
+### 2026-10-05 — Partners send leads through one API key
+
+An outside CRM can create a Lead without any other access. `POST /api/leads` takes first name, last name, phone, street, city, state, and ZIP. Email and a short source label are optional. The route checks `LEADS_API_KEY` (`Authorization: Bearer` or `X-Api-Key`) and is public in middleware so it does not wait on a staff session. A matching phone returns the existing client instead of a second file. The new row is stage `lead`, active, with no Account Manager and no MID. Staff assign those the same way as any other lead. A note on the client says it arrived through the partner API.
+
+Code: `app/api/leads/route.ts`, `lib/leads/parse-inbound-lead.ts`. Instructions for the partner: `docs/partner-lead-api.md`. The key itself is only in the host environment.
 
 ### 2026-10-03 — Account Manager exit is a signed CC authorization
 

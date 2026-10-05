@@ -1,8 +1,12 @@
-export const LA_TZ = "America/Los_Angeles";
+import { OFFICE_TZ } from "@/lib/time/office";
+
+/** Office clock. Arizona does not observe daylight saving. */
+export const LA_TZ = OFFICE_TZ;
+export { OFFICE_TZ };
 
 export function formatDate(date: string | Date, options?: Intl.DateTimeFormatOptions): string {
   return new Date(date).toLocaleDateString("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     ...options,
   });
 }
@@ -17,7 +21,7 @@ export function formatDateTimeOrDash(iso: string | null | undefined): string {
 
 export function formatDateTime(date: string | Date): string {
   return new Date(date).toLocaleString("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -27,13 +31,13 @@ export function formatDateTime(date: string | Date): string {
   });
 }
 
-/** e.g. `04/30/26 3:24 PM` in America/Los_Angeles (compact for sidebars). */
+/** e.g. `04/30/26 3:24 PM` in Arizona (compact for sidebars). */
 export function formatShortDateTime(date: string | Date): string {
   const d = new Date(date);
   if (Number.isNaN(d.getTime())) return "—";
   return d
     .toLocaleString("en-US", {
-      timeZone: LA_TZ,
+      timeZone: OFFICE_TZ,
       month: "2-digit",
       day: "2-digit",
       year: "2-digit",
@@ -47,7 +51,7 @@ export function formatShortDateTime(date: string | Date): string {
 /** Long label with weekday and short zone. */
 export function formatDateTimeLong(date: string | Date): string {
   return new Date(date).toLocaleString("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     weekday: "long",
     month: "short",
     day: "numeric",
@@ -60,18 +64,18 @@ export function formatDateTimeLong(date: string | Date): string {
 
 export function formatTime(date: string | Date): string {
   return new Date(date).toLocaleTimeString("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     hour: "numeric",
     minute: "2-digit",
     hour12: true,
   });
 }
 
-/** e.g. "Jan 5 at 3:00 PM" (LA) — for activity log style. */
+/** e.g. "Jan 5 at 3:00 PM" (Arizona) — for activity log style. */
 export function formatDateTimeAtWord(date: string | Date): string {
   const d = new Date(date);
   const datePart = d.toLocaleDateString("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -79,10 +83,10 @@ export function formatDateTimeAtWord(date: string | Date): string {
   return `${datePart} at ${formatTime(d)}`;
 }
 
-/** e.g. "Jan 5, 3:00 PM" without year (LA). */
+/** e.g. "Jan 5, 3:00 PM" without year (Arizona). */
 export function formatShortMonthDayTime(date: string | Date): string {
   return new Date(date).toLocaleString("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -107,20 +111,20 @@ export function formatTimeAgo(date: string | Date): string {
   return formatDate(date);
 }
 
-/** YYYY-MM-DD in LA (for grouping / comparisons). */
+/** YYYY-MM-DD in Arizona (for grouping / comparisons). */
 export function laCalendarDayKey(date: string | Date): string {
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).format(new Date(date));
 }
 
-/** Current time in LA as `HH:mm` (24h), for datetime-local style defaults. */
+/** Current time in Arizona as `HH:mm` (24h), for datetime-local style defaults. */
 export function laNowHm24(): string {
   const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: LA_TZ,
+    timeZone: OFFICE_TZ,
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,

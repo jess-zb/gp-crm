@@ -222,13 +222,15 @@ export default async function ClientsPage({
     );
 
     const nameByAssignee: Record<string, string> = {};
+    const lineByAssignee: Record<string, string | null> = {};
     if (assigneeIds.length > 0) {
       const { data: profs } = await supabase
         .from("profiles")
-        .select("id, full_name")
+        .select("id, full_name, direct_line")
         .in("id", assigneeIds);
       for (const p of profs ?? []) {
         nameByAssignee[p.id] = p.full_name?.trim() || "—";
+        lineByAssignee[p.id] = p.direct_line?.trim() || null;
       }
     }
 
@@ -249,9 +251,15 @@ export default async function ClientsPage({
       created_at: (c.created_at as string | null) ?? null,
       assigned_to: (c.assigned_to as string | null) ?? null,
       assignee_name: c.assigned_to ? nameByAssignee[c.assigned_to as string] ?? null : null,
+      assignee_direct_line: c.assigned_to
+        ? lineByAssignee[c.assigned_to as string] ?? null
+        : null,
       assigned_services_id: (c.assigned_services_id as string | null) ?? null,
       services_user_name: c.assigned_services_id
         ? nameByAssignee[c.assigned_services_id as string] ?? null
+        : null,
+      services_direct_line: c.assigned_services_id
+        ? lineByAssignee[c.assigned_services_id as string] ?? null
         : null,
       dnc_reason: (c.dnc_reason as string | null) ?? null,
       spouse_first_name: (c.spouse_first_name as string | null) ?? null,

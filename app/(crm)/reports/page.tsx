@@ -57,7 +57,7 @@ export default async function ReportsPage() {
     supabase
       .from("profiles")
       .select(
-        "id, full_name, email, role, is_accounts, is_services"
+        "id, full_name, email, role, is_accounts, is_services, direct_line"
       )
       .in("role", ["dev", "admin", "acct_manager"])
       .order("full_name", { ascending: true }),
@@ -146,6 +146,7 @@ export default async function ReportsPage() {
     role: (p.role as string | null) ?? null,
     is_accounts: !!(p.is_accounts as boolean | null),
     is_services: !!(p.is_services as boolean | null),
+    direct_line: (p.direct_line as string | null)?.trim() || null,
   }));
 
   const stageAdvanceEvents = (stageAdvancesRes.data ?? []).map((row) => ({

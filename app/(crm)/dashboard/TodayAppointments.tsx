@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getAppointmentPillClass } from "@/lib/constants/appointment-types";
-import { formatTime } from "@/lib/utils/date";
+import { AppointmentWhen } from "@/app/components/AppointmentClock";
 import type { TodayAppointmentRow } from "./dashboard-types";
 
 function dotClass(appointmentType: string | null) {
@@ -61,8 +61,13 @@ export function TodayAppointments({
                   </p>
                 </div>
               </div>
-              <span className="shrink-0 text-xs font-medium tabular-nums text-slate-600 dark:text-slate-300">
-                {a.due_date ? formatTime(a.due_date) : "—"}
+              <span className="shrink-0 text-right text-xs font-medium tabular-nums text-slate-600 dark:text-slate-300">
+                <AppointmentWhen
+                  iso={a.due_date}
+                  state={a.client?.state}
+                  zip={a.client?.zip_code}
+                  withDate={false}
+                />
               </span>
             </div>
           ))}

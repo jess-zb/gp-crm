@@ -8,6 +8,7 @@ import { ClientFormattedDate } from "@/app/components/ClientFormattedDate";
 import { type PipelinePageStage } from "@/lib/crm/pipeline-stage-counts";
 import { searchFilter } from "@/lib/clients/client-search";
 import { getStageConfig } from "@/lib/constants/stages";
+import { AssigneeIdentity } from "@/app/components/AssigneeIdentity";
 
 const SALES_TABS: { id: PipelinePageStage; label: string }[] = [
   { id: "lead", label: "New Leads" },
@@ -30,8 +31,8 @@ export type PipelinePageRow = {
   stage: string;
   created_at: string | null;
   stage_entered_at: string | null;
-  assigned_user: { full_name: string | null } | null;
-  services_manager: { full_name: string | null } | null;
+  assigned_user: { full_name: string | null; direct_line?: string | null } | null;
+  services_manager: { full_name: string | null; direct_line?: string | null } | null;
 };
 
 const COLUMN_STORAGE_KEY = "gp-pipeline-visible-columns";
@@ -88,18 +89,6 @@ function displayPhone(mobile: string | null): string {
   return v || "—";
 }
 
-function embedName(
-  raw:
-    | { full_name: string | null }
-    | { full_name: string | null }[]
-    | null
-    | undefined
-): string {
-  if (!raw) return "—";
-  const u = Array.isArray(raw) ? raw[0] : raw;
-  return u?.full_name?.trim() || "—";
-}
-
 type Props = {
   rows: PipelinePageRow[];
   stageCounts: Record<string, number>;
@@ -149,18 +138,24 @@ const PipelineRow = memo(({
             return (
               <td
                 key={colId}
-                className="crm-table-td hidden max-w-[160px] truncate md:table-cell"
+                className="crm-table-td hidden max-w-[180px] md:table-cell"
               >
-                {embedName(c.assigned_user)}
+                <AssigneeIdentity
+                  name={c.assigned_user?.full_name}
+                  directLine={c.assigned_user?.direct_line}
+                />
               </td>
             );
           case "services":
             return (
               <td
                 key={colId}
-                className="crm-table-td hidden max-w-[160px] truncate lg:table-cell"
+                className="crm-table-td hidden max-w-[180px] lg:table-cell"
               >
-                {embedName(c.services_manager)}
+                <AssigneeIdentity
+                  name={c.services_manager?.full_name}
+                  directLine={c.services_manager?.direct_line}
+                />
               </td>
             );
           case "created_at":

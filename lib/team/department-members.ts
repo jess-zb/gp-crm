@@ -8,6 +8,7 @@ export type DepartmentMemberOption = {
   role?: string | null;
   is_accounts?: boolean | null;
   is_services?: boolean | null;
+  direct_line?: string | null;
 };
 
 /**

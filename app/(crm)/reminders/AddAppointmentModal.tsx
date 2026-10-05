@@ -13,6 +13,11 @@ import {
 import { normalizePipelineStage } from "@/lib/clients/pipeline-status";
 import { buildSearchQuery } from "@/lib/clients/client-search";
 import { createAppointmentFromModal } from "./actions";
+import {
+  AppointmentClockPreview,
+  appointmentInstantFromClientTime,
+  bookingTimeZone,
+} from "@/app/components/AppointmentClock";
 
 export type TeamMemberOption = { id: string; full_name: string | null };
 
@@ -26,6 +31,8 @@ type SearchClient = {
   spouse_first_name: string | null;
   spouse_last_name: string | null;
   assigned_to: string | null;
+  state: string | null;
+  zip_code: string | null;
 };
 
 export function AddAppointmentModal({
@@ -114,7 +121,7 @@ export function AddAppointmentModal({
     const { data, error } = await supabase
       .from("clients")
       .select(
-        "id, first_name, last_name, phone_mobile, stage, email, spouse_first_name, spouse_last_name, assigned_to"
+        "id, first_name, last_name, phone_mobile, stage, email, spouse_first_name, spouse_last_name, assigned_to, state, zip_code"
       )
       .or(orFrag)
       .limit(8);
@@ -161,8 +168,13 @@ export function AddAppointmentModal({
 
     const label = selectedTypeDef?.label ?? appointmentType;
     const pipeline = selectedTypeDef?.pipeline ?? "sales";
-    const local = new Date(`${dueDate.trim()}T${(dueTime || "09:00").trim()}:00`);
-    if (Number.isNaN(local.getTime())) {
+    const local = appointmentInstantFromClientTime(
+      dueDate.trim(),
+      (dueTime || "09:00").trim(),
+      selectedClient?.state,
+      selectedClient?.zip_code
+    );
+    if (!local) {
       toast.error("Invalid date or time.");
       return;
     }
@@ -310,7 +322,8 @@ export function AddAppointmentModal({
           <div className="mb-4 grid grid-cols-2 gap-3">
             <label className="block text-sm">
               <span className="font-medium text-slate-700 dark:text-slate-300">
-                Date <span className="text-red-500">*</span>
+                Date ({bookingTimeZone(selectedClient?.state, selectedClient?.zip_code).label}){" "}
+                <span className="text-red-500">*</span>
               </span>
               <input
                 type="date"
@@ -329,7 +342,9 @@ export function AddAppointmentModal({
               )}
             </label>
             <label className="block text-sm">
-              <span className="font-medium text-slate-700 dark:text-slate-300">Time</span>
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                Time ({bookingTimeZone(selectedClient?.state, selectedClient?.zip_code).label})
+              </span>
               <input
                 type="time"
                 value={dueTime}
@@ -337,6 +352,14 @@ export function AddAppointmentModal({
                 className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
+          </div>
+          <div className="mb-4">
+            <AppointmentClockPreview
+              date={dueDate}
+              time={dueTime || "09:00"}
+              state={selectedClient?.state}
+              zip={selectedClient?.zip_code}
+            />
           </div>
 
           <label className="mb-4 block text-sm">

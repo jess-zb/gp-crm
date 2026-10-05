@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Calendar, ChevronRight } from "lucide-react";
-import { formatTime } from "@/lib/utils/date";
+import { AppointmentWhen } from "@/app/components/AppointmentClock";
+import { formatOfficeYmd, officeTodayYmd, officeWeekBounds } from "@/lib/time/office-calendar";
 import { getTimeOfDay } from "./dashboard-ui";
 import type { TodayAppointmentRow } from "./dashboard-types";
 
@@ -30,27 +31,10 @@ const TONE: Record<DashboardTableRow["tone"], string> = {
   red: "bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-200",
 };
 
-function startOfWeek(from: Date) {
-  const day = new Date(from);
-  day.setHours(0, 0, 0, 0);
-  const weekday = day.getDay();
-  const mondayOffset = weekday === 0 ? -6 : 1 - weekday;
-  day.setDate(day.getDate() + mondayOffset);
-  return day;
-}
-
-function sameCalendarDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-}
-
-function sameDay(iso: string, day: Date) {
+function sameDay(iso: string, ymd: string) {
   const value = new Date(iso);
   if (Number.isNaN(value.getTime())) return false;
-  return sameCalendarDay(value, day);
+  return officeTodayYmd(value) === ymd;
 }
 
 function clientLabel(row: TodayAppointmentRow) {
@@ -83,19 +67,8 @@ export function RoleDashboard({
   sideItems: DashboardSideItem[];
   emptySide: string;
 }) {
-  const today = useMemo(() => {
-    const day = new Date();
-    day.setHours(0, 0, 0, 0);
-    return day;
-  }, []);
-  const week = useMemo(() => {
-    const start = startOfWeek(today);
-    return Array.from({ length: 7 }, (_, index) => {
-      const day = new Date(start);
-      day.setDate(start.getDate() + index);
-      return day;
-    });
-  }, [today]);
+  const today = useMemo(() => officeTodayYmd(), []);
+  const week = useMemo(() => officeWeekBounds()?.days ?? [today], [today]);
   const [selected, setSelected] = useState(today);
   const name = firstName?.trim() || "there";
   const selectedAppointments = appointments.filter(
@@ -106,7 +79,7 @@ export function RoleDashboard({
     <div className="space-y-4">
       <div>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          {today.toLocaleDateString("en-US", {
+          {formatOfficeYmd(today, {
             weekday: "long",
             month: "long",
             day: "numeric",
@@ -175,14 +148,14 @@ export function RoleDashboard({
           </div>
           <div className="grid grid-cols-7 gap-1 px-3 py-3">
             {week.map((day) => {
-              const active = sameCalendarDay(day, selected);
+              const active = day === selected;
               const hasItems = appointments.some((row) => row.due_date && sameDay(row.due_date, day));
               return (
                 <button
-                  key={`${day.getFullYear()}-${day.getMonth()}-${day.getDate()}`}
+                  key={day}
                   type="button"
                   aria-pressed={active}
-                  aria-label={day.toLocaleDateString("en-US", {
+                  aria-label={formatOfficeYmd(day, {
                     weekday: "long",
                     month: "long",
                     day: "numeric",
@@ -195,9 +168,11 @@ export function RoleDashboard({
                   }`}
                 >
                   <span className="block text-[10px] font-semibold uppercase">
-                    {day.toLocaleDateString("en-US", { weekday: "short" }).slice(0, 2)}
+                    {formatOfficeYmd(day, { weekday: "short" }).slice(0, 2)}
                   </span>
-                  <span className="block text-sm font-semibold tabular-nums">{day.getDate()}</span>
+                  <span className="block text-sm font-semibold tabular-nums">
+                    {Number(day.slice(8))}
+                  </span>
                   <span
                     className={`mx-auto mt-1 block h-1 w-1 rounded-full ${
                       hasItems ? (active ? "bg-[#161616]" : "bg-[#A87830]") : "bg-transparent"
@@ -209,7 +184,7 @@ export function RoleDashboard({
           </div>
           {selectedAppointments.length === 0 ? (
             <p className="px-4 pb-4 text-sm text-slate-500 dark:text-slate-400">
-              Nothing scheduled for {selected.toLocaleDateString("en-US", { weekday: "long" })}.
+              Nothing scheduled for {formatOfficeYmd(selected, { weekday: "long" })}.
             </p>
           ) : (
             <ul className="divide-y divide-slate-100 border-t border-slate-100 dark:divide-[#2E2E2E] dark:border-[#2E2E2E]">
@@ -227,8 +202,13 @@ export function RoleDashboard({
                         {row.description?.trim() || row.appointment_type || "Appointment"}
                       </span>
                     </span>
-                    <span className="shrink-0 text-xs tabular-nums text-slate-500">
-                      {row.due_date ? formatTime(row.due_date) : "—"}
+                    <span className="shrink-0 text-right text-xs tabular-nums text-slate-500">
+                      <AppointmentWhen
+                        iso={row.due_date}
+                        state={row.client?.state}
+                        zip={row.client?.zip_code}
+                        withDate={false}
+                      />
                     </span>
                   </Link>
                 </li>

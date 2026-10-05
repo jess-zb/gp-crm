@@ -23,6 +23,7 @@ export type ReportsTeamMember = {
   role: string | null;
   is_accounts: boolean;
   is_services: boolean;
+  direct_line: string | null;
 };
 
 export type StageAdvanceEvent = {
@@ -133,6 +134,7 @@ export function ReportsClient({
         id: m.id,
         full_name:
           m.full_name?.trim() || m.email?.trim() || "—",
+        direct_line: m.direct_line?.trim() || null,
         department: getDepartmentLabel(m),
         advances: advancesByUser.get(m.id) ?? 0,
         appointments_completed: appointmentsByUser.get(m.id) ?? 0,
@@ -178,6 +180,7 @@ export function ReportsClient({
     if (!canExportCsv) return;
     const rows = teamPerformance.map((m) => [
       m.full_name,
+      m.direct_line ?? "",
       m.department,
       m.advances,
       m.appointments_completed,
@@ -186,6 +189,7 @@ export function ReportsClient({
     const csv = [
       [
         "Name",
+        "Direct line",
         "Department",
         "Stage Advances",
         "Appointments",
@@ -403,7 +407,12 @@ export function ReportsClient({
                     className="bg-white dark:bg-[#1C1C1C]/40"
                   >
                     <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
-                      {row.full_name}
+                      <span className="block">{row.full_name}</span>
+                      {row.direct_line ? (
+                        <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
+                          {row.direct_line}
+                        </span>
+                      ) : null}
                     </td>
                     <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
                       {row.department}

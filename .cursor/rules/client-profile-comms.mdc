@@ -1,6 +1,6 @@
 ---
-description: Client profile overview order, full communications, and assignee names
-globs: app/(crm)/clients/[id]/CommunicationsTab.tsx,app/(crm)/clients/[id]/ClientRightSidebar.tsx,app/(crm)/clients/[id]/ClientSettingsTab.tsx,app/(crm)/clients/[id]/SettingsMenuSelect.tsx,app/(crm)/clients/[id]/AssignmentModal.tsx,lib/team/department-members.ts
+description: Client profile overview notes, activity log, and assignee names
+globs: app/(crm)/clients/[id]/page.tsx,app/(crm)/clients/[id]/ClientRightSidebar.tsx,app/(crm)/clients/[id]/ClientSettingsTab.tsx,app/(crm)/clients/[id]/SettingsMenuSelect.tsx,app/(crm)/clients/[id]/AssignmentModal.tsx,lib/team/department-members.ts
 alwaysApply: false
 ---
 
@@ -8,19 +8,21 @@ alwaysApply: false
 
 ## Invariants — do not regress
 
-1. Communications bodies (calls, texts, emails, notes) show the full text.
-   No character cap and no Show more / Show less.
-2. Overview notes stay short. Clicking one opens Communications at
-   `#comm-{id}` and scrolls to that full message. Do not open a full-note
-   modal on Overview.
-3. Overview order is Appointments, then Notes.
-4. Saving a communication or an overview note adds that row to the list on
-   screen immediately. `router.refresh()` alone is not enough: the list is
-   local state copied from server props.
-5. Account Manager and Client Services menus include every admin and anyone
+1. Calls, texts, emails, and notes live in the Overview **Notes** section.
+   Each row stays short until it is clicked, then the full message shows in
+   that row. There is no Activity tab and no Show more control.
+2. Overview order is Appointments, then Notes. Notes keeps its title and the
+   small icon buttons. The activity log sits under that list.
+3. Saving a communication adds that row to the Notes list immediately.
+   `router.refresh()` alone is not enough: the list is local state copied
+   from server props.
+4. Account Manager and Client Services menus include every admin and anyone
    with that department checked. The hidden dev account stays off the lists.
    Show the person's name, or their email when the name is blank. Render the
    open menu outside overflow clipping so the names stay visible.
-6. Editing a client does not save on a timer while someone is typing.
+5. Editing a client does not save on a timer while someone is typing.
    Save on **Save Changes**, when the edit dialog closes, or when they leave
    the page. Do not remount the form on each server refresh while it is open.
+6. A staff direct line is edited on Team. Show it with that person's name
+   wherever they are the Account Manager or the Client Services assignee.
+   Hide the line when it is blank. Do not put it on a signed document.

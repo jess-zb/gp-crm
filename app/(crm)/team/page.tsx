@@ -32,7 +32,7 @@ export default async function TeamPage() {
   const { data: profiles, error: profErr } = await supabase
     .from("profiles")
     .select(
-      "id, email, full_name, role, is_active, is_accounts, is_services"
+      "id, email, full_name, role, is_active, is_accounts, is_services, direct_line"
     )
     .in("role", [...roleFilter])
     .order("full_name", { ascending: true, nullsFirst: false });
@@ -57,7 +57,7 @@ export default async function TeamPage() {
     const { data: extra } = await supabase
       .from("profiles")
       .select(
-        "id, email, full_name, role, is_active, is_accounts, is_services"
+        "id, email, full_name, role, is_active, is_accounts, is_services, direct_line"
       )
       .in("email", missingStarred)
       .eq("is_active", true);
@@ -94,6 +94,7 @@ export default async function TeamPage() {
     is_active: boolean | null;
     is_accounts: boolean | null;
     is_services: boolean | null;
+    direct_line: string | null;
   }[];
 
   const visibleProfiles = sortedProfiles.filter(
@@ -108,6 +109,7 @@ export default async function TeamPage() {
     is_active: p.is_active as boolean | null,
     is_accounts: !!p.is_accounts,
     is_services: !!p.is_services,
+    direct_line: (p.direct_line as string | null)?.trim() || null,
   }));
 
   return (

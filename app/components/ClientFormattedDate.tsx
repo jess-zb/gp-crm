@@ -11,7 +11,7 @@ import {
 
 type Props = {
   iso: string | null | undefined;
-  /** Legacy date-fns-style tokens; mapped to LA timezone formatting. */
+  /** Legacy date-fns-style tokens; mapped to the Arizona office clock. */
   pattern?: string;
   fallback?: string;
   className?: string;

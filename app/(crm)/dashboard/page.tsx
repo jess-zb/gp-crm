@@ -13,6 +13,7 @@ import type {
   TeamActivityRow,
   TodayAppointmentRow,
 } from "./dashboard-types";
+import { officeDayStartIso, officeTodayYmd, officeWeekBounds } from "@/lib/time/office-calendar";
 
 function normalizeClientJoin<T extends { client?: unknown }>(
   rows: T[]
@@ -77,17 +78,10 @@ export default async function DashboardPage() {
   const isServices =
     !isAdmin && !!profile.is_services && !profile.is_accounts;
 
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const todayStartISO = todayStart.toISOString();
-  const weekStart = new Date(todayStart);
-  const weekday = weekStart.getDay();
-  weekStart.setDate(weekStart.getDate() + (weekday === 0 ? -6 : 1 - weekday));
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-  weekEnd.setHours(23, 59, 59, 999);
-  const weekStartISO = weekStart.toISOString();
-  const weekEndISO = weekEnd.toISOString();
+  const todayStartISO = officeDayStartIso(officeTodayYmd()) ?? new Date().toISOString();
+  const officeWeek = officeWeekBounds();
+  const weekStartISO = officeWeek?.startIso ?? todayStartISO;
+  const weekEndISO = officeWeek?.endIso ?? todayStartISO;
   const twentyOneDaysAgo = new Date(
     Date.now() - 21 * 24 * 60 * 60 * 1000
   ).toISOString();
@@ -118,7 +112,7 @@ export default async function DashboardPage() {
           action, new_value, created_at,
           performed_by,
           performed_by_name,
-          client:client_id(id, first_name, last_name)
+          client:client_id(id, first_name, last_name, state, zip_code)
         `
         )
         .eq("action", "stage_advanced")
@@ -131,7 +125,7 @@ export default async function DashboardPage() {
           `
           id, description, due_date,
           appointment_type,
-          client:client_id(id, first_name, last_name)
+          client:client_id(id, first_name, last_name, state, zip_code)
         `
         )
         .eq("completed", false)
@@ -212,7 +206,7 @@ export default async function DashboardPage() {
             `
             id, description, due_date,
             appointment_type,
-            client:client_id(id, first_name, last_name)
+            client:client_id(id, first_name, last_name, state, zip_code)
           `
           )
           .eq("assigned_to", profile.id)
@@ -254,7 +248,7 @@ export default async function DashboardPage() {
             `
             id, description, due_date,
             appointment_type,
-            client:client_id(id, first_name, last_name)
+            client:client_id(id, first_name, last_name, state, zip_code)
           `
           )
           .eq("assigned_to", profile.id)

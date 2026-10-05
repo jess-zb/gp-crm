@@ -12,6 +12,7 @@ import {
   belongsToDepartment,
   departmentMembershipOr,
 } from "@/lib/team/department-members";
+import { staffNameWithDirectLine } from "@/lib/team/direct-line";
 import { enrollWelcomeLeadForNewClientAction } from "./enroll-actions";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
 import { useMids } from "@/lib/hooks/use-mids";
@@ -24,6 +25,7 @@ type TeamOption = {
   email: string | null;
   role?: string | null;
   is_accounts?: boolean | null;
+  direct_line?: string | null;
 };
 
 type FieldErrors = Partial<Record<string, string>>;
@@ -94,7 +96,7 @@ export default function NewClientPage() {
       }
       const { data, error: qErr } = await supabase
         .from("profiles")
-        .select("id, full_name, email, role, is_accounts")
+        .select("id, full_name, email, role, is_accounts, direct_line")
         .eq("is_active", true)
         .or(departmentMembershipOr("is_accounts"))
         .order("full_name", { ascending: true });
@@ -520,7 +522,11 @@ export default function NewClientPage() {
               <option value="">Select…</option>
               {team.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.full_name?.trim() || "Account manager"}
+                  {staffNameWithDirectLine(
+                    t.full_name,
+                    t.direct_line,
+                    "Account manager"
+                  )}
                 </option>
               ))}
             </select>

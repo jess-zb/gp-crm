@@ -20,6 +20,8 @@ export type TodayAppointmentRow = {
     id: string;
     first_name: string | null;
     last_name: string | null;
+    state?: string | null;
+    zip_code?: string | null;
   } | null;
 };
 

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { AssigneeIdentity } from "@/app/components/AssigneeIdentity";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
@@ -196,8 +197,8 @@ export function ClientStageHeader({
   assignedTo: string | null;
   assignedUserName?: string | null;
   assignedServicesId: string | null;
-  accountsUser: { full_name: string | null } | null;
-  servicesUser: { full_name: string | null } | null;
+  accountsUser: { full_name: string | null; direct_line?: string | null } | null;
+  servicesUser: { full_name: string | null; direct_line?: string | null } | null;
   shouldPromptSelfAssign: boolean;
   viewerDept: { is_accounts: boolean; is_services: boolean };
   /** Used to gate advance client_services → awaiting_collection_letter */
@@ -970,7 +971,11 @@ export function ClientStageHeader({
               </Link>
             </div>
             <dd className="text-sm text-slate-800 dark:text-slate-100">
-              {accountsUser?.full_name?.trim() || "Unassigned"}
+              <AssigneeIdentity
+                name={accountsUser?.full_name}
+                directLine={accountsUser?.direct_line}
+                empty="Unassigned"
+              />
             </dd>
           </div>
           <div>
@@ -978,7 +983,11 @@ export function ClientStageHeader({
               Client Services
             </dt>
             <dd className="text-sm text-slate-800 dark:text-slate-100">
-              {servicesUser?.full_name?.trim() || "Unassigned"}
+              <AssigneeIdentity
+                name={servicesUser?.full_name}
+                directLine={servicesUser?.direct_line}
+                empty="Unassigned"
+              />
             </dd>
           </div>
           <div>

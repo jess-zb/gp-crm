@@ -11,6 +11,12 @@ import {
 } from "@/lib/constants/appointment-types";
 import { normalizePipelineStage } from "@/lib/clients/pipeline-status";
 import { updateAppointment } from "./actions";
+import {
+  AppointmentClockPreview,
+  appointmentInstantFromClientTime,
+  bookingTimeZone,
+} from "@/app/components/AppointmentClock";
+import { utcToWall } from "@/lib/time/zoned";
 
 export type EditableAppointment = {
   id: string;
@@ -20,6 +26,8 @@ export type EditableAppointment = {
   assigned_to: string | null;
   client_id: string | null;
   clientStage: string | null;
+  clientState?: string | null;
+  clientZip?: string | null;
 };
 
 export function EditAppointmentModal({
@@ -57,15 +65,13 @@ export function EditAppointmentModal({
     setFieldErrors({});
 
     if (appointment.due_date) {
-      const d = new Date(appointment.due_date);
-      if (!Number.isNaN(d.getTime())) {
-        const y = d.getFullYear();
-        const mo = String(d.getMonth() + 1).padStart(2, "0");
-        const dy = String(d.getDate()).padStart(2, "0");
-        const hr = String(d.getHours()).padStart(2, "0");
-        const mn = String(d.getMinutes()).padStart(2, "0");
-        setDueDate(`${y}-${mo}-${dy}`);
-        setDueTime(`${hr}:${mn}`);
+      const wall = utcToWall(
+        appointment.due_date,
+        bookingTimeZone(appointment.clientState, appointment.clientZip).timeZone
+      );
+      if (wall) {
+        setDueDate(wall.ymd);
+        setDueTime(wall.hm);
       }
     } else {
       setDueDate("");
@@ -89,8 +95,13 @@ export function EditAppointmentModal({
     }
     setFieldErrors({});
 
-    const local = new Date(`${dueDate.trim()}T${(dueTime || "09:00").trim()}:00`);
-    if (Number.isNaN(local.getTime())) {
+    const local = appointmentInstantFromClientTime(
+      dueDate.trim(),
+      (dueTime || "09:00").trim(),
+      appointment.clientState,
+      appointment.clientZip
+    );
+    if (!local) {
       toast.error("Invalid date or time.");
       return;
     }
@@ -167,7 +178,8 @@ export function EditAppointmentModal({
           <div className="mb-4 grid grid-cols-2 gap-3">
             <label className="block text-sm">
               <span className="font-medium text-slate-700 dark:text-slate-300">
-                Date <span className="text-red-500">*</span>
+                Date ({bookingTimeZone(appointment.clientState, appointment.clientZip).label}){" "}
+                <span className="text-red-500">*</span>
               </span>
               <input
                 type="date"
@@ -182,7 +194,9 @@ export function EditAppointmentModal({
               )}
             </label>
             <label className="block text-sm">
-              <span className="font-medium text-slate-700 dark:text-slate-300">Time</span>
+              <span className="font-medium text-slate-700 dark:text-slate-300">
+                Time ({bookingTimeZone(appointment.clientState, appointment.clientZip).label})
+              </span>
               <input
                 type="time"
                 value={dueTime}
@@ -190,6 +204,14 @@ export function EditAppointmentModal({
                 className="mt-1 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-700 focus:border-[#A87830] focus:outline-none focus:ring-2 focus:ring-[#A87830]/20 dark:border-[#2E2E2E] dark:bg-[#121212] dark:text-white"
               />
             </label>
+          </div>
+          <div className="mb-4">
+            <AppointmentClockPreview
+              date={dueDate}
+              time={dueTime || "09:00"}
+              state={appointment.clientState}
+              zip={appointment.clientZip}
+            />
           </div>
 
           <label className="mb-4 block text-sm">

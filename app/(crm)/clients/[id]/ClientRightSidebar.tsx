@@ -1,9 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ClientFormattedDate } from "@/app/components/ClientFormattedDate";
+import {
+  AppointmentClockPreview,
+  AppointmentWhen,
+  appointmentInstantFromClientTime,
+  bookingTimeZone,
+} from "@/app/components/AppointmentClock";
 
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/app/components/Toast";
@@ -19,6 +24,9 @@ import type { AppointmentModalResult } from "../../reminders/actions";
 import { EditAppointmentModal, type EditableAppointment } from "../../reminders/EditAppointmentModal";
 import { getAppointmentTypesForStage } from "@/lib/constants/appointment-types";
 import { normalizePipelineStage } from "@/lib/clients/pipeline-status";
+import { getActivityActionLabel } from "@/lib/clients/activity-feed";
+import { staffNameWithDirectLine } from "@/lib/team/direct-line";
+import { formatTimeAgo } from "@/lib/utils/date";
 
 export type ReminderRow = {
   id: string;
@@ -34,11 +42,29 @@ export type ReminderRow = {
 
 export type SidebarCommNoteRow = {
   id: string;
+  type: string;
+  direction: string;
+  subject: string | null;
   body: string;
   sent_at: string | null;
   author_name: string;
   is_pinned: boolean;
 };
+
+export type SidebarActivityEntry = {
+  id: string;
+  action: string | null;
+  performed_by_name: string | null;
+  created_at: string;
+};
+
+function commKindLabel(type: string): string {
+  if (type === "call") return "Call";
+  if (type === "sms") return "Text";
+  if (type === "email") return "Email";
+  if (type === "note") return "Note";
+  return "Note";
+}
 
 function truncateNote(body: string, max = 80): string {
   const t = body.trim();
@@ -51,6 +77,7 @@ export function ClientRightSidebar({
   clientStage,
   reminders,
   commNotes,
+  activityLog,
   accountInfo,
   auditPerformedByName,
   staffOptions,
@@ -65,9 +92,10 @@ export function ClientRightSidebar({
   clientStage: string | null;
   reminders: ReminderRow[];
   commNotes: SidebarCommNoteRow[];
+  activityLog: SidebarActivityEntry[];
   /** Shown on `appointment_completed` audit rows (current viewer). */
   auditPerformedByName: string;
-  staffOptions: { id: string; full_name: string | null }[];
+  staffOptions: { id: string; full_name: string | null; direct_line?: string | null }[];
   currentUserId: string;
   currentRole: string;
   /** `main` fills the Overview column. `sidebar` is the narrow rail. */
@@ -81,6 +109,8 @@ export function ClientRightSidebar({
     assigned_to: string | null;
     assigned_user: { full_name: string | null } | null;
     attorney: { full_name: string | null; email: string | null } | null;
+    state: string | null;
+    zip_code: string | null;
   };
   className?: string;
 }) {
@@ -102,6 +132,15 @@ export function ClientRightSidebar({
   const [noteText, setNoteText] = useState("");
   const [savingNote, setSavingNote] = useState(false);
   const [localCommNotes, setLocalCommNotes] = useState<SidebarCommNoteRow[]>(commNotes);
+  const [openCommId, setOpenCommId] = useState<string | null>(null);
+  useEffect(() => {
+    setLocalCommNotes((current) => {
+      const serverIds = new Set(commNotes.map((row) => row.id));
+      const pending = current.filter((row) => !serverIds.has(row.id));
+      return [...commNotes, ...pending];
+    });
+  }, [commNotes]);
+
   const [openSections, setOpenSections] = useState<{ notes: boolean; appts: boolean; account: boolean }>({
     notes: true,
     appts: true,
@@ -218,8 +257,13 @@ export function ClientRightSidebar({
       errors.dueDate = "Due date is required.";
     }
     const t = dueTime.trim() || "09:00";
-    const local = new Date(`${dueDate.trim()}T${t}:00`);
-    if (Number.isNaN(local.getTime())) {
+    const local = appointmentInstantFromClientTime(
+      dueDate.trim(),
+      t,
+      accountInfo.state,
+      accountInfo.zip_code
+    );
+    if (!local) {
       errors.dateTime = "Invalid date or time.";
     }
 
@@ -236,7 +280,7 @@ export function ClientRightSidebar({
         client_id: clientId,
         appointment_type: appointmentType,
         description: def.label,
-        due_date_iso: local.toISOString(),
+        due_date_iso: local!.toISOString(),
         assigned_to: assignToId.trim() || accountInfo.assigned_to || null,
         notes: notesAppt.trim() || null,
         pipeline_type: def.pipeline,
@@ -350,6 +394,9 @@ export function ClientRightSidebar({
     setLocalCommNotes((prev) => [
       {
         id: saved.id,
+        type: "note",
+        direction: "internal",
+        subject: null,
         body: saved.body ?? body,
         sent_at: saved.sent_at,
         author_name: auditPerformedByName,
@@ -466,12 +513,29 @@ export function ClientRightSidebar({
     }
 
     setSbCommSaving(true);
-    const { error } = await supabase.from("communications").insert(insert);
+    const { data: saved, error } = await supabase
+      .from("communications")
+      .insert(insert)
+      .select("id, type, direction, subject, body, sent_at, is_pinned")
+      .single();
     setSbCommSaving(false);
-    if (error) {
-      toast.error(toUserFacingError(error.message));
+    if (error || !saved) {
+      toast.error(toUserFacingError(error?.message ?? "Could not save."));
       return;
     }
+    setLocalCommNotes((prev) => [
+      {
+        id: saved.id,
+        type: saved.type,
+        direction: saved.direction,
+        subject: saved.subject,
+        body: saved.body ?? "",
+        sent_at: saved.sent_at,
+        author_name: auditPerformedByName,
+        is_pinned: !!saved.is_pinned,
+      },
+      ...prev.filter((note) => note.id !== saved.id),
+    ]);
     toast.success("Saved");
     closeSidebarCommModal();
     router.refresh();
@@ -532,9 +596,10 @@ export function ClientRightSidebar({
                       className="border-b border-slate-100 last:border-0 dark:border-[#2E2E2E]"
                     >
                       <td className="py-2 pr-2 align-top text-slate-600 dark:text-slate-300">
-                        <ClientFormattedDate
+                        <AppointmentWhen
                           iso={r.due_date}
-                          pattern="MMM d, yyyy, h:mm a"
+                          state={accountInfo.state}
+                          zip={accountInfo.zip_code}
                         />
                       </td>
                       <td className="py-2 pr-2 align-top text-slate-800 dark:text-slate-200">
@@ -557,6 +622,8 @@ export function ClientRightSidebar({
                                   assigned_to: r.assigned_to,
                                   client_id: clientId,
                                   clientStage: clientStage,
+                                  clientState: accountInfo.state,
+                                  clientZip: accountInfo.zip_code,
                                 })
                               }
                               className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:hover:bg-[#242424] dark:hover:text-slate-300"
@@ -647,17 +714,23 @@ export function ClientRightSidebar({
         <>
         {!localCommNotes.length ? (
           <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500 dark:border-[#2E2E2E] dark:text-slate-400">
-            No notes yet. Use the icons above to log a call, text, email, or internal note.
+            Nothing logged yet. Use the icons above to add a call, text, email, or note.
           </p>
         ) : (
-          <ul className="max-h-96 space-y-3 overflow-y-auto">
+          <ul className="max-h-[32rem] space-y-3 overflow-y-auto">
             {[...localCommNotes]
               .sort((a, b) => {
                 if (a.is_pinned && !b.is_pinned) return -1;
                 if (!a.is_pinned && b.is_pinned) return 1;
                 return new Date(b.sent_at ?? 0).getTime() - new Date(a.sent_at ?? 0).getTime();
               })
-              .map((n) => (
+              .map((n) => {
+                const open = openCommId === n.id;
+                const preview =
+                  n.type === "email" && n.subject?.trim()
+                    ? truncateNote(`${n.subject.trim()}${n.body.trim() ? ` — ${n.body}` : ""}`)
+                    : truncateNote(n.body);
+                return (
                 <li key={n.id}>
                   <div
                     className={`group relative w-full rounded-lg border p-3 text-left transition ${
@@ -672,24 +745,34 @@ export function ClientRightSidebar({
                         Pinned
                       </span>
                     ) : null}
-                    <Link
-                      href={`/clients/${clientId}?tab=communications#comm-${n.id}`}
+                    <button
+                      type="button"
+                      onClick={() => setOpenCommId(open ? null : n.id)}
+                      aria-expanded={open}
                       className="block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
                     >
-                      <p className={`line-clamp-2 break-words pr-14 text-sm ${n.is_pinned ? "text-amber-900 dark:text-amber-100" : "text-slate-800 dark:text-slate-200"}`}>
-                        {truncateNote(n.body)}
+                      <p className="pr-14 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                        {commKindLabel(n.type)}
+                      </p>
+                      <p className={`mt-1 break-words pr-14 text-sm ${n.is_pinned ? "text-amber-900 dark:text-amber-100" : "text-slate-800 dark:text-slate-200"}`}>
+                        {open && n.type === "email" && n.subject?.trim() ? (
+                          <span className="mb-1 block font-semibold">{n.subject}</span>
+                        ) : null}
+                        <span className={open ? "block whitespace-pre-wrap" : "line-clamp-2 block"}>
+                          {open ? (n.body.trim() || "—") : preview}
+                        </span>
                       </p>
                       <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                         {n.author_name}
                         <span className="mx-1">·</span>
                         <ClientFormattedDate iso={n.sent_at} pattern="MM/dd/yy h:mm a" />
                       </p>
-                    </Link>
+                    </button>
                     <button
                       type="button"
                       onClick={() => void handleToggleNotePin(n.id)}
-                      title={n.is_pinned ? "Unpin note" : "Pin note"}
-                      aria-label={n.is_pinned ? "Unpin note" : "Pin note"}
+                      title={n.is_pinned ? "Unpin" : "Pin"}
+                      aria-label={n.is_pinned ? "Unpin" : "Pin"}
                       className={`absolute bottom-2 right-2 rounded p-1 text-xs transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] ${
                         n.is_pinned
                           ? "text-amber-500 opacity-100 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
@@ -700,16 +783,32 @@ export function ClientRightSidebar({
                     </button>
                   </div>
                 </li>
-              ))}
+                );
+              })}
           </ul>
         )}
-        <div className="mt-3 text-center">
-          <Link
-            href={`/clients/${clientId}?tab=communications`}
-            className="text-xs font-semibold text-[#A87830] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830]"
-          >
-            View all notes
-          </Link>
+        <div className="mt-6 border-t border-slate-100 pt-4 dark:border-[#2E2E2E]">
+          <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            Activity log
+          </h4>
+          {activityLog.length === 0 ? (
+            <p className="text-sm text-slate-500 dark:text-slate-400">No activity recorded yet.</p>
+          ) : (
+            <ul className="max-h-80 divide-y divide-slate-100 overflow-y-auto dark:divide-[#2E2E2E]">
+              {activityLog.map((entry) => (
+                <li key={entry.id} className="flex items-start justify-between gap-3 py-2.5">
+                  <p className="min-w-0 break-words text-sm text-slate-800 dark:text-slate-100">
+                    {getActivityActionLabel(entry.action)}
+                  </p>
+                  <p className="shrink-0 text-xs text-slate-400 dark:text-slate-500">
+                    {entry.performed_by_name?.trim() || "System"}
+                    <span className="mx-1" aria-hidden>·</span>
+                    {formatTimeAgo(entry.created_at)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         </>
         ) : null}
@@ -774,7 +873,9 @@ export function ClientRightSidebar({
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <label className="block text-sm">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Due date</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">
+                    Date ({bookingTimeZone(accountInfo.state, accountInfo.zip_code).label})
+                  </span>
                   <input
                     type="date"
                     value={dueDate}
@@ -788,7 +889,9 @@ export function ClientRightSidebar({
                   />
                 </label>
                 <label className="block text-sm">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Time</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">
+                    Time ({bookingTimeZone(accountInfo.state, accountInfo.zip_code).label})
+                  </span>
                   <input
                     type="time"
                     value={dueTime}
@@ -801,6 +904,12 @@ export function ClientRightSidebar({
                   />
                 </label>
               </div>
+              <AppointmentClockPreview
+                date={dueDate}
+                time={dueTime || "09:00"}
+                state={accountInfo.state}
+                zip={accountInfo.zip_code}
+              />
               {fieldErrors.dueDate && (
                 <p className="mt-1 text-xs font-medium text-red-600 dark:text-red-400">
                   {fieldErrors.dueDate}
@@ -830,7 +939,11 @@ export function ClientRightSidebar({
                   <option value="">—</option>
                   {staffOptions.map((m) => (
                     <option key={m.id} value={m.id}>
-                      {m.full_name?.trim() || m.id.slice(0, 8)}
+                      {staffNameWithDirectLine(
+                        m.full_name,
+                        m.direct_line,
+                        m.id.slice(0, 8)
+                      )}
                     </option>
                   ))}
                 </select>

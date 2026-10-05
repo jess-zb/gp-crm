@@ -5,7 +5,9 @@ import { useEffect, useMemo, useState, memo } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, CheckCircle, List, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { formatDateTime } from "@/lib/utils/date";
+import { AppointmentWhen } from "@/app/components/AppointmentClock";
+import { officeDayStartIso, officeTodayYmd } from "@/lib/time/office-calendar";
+import { addCalendarDays } from "@/lib/time/zoned";
 import type { PipelineKind } from "@/lib/reminders/appointments";
 import { AppointmentsCalendar } from "./AppointmentsCalendar";
 import { AddAppointmentModal } from "./AddAppointmentModal";
@@ -26,6 +28,8 @@ export type AppointmentRow = {
   client_id: string | null;
   clientName: string;
   clientStage: string | null;
+  clientState: string | null;
+  clientZip: string | null;
   assigneeName: string;
   assigned_to: string | null;
   appointment_type: string | null;
@@ -90,13 +94,6 @@ function getTypeOptions(pipeline: PipelineKind) {
   return options;
 }
 
-function formatDue(iso: string | null) {
-  if (!iso) return "—";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return formatDateTime(d);
-}
-
 type TeamMember = { id: string; full_name: string | null };
 
 const AppointmentRow = memo(({
@@ -114,10 +111,12 @@ const AppointmentRow = memo(({
     if (!due_date) return null;
     const due = new Date(due_date);
     if (Number.isNaN(due.getTime())) return null;
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
+    const today = officeTodayYmd();
+    const startIso = officeDayStartIso(today);
+    const endIso = officeDayStartIso(addCalendarDays(today, 1));
+    if (!startIso || !endIso) return null;
+    const start = new Date(startIso);
+    const end = new Date(endIso);
 
     if (due < start) {
       return (
@@ -127,7 +126,7 @@ const AppointmentRow = memo(({
         />
       );
     }
-    if (due <= end) {
+    if (due < end) {
       return (
         <span
           className="mr-1.5 inline-block h-2 w-2 rounded-full bg-amber-400"
@@ -167,10 +166,10 @@ const AppointmentRow = memo(({
             "—"}
         </span>
       </td>
-      <td className="crm-table-td whitespace-nowrap text-slate-800 dark:text-slate-200">
-        <span className="inline-flex items-center">
+      <td className="crm-table-td text-slate-800 dark:text-slate-200">
+        <span className="inline-flex items-start gap-2">
           {getStatusDot(r.due_date)}
-          {formatDue(r.due_date)}
+          <AppointmentWhen iso={r.due_date} state={r.clientState} zip={r.clientZip} />
         </span>
       </td>
       <td className="crm-table-td whitespace-nowrap text-slate-700 dark:text-slate-300">
@@ -399,6 +398,8 @@ export function AppointmentsView({
                           assigned_to: row.assigned_to,
                           client_id: row.client_id,
                           clientStage: row.clientStage,
+                          clientState: row.clientState,
+                          clientZip: row.clientZip,
                         })
                       }
                       canEdit={canEdit}

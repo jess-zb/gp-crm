@@ -15,6 +15,7 @@ import {
   filterByDepartment,
   type DepartmentMemberOption,
 } from "@/lib/team/department-members";
+import { staffNameWithDirectLine } from "@/lib/team/direct-line";
 import { updateClientSettings } from "./actions";
 import { SettingsMenuSelect } from "./SettingsMenuSelect";
 
@@ -37,8 +38,13 @@ function staffLabel(person: {
   id: string;
   full_name?: string | null;
   email?: string | null;
+  direct_line?: string | null;
 }): string {
-  return person.full_name?.trim() || person.email?.trim() || person.id.slice(0, 8);
+  return staffNameWithDirectLine(
+    person.full_name,
+    person.direct_line,
+    person.email?.trim() || person.id.slice(0, 8)
+  );
 }
 
 function ReadOnlySetting({
@@ -74,7 +80,9 @@ export function ClientSettingsTab({
   attorneyOptions,
   assigneeName,
   assigneeRole,
+  assigneeDirectLine = null,
   servicesAssigneeName,
+  servicesAssigneeDirectLine = null,
 }: {
   clientId: string;
   client: ClientSettingsTabClient;
@@ -87,7 +95,9 @@ export function ClientSettingsTab({
   attorneyOptions: AttorneyOption[];
   assigneeName: string | null;
   assigneeRole?: string | null;
+  assigneeDirectLine?: string | null;
   servicesAssigneeName?: string | null;
+  servicesAssigneeDirectLine?: string | null;
 }) {
   const toast = useToast();
   const router = useRouter();
@@ -182,7 +192,14 @@ export function ClientSettingsTab({
             <ReadOnlySetting
               label="Accounts"
               value={assigneeName ?? "—"}
-              detail={assigneeName && assigneeRole ? getRoleDisplayName(assigneeRole) : null}
+              detail={
+                [
+                  assigneeName && assigneeRole ? getRoleDisplayName(assigneeRole) : null,
+                  assigneeDirectLine?.trim() || null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ") || null
+              }
             />
           )}
           {canReassignClient ? (
@@ -197,7 +214,11 @@ export function ClientSettingsTab({
               }))}
             />
           ) : (
-            <ReadOnlySetting label="Client Services" value={servicesAssigneeName ?? "—"} />
+            <ReadOnlySetting
+              label="Client Services"
+              value={servicesAssigneeName ?? "—"}
+              detail={servicesAssigneeDirectLine?.trim() || null}
+            />
           )}
 
           {canViewAssignedAttorneyField ? (

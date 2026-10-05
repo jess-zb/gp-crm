@@ -29,7 +29,7 @@ function getBaseUrl(): string {
 }
 
 function todayPacificYmd(): string {
-  const tz = process.env.HOLIDAY_TIMEZONE?.trim() || "America/Los_Angeles";
+  const tz = process.env.HOLIDAY_TIMEZONE?.trim() || "America/Phoenix";
   return new Date().toLocaleDateString("en-CA", { timeZone: tz });
 }
 
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const tz = process.env.HOLIDAY_TIMEZONE?.trim() || "America/Los_Angeles";
+  const tz = process.env.HOLIDAY_TIMEZONE?.trim() || "America/Phoenix";
   const today = todayPacificYmd();
 
   if (!US_HOLIDAYS_PACIFIC.has(today)) {

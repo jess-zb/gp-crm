@@ -22,6 +22,8 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
+import { AssigneeIdentity } from "@/app/components/AssigneeIdentity";
+import { staffNameWithDirectLine } from "@/lib/team/direct-line";
 import { toast } from "sonner";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { createClient } from "@/lib/supabase/client";
@@ -77,8 +79,10 @@ export type ClientsListItem = {
   stage_entered_at: string | null;
   assigned_to: string | null;
   assignee_name: string | null;
+  assignee_direct_line: string | null;
   assigned_services_id: string | null;
   services_user_name: string | null;
+  services_direct_line: string | null;
   dnc_reason: string | null;
   mid_name: string | null;
 };
@@ -436,16 +440,20 @@ const ClientCell = memo(({
       );
     case "sales_user":
       return (
-        <td className="hidden max-w-[130px] px-4 py-2.5 text-sm text-slate-700 md:table-cell dark:text-slate-300">
-          <span className="block truncate">{client.assignee_name?.trim() || "—"}</span>
+        <td className="hidden max-w-[160px] px-4 py-2.5 text-sm text-slate-700 md:table-cell dark:text-slate-300">
+          <AssigneeIdentity
+            name={client.assignee_name}
+            directLine={client.assignee_direct_line}
+          />
         </td>
       );
     case "services":
       return (
-        <td className="hidden max-w-[130px] px-4 py-2.5 text-sm text-slate-700 md:table-cell dark:text-slate-300">
-          <span className="block truncate" title={client.services_user_name?.trim() || undefined}>
-            {client.services_user_name?.trim() || "—"}
-          </span>
+        <td className="hidden max-w-[160px] px-4 py-2.5 text-sm text-slate-700 md:table-cell dark:text-slate-300">
+          <AssigneeIdentity
+            name={client.services_user_name}
+            directLine={client.services_direct_line}
+          />
         </td>
       );
     case "created_at":
@@ -942,7 +950,9 @@ export function ClientsListClient({
           esc(getStageLabel(c.stage)),
           esc(st),
           esc(added),
-          esc((c.assignee_name ?? "").trim()),
+          esc(
+            staffNameWithDirectLine(c.assignee_name, c.assignee_direct_line)
+          ),
         ].join(",");
       }),
     ];
