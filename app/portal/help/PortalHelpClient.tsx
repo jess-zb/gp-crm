@@ -32,7 +32,7 @@ const SECTIONS: { title: string; items: FaqItem[] }[] = [
       {
         q: "I opened the link — what do I do next?",
         a:
-          "Read through the packet, including the POA (Power of Attorney), then type your name and sign at the bottom. Your signed copy is saved to the Documents section on this page as soon as you finish.",
+          "Read through the Welcome Packet, then type your name and sign at the bottom. Your signed copy is saved to the Documents section on this page as soon as you finish.",
       },
       {
         q: "I never received the email",

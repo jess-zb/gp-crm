@@ -256,7 +256,7 @@ export function EsignDripSection({
               hint={
                 card.hint?.trim() ||
                 (card.behavior === "welcome_packet"
-                  ? "Signed POA — advances the client once signed"
+                  ? "Signed Welcome Packet — advances the client once signed"
                   : "Sends this MID's document")
               }
               row={latestForTemplate(rows, card.id)}

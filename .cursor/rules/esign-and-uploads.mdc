@@ -20,8 +20,9 @@ alwaysApply: false
   `archived_by`). The `documents` row and the `client-documents` object stay.
   The profile stops showing the file. Do not call `storage.remove` for a filed
   document.
-- **Locked for everyone:** Collection Letter and POA (`poa_document`, `poa`,
-  `poa_signed`, `power_of_attorney`). These cannot be archived or deleted.
+- **Locked for everyone:** Collection Letter and Welcome Packet (`poa_document`,
+  `poa`, `poa_signed`, `power_of_attorney`). The upload label is Welcome Packet.
+  These cannot be archived or deleted. Do not rename the stored types.
 - **Not locked:** CC Authorization (manual uploads). Signed e-sign files stay
   undeletable via `esign_requests`, including signed CC Auth.
 - Enforce in the UI, `deleteOwnClientDocument` / `deleteClientDocument`, and RLS

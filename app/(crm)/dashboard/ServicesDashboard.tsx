@@ -26,7 +26,7 @@ export function ServicesDashboard({
       firstName={firstName}
       stats={[
         { label: "in Client Services", value: mySvcClients.length },
-        { label: "POA overdue", value: poaOverdue.length },
+        { label: "Welcome Packet overdue", value: poaOverdue.length },
         { label: "Appointments Today", value: countAppointmentsOn(myApptToday) },
       ]}
       tableTitle="My clients"
@@ -39,21 +39,21 @@ export function ServicesDashboard({
           href: signed ? `/clients/${client.id}` : `/clients/${client.id}?tab=documents&upload=poa_document`,
           name: clientDisplayName(client),
           detail: daysLabel(client.stage_entered_at),
-          status: signed ? "POA signed" : overdue ? "POA overdue" : "No POA",
+          status: signed ? "Welcome Packet signed" : overdue ? "Welcome Packet overdue" : "No Welcome Packet",
           tone: signed ? "green" : overdue ? "red" : "amber",
         } as const;
       })}
       emptyTable="No clients are assigned to you in Client Services."
       appointments={myApptToday}
-      sideTitle="POA follow-up"
+      sideTitle="Welcome Packet follow-up"
       sideHref="/clients"
       sideItems={poaOverdue.map((client) => ({
         id: client.id,
         href: `/clients/${client.id}?tab=documents&upload=poa_document`,
         title: clientDisplayName(client),
-        detail: "21+ days in Client Services with no signed POA.",
+        detail: "21+ days in Client Services with no signed Welcome Packet.",
       }))}
-      emptySide="No POA follow-ups are overdue."
+      emptySide="No Welcome Packet follow-ups are overdue."
     />
   );
 }

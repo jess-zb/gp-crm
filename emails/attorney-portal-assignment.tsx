@@ -53,7 +53,7 @@ export default function AttorneyPortalAssignmentEmail({
             </Text>
             <Text style={styles.text}>
               Sign in with your attorney CRM credentials to review client contact
-              info, signed POA, and collection letters.
+              info, the signed Welcome Packet, and collection letters.
             </Text>
           </Section>
         </Container>

@@ -57,7 +57,7 @@ export async function sendAttorneyPortalAssignmentEmail(
     "",
     `View all cases: ${params.casesUrl}`,
     "",
-    "Sign in with your attorney CRM credentials to review client contact info, signed POA, and collection letters.",
+    "Sign in with your attorney CRM credentials to review client contact info, the signed Welcome Packet, and collection letters.",
   ].join("\n");
 
   try {

@@ -187,7 +187,7 @@ export function AttorneyQueueClient({
         {selectedCount > 0 && clientsMissingDocs > 0 ? (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
             {clientsMissingDocs} selected client
-            {clientsMissingDocs === 1 ? "" : "s"} missing POA or collection
+            {clientsMissingDocs === 1 ? "" : "s"} missing a Welcome Packet or collection
             letter — assign anyway only if files are being uploaded separately.
           </div>
         ) : null}
@@ -252,11 +252,11 @@ export function AttorneyQueueClient({
                       <td className="px-3 py-3 text-slate-600 dark:text-slate-300">
                         {c.documents.length === 0 ? (
                           <span className="text-amber-700 dark:text-amber-300">
-                            No POA / collection letter yet
+                            No Welcome Packet or collection letter yet
                           </span>
                         ) : (
                           <>
-                            {poaCount} POA · {letterCount} letter
+                            {poaCount} Welcome Packet{poaCount === 1 ? "" : "s"} · {letterCount} letter
                             {letterCount === 1 ? "" : "s"}
                           </>
                         )}

@@ -36,7 +36,7 @@ export async function markPoaSignedOnClient(
 }
 
 export const POA_STAGE_ADVANCE_TOAST =
-  "POA saved — client advanced to Awaiting Collection Letter";
+  "Welcome Packet saved — client advanced to Awaiting Collection Letter";
 
 export const POA_AUTO_ADVANCE_FROM = ["account_manager", "client_services"] as const;
 

@@ -117,7 +117,7 @@ export async function createAttorneyBatch(args: {
       ) {
         return {
           ok: false,
-          error: `Document is not a POA or collection letter: ${doc.file_name ?? docId}`,
+          error: `Document is not a Welcome Packet or collection letter: ${doc.file_name ?? docId}`,
         };
       }
     }

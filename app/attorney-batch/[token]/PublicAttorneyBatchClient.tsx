@@ -8,7 +8,7 @@ function clientName(c: PublicBatchClient) {
 }
 
 function kindLabel(kind: "poa" | "collection_letter" | "other") {
-  if (kind === "poa") return "POA";
+  if (kind === "poa") return "Welcome Packet";
   if (kind === "collection_letter") return "Collection letter";
   return "File";
 }

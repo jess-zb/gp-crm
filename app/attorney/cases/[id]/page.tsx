@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import { StagePill } from "@/app/components/StagePill";
 import { formatDateTimeOrDash } from "@/lib/utils/date";
+import { documentTypeLabel } from "@/lib/clients/document-upload";
 import { isPoaDocumentType } from "@/lib/clients/poa-upload-advance";
 import { midNameFromEmbed } from "@/lib/mids/queries";
 import { isHiddenProfile } from "@/lib/constants/hidden-accounts";
@@ -40,7 +41,9 @@ function isLegacySystemNote(row: { type?: unknown; body?: unknown }): boolean {
 }
 
 function docRowTypeLabel(d: DocRow): string {
-  if (isPoaDocumentType((d.document_type ?? "").trim())) return "POA";
+  if (isPoaDocumentType((d.document_type ?? "").trim())) {
+    return documentTypeLabel(d.document_type);
+  }
   if (d.document_type === "collection_letter" || d.is_collection_letter === true) {
     return "Collection letter";
   }

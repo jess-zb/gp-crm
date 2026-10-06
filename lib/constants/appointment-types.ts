@@ -34,7 +34,7 @@ export const APPOINTMENT_TYPES_BY_STAGE: Record<string, StageAppointmentTypeDef[
 
   client_services: [
     { value: "cs_intro_call", label: "CS Intro Call", color: "green", pipeline: "service" },
-    { value: "poa_follow_up_call", label: "POA Follow Up Call", color: "yellow", pipeline: "service" },
+    { value: "poa_follow_up_call", label: "Welcome Packet Follow Up Call", color: "yellow", pipeline: "service" },
     { value: "follow_up_appointment", label: "Follow Up Appointment", color: "green", pipeline: "service" },
     { value: "follow_up_attempt", label: "Follow Up Attempt", color: "red", pipeline: "service" },
   ],
@@ -75,12 +75,13 @@ export function getAppointmentPillClass(value: string): string {
   return PILL_BY_COLOR[color];
 }
 
-const ACRONYMS = new Set(["POA", "CS", "DNC", "DNQ"]);
+const ACRONYMS = new Set(["CS", "DNC", "DNQ"]);
 
 function humanizeSnakeCase(value: string): string {
   return value
     .split("_")
     .map((word) => {
+      if (word.toLowerCase() === "poa") return "Welcome Packet";
       const upper = word.toUpperCase();
       if (ACRONYMS.has(upper)) return upper;
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();

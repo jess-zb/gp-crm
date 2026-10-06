@@ -25,7 +25,7 @@ export default function Active1Email({ client, accountManager, portalUrl, unsubs
 
       <Text>
         What to expect next:
-        <br />- Welcome packet: we email you a link to review and sign it.
+        <br />- Welcome Packet: we email you a link to review and sign it.
         <br />- Creditor communications: If you receive emails, texts, or letters, forward them to me. For mail, snap a
         photo and email/text it to me. Our nationwide network of attorneys uses this information to help challenge and
         invalidate debts.

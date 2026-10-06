@@ -110,7 +110,7 @@ export function DashboardClientTable({
                         : "bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300"
                     }`}
                   >
-                    {c.poa_signed_at || c.poa_signed_date ? "POA ✓" : "No POA"}
+                    {c.poa_signed_at || c.poa_signed_date ? "Welcome Packet ✓" : "No Welcome Packet"}
                   </span>
                 ) : null}
                 {columns.includes("days_in_stage") ? (

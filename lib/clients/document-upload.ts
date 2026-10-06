@@ -18,7 +18,7 @@ const UI_DOCUMENT_TYPE_LABELS: Record<UiDocumentType, string> = {
   upload: "Enrolled Cards",
   cc_authorization: "CC Authorization",
   audio_recording: "Audio Recording",
-  poa_document: "POA File",
+  poa_document: "Welcome Packet",
   correspondence: "Correspondence",
   screenshot: "Screenshot",
   collection_letter: "Collection Letter",
@@ -33,7 +33,7 @@ export const DOCUMENT_TYPE_OPTIONS: { value: UiDocumentType; label: string }[] =
 
 /**
  * Labels for every `document_type` enum value, not just the subset offered in the
- * upload modal. Legacy POA aliases are included because older rows store `poa`,
+ * upload modal. Older rows store `poa`,
  * `poa_signed`, or `power_of_attorney`.
  */
 const DOCUMENT_TYPE_LABELS: Record<string, string> = {
@@ -42,9 +42,9 @@ const DOCUMENT_TYPE_LABELS: Record<string, string> = {
   utility_bill: "Utility Bill",
   social_security_card: "Social Security Card",
   client_agreement: "Client Agreement",
-  poa: "POA File",
-  poa_signed: "POA File",
-  power_of_attorney: "POA File",
+  poa: "Welcome Packet",
+  poa_signed: "Welcome Packet",
+  power_of_attorney: "Welcome Packet",
 };
 
 const LOCKED_DOCUMENT_TYPES = new Set([
@@ -55,7 +55,7 @@ const LOCKED_DOCUMENT_TYPES = new Set([
   "power_of_attorney",
 ]);
 
-/** Collection letters and POA files cannot be deleted. */
+/** Collection letters and Welcome Packets cannot be deleted. */
 export function isPermanentClientDocument(doc: {
   document_type?: string | null;
   is_collection_letter?: boolean | null;
@@ -65,7 +65,7 @@ export function isPermanentClientDocument(doc: {
 }
 
 export const PERMANENT_DOCUMENT_DELETE_ERROR =
-  "Collection letters and POA files cannot be deleted.";
+  "Collection letters and Welcome Packets cannot be deleted.";
 
 /**
  * Single source of truth for how a stored document type is displayed. Every

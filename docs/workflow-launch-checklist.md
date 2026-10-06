@@ -54,7 +54,7 @@ limit 20;
 | **Auto-cancel behavior** | Transitions that should cancel open reminders | Reminders cancelled or completed per business rules; queues update. |
 | **Auto-complete behavior** | Transitions that complete specific tasks | Matching reminders complete; others untouched. |
 | **Duplicate prevention** | Repeat same transition or re-save stage | No duplicate open reminders for the same logical task (where prevention exists). |
-| **POA blocker** | Client stage / document rules around POA | Stage cannot advance (or shows blocker) until POA satisfied; reminders align with blocker UX. |
+| **Welcome Packet blocker** | Client stage / document rules around the Welcome Packet | Stage cannot advance (or shows blocker) until the Welcome Packet is on file; reminders align with blocker UX. |
 | **Collection letter flow** | Upload / event that fires collection-letter handler | Auto reminders from templates insert correctly; **`workflow_source`** / keys correct for those rows. |
 
 ---

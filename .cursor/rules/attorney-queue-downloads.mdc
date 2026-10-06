@@ -65,7 +65,7 @@ graphify explain "attorney_portal_assigned_at"
 
    **Case detail documents** — `AttorneyCaseDocuments.tsx` on
    `app/attorney/cases/[id]/page.tsx` renders **every** document on the client
-   (not POA/collection-letter only). Type column labels POA / Collection letter
+   (not Welcome Packet/collection-letter only). Type column labels Welcome Packet / Collection letter
    / other upload types. Per-file **preview** (eye → `DocPreviewModal` via
    same-origin `/api/clients/documents/download?inline=1`) and **download**
    (attachment via same API). Includes real PDFs, `.txt`, and Shape text-as-PDF

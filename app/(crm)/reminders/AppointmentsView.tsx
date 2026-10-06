@@ -46,7 +46,7 @@ const TYPE_FILTER_OPTIONS = [
   { value: "charge_attempt", label: "Charge Attempt" },
   { value: "appointment_set", label: "Appointment Set" },
   { value: "cs_intro_call", label: "CS Intro Call" },
-  { value: "poa_follow_up_call", label: "POA Follow Up Call" },
+  { value: "poa_follow_up_call", label: "Welcome Packet Follow Up Call" },
   { value: "retention_call", label: "Retention Call" },
   { value: "check_in_30_day", label: "30-Day Check-In" },
   { value: "check_in_60_day", label: "60-Day Check-In" },

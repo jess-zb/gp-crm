@@ -34,7 +34,7 @@ export function blockAdvanceFromClientServicesWithoutPoa(opts: {
     return {
       blocked: true,
       reason:
-        "A signed POA must be on file before advancing to Awaiting Collections. Upload the POA in Documents.",
+        "A signed Welcome Packet must be on file before advancing to Awaiting Collections. Upload the Welcome Packet in Documents.",
     };
   }
 

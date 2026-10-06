@@ -14,11 +14,15 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 - Staff departments are Account Managers and Client Services. MIDs are labels, not tenancy. There is no physical mail and no third-party e-sign vendor.
 - Leaving Account Manager for a later pipeline stage requires a signed credit card authorization on file (`cc_authorization`), from e-sign or a direct upload.
-- Leaving Client Services for Awaiting Collections still requires a signed POA.
+- Leaving Client Services for Awaiting Collections still requires a signed Welcome Packet. Staff see that name. The stored document types stay `poa_document`, `poa`, `poa_signed`, and `power_of_attorney`.
 - Cancel and disqualify destinations stay open with no paperwork: `retention`, `dnc`, `not_interested`, `dnq`, `mortgage`, `closed`.
 - Uploading any e-sign PDF suggests general client fields from the text. Cards, amounts, and anything the scan misses stay manual in the drag-and-drop editor. Staff edit values in Confirm Before Sending.
 
 ## Decisions
+
+### 2026-10-06 — The file is called a Welcome Packet
+
+Uploads, the Client Services dashboard, the stage block, attorney files, and the knowledge base say Welcome Packet wherever they used to say POA. The gate is unchanged: a signed copy still has to be on the file before Client Services can move to Awaiting Collections, and those files still cannot be deleted. Stored type values are not renamed.
 
 ### 2026-10-05 — Partner lead intake stays private
 

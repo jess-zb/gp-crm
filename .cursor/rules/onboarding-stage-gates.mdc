@@ -25,7 +25,10 @@ upload requirements.
 - Cancel / disqualify destinations (`retention`, `dnc`, `not_interested`,
   `dnq`, `mortgage`, `closed`) are **never** gated on paperwork.
 
-### Signed POA — gate at Client Services exit
+### Signed Welcome Packet — gate at Client Services exit
+
+Staff-facing copy says **Welcome Packet**. Stored types stay `poa_document`,
+`poa`, `poa_signed`, and `power_of_attorney`. Do not rename those values.
 
 - `blockAdvanceFromClientServicesWithoutPoa` covers
   **`client_services` → `awaiting_collection_letter`** only.

@@ -15,6 +15,7 @@ import {
   DOCUMENT_TYPE_OPTIONS,
   documentTypeLabel,
   isPermanentClientDocument,
+  PERMANENT_DOCUMENT_DELETE_ERROR,
 } from "@/lib/clients/document-upload";
 import { isPoaDocumentType } from "@/lib/clients/poa-upload-advance";
 import { emitClientProfilePatch } from "@/lib/clients/client-profile-patch";
@@ -547,7 +548,7 @@ export function DocumentsTab({
                           ) : isPermanentClientDocument(row) ? (
                             <span
                               className="text-xs font-medium text-slate-400 dark:text-slate-500"
-                              title="Collection letters and POA files cannot be deleted."
+                              title={PERMANENT_DOCUMENT_DELETE_ERROR}
                             >
                               Locked
                             </span>

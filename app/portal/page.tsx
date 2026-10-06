@@ -260,7 +260,7 @@ export default function PortalPage() {
     return (
       <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
         <h2 className="text-base font-bold text-slate-900 dark:text-white">
-          Welcome packet
+          Welcome Packet
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
           Your welcome packet is sent to you by email for electronic signature.

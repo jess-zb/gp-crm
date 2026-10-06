@@ -16,7 +16,7 @@ export type AttorneyCaseDocItem = {
   fileName: string;
   createdAt: string | null;
   mimeType: string | null;
-  /** Human label e.g. POA, Collection letter, or document type */
+  /** Human label e.g. Welcome Packet, Collection letter, or document type */
   typeLabel: string;
 };
 

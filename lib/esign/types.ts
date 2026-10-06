@@ -28,7 +28,7 @@ export function isEsignBehavior(value: string): value is EsignBehavior {
 
 export const ESIGN_BEHAVIOR_LABELS: Record<EsignBehavior, string> = {
   cc_authorization: "Credit card authorization",
-  welcome_packet: "Welcome packet (advances the client once signed)",
+  welcome_packet: "Welcome Packet (advances the client once signed)",
   agreement: "Agreement",
   other: "Other",
 };

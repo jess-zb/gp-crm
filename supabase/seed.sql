@@ -275,7 +275,7 @@ INSERT INTO public.email_message_templates (id, template_key, name, sequence_key
 
 A new case has been assigned to you in the Golden Pathway attorney portal.
 
-Sign in with your attorney CRM credentials to review client contact info, signed POA, and collection letters.', NULL, NULL, false, '{attorney.firstName,casesUrl,clients}', 'staff', true, NULL, NULL, '2026-10-02 21:33:27.311617+00')
+Sign in with your attorney CRM credentials to review client contact info, the signed Welcome Packet, and collection letters.', NULL, NULL, false, '{attorney.firstName,casesUrl,clients}', 'staff', true, NULL, NULL, '2026-10-02 21:33:27.311617+00')
 ON CONFLICT DO NOTHING;
 
 -- reminder_templates (17 rows)

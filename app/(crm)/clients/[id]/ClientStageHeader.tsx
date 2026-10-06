@@ -303,7 +303,7 @@ export function ClientStageHeader({
       return {
         href: `/clients/${clientId}?tab=documents&upload=poa_document`,
         title: `Missing before ${nextLabel}`,
-        detail: "A signed POA is not on file. Open Documents to upload it.",
+        detail: "A signed Welcome Packet is not on file. Open Documents to upload it.",
       };
     }
     return null;

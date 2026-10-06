@@ -115,7 +115,7 @@ export const ACTION_LABELS: Record<string, string> = {
   document_deleted: "File Deleted",
   audio_recording_uploaded: "Audio Recording Uploaded",
   collection_letter_uploaded: "Collection Letter Uploaded",
-  poa_uploaded: "POA Uploaded",
+  poa_uploaded: "Welcome Packet Uploaded",
 
   // Communications (manual comms may also appear in audit in some flows)
   note: "Note Added",
@@ -251,7 +251,7 @@ export function formatAuditDescription(
     return `Text logged: ${direction}`;
   }
   if (action === "welcome_packet_resent") {
-    return "Welcome packet resent for signature";
+    return "Welcome Packet resent for signature";
   }
   if (action === "client_record_viewed") {
     return `Profile viewed by ${(entry.performed_by_name ?? "").trim() || "—"}`;

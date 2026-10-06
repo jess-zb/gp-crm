@@ -51,7 +51,7 @@ export default async function AttorneyQueuePage() {
           Clients in Case Sent to Attorneys appear here until staff assigns them
           to an attorney. Select clients in bulk, choose the attorney, and
           assign — the client receives the case referred email and the attorney
-          receives portal access to view contact info, signed POA, and
+          receives portal access to view contact info, the signed Welcome Packet, and
           collection letters.
         </p>
       </div>

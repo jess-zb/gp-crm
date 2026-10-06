@@ -118,7 +118,7 @@ The role is the second line under your name in the sidebar.
 A department is a checkbox an admin sets on **Team** for a User. There are exactly two.
 
 - **Account Managers** work the client while the file is in the Account Manager stage.
-- **Client Services** work the client after that, until the signed POA is on file and the file can move on.
+- **Client Services** work the client after that, until the signed Welcome Packet is on file and the file can move on.
 
 One person can be in both departments. Admins are already in both, so they show up on Account Manager and Client Services lists without those checkboxes. If you are in both, and you are not an admin, your dashboard is the Account Manager dashboard.
 
@@ -140,7 +140,7 @@ One person can be in both departments. Admins are already in both, so they show 
 - **Stage** is where the file sits in the work. The usual path is New Lead, then Account Manager, then Client Services, then Awaiting Collections, then Case Sent to Attorneys.
 - **MID** is a label on the client, such as Golden Pathway. It chooses which signature documents that client is offered. It does not hide the client from other staff. Everyone on the staff side can open every client.
 - **Credit card authorization** is the signed card form. It must be on the file before the client leaves Account Manager.
-- **POA** is the signed power of attorney. The signed Welcome Packet is stored as the POA. It must be on the file before the client leaves Client Services for Awaiting Collections.
+- **Welcome Packet** is the signed packet. It must be on the file before the client leaves Client Services for Awaiting Collections.
 - **Appointment** is a call or meeting on the calendar. It is not an email.
 - **Drip** is an automatic email sequence. It is not a text message, and nothing is mailed on paper.
 - **Archive** means the file is closed or inactive. It is still searchable.
@@ -161,7 +161,7 @@ There is no shipping, no tracking number, and no print vendor in this system. Do
 5. Book the next call on **Appointments**.
 6. When the card authorization is on file, move the stage to Client Services and make sure a Client Services person is assigned.
 
-You do not send paper packets. You do not need a signed Welcome Packet to leave Account Manager. The card authorization is the gate. The Welcome Packet matters later, as the POA, when Client Services is ready to move the file to Awaiting Collections.
+You do not send paper packets. You do not need a signed Welcome Packet to leave Account Manager. The card authorization is the gate. The Welcome Packet matters later, when Client Services is ready to move the file to Awaiting Collections.
 
 If the person should leave the pipeline instead (they cancelled, they are not interested, or the file should close), use **Cancel client** on their page. Those exits are not held up by the missing card form.
 `,
@@ -260,13 +260,13 @@ After the file is in Client Services, your Account Manager dashboard no longer t
 
 1. Open **Dashboard** and see who is assigned to you.
 2. Open each client. Read the notes and the Documents tab before you call.
-3. Collect the signed POA. The signed Welcome Packet is stored as that POA.
+3. Collect the signed Welcome Packet.
 4. Book follow-up appointments.
-5. When the signed POA is on the file, you can move the stage to **Awaiting Collections**.
+5. When the signed Welcome Packet is on the file, you can move the stage to **Awaiting Collections**.
 
-You cannot make that move with the POA missing. Uploading the POA is the way through. There is no checklist card on the client page anymore. Do not look for boxes named CS Intro or Tracking Update. Those were removed.
+You cannot make that move with the Welcome Packet missing. Uploading the Welcome Packet is the way through. There is no checklist card on the client page anymore. Do not look for boxes named CS Intro or Tracking Update. Those were removed.
 
-If a file has been in Client Services for a long time with no POA, it shows on your dashboard as overdue.
+If a file has been in Client Services for a long time with no Welcome Packet, it shows on your dashboard as overdue.
 `,
   },
   {
@@ -278,36 +278,36 @@ If a file has been in Client Services for a long time with no POA, it shows on y
 The three counts are:
 
 - How many clients in Client Services are assigned to you.
-- How many are POA overdue. That means 21 days or more in Client Services with no signed POA.
+- How many are Welcome Packet overdue. That means 21 days or more in Client Services with no signed Welcome Packet.
 - How many appointments you have today.
 
 ## The three boxes
 
-1. **My clients** lists your files. The status says **POA signed**, **No POA**, or **POA overdue**. Click a row that is not signed. It opens Documents with the POA upload already chosen.
+1. **My clients** lists your files. The status says **Welcome Packet signed**, **No Welcome Packet**, or **Welcome Packet overdue**. Click a row that is not signed. It opens Documents with the Welcome Packet upload already chosen.
 2. **Appointments** works the same way as the Account Manager calendar. Click a day. **See all** opens Appointments.
-3. **POA follow-up** is the overdue list, so you can call those people first.
+3. **Welcome Packet follow-up** is the overdue list, so you can call those people first.
 
 If you are in both departments, you will see the Account Manager dashboard instead. Use **Clients** and search to find your Client Services files, or ask an admin which dashboard you should be using.
 `,
   },
   {
     category: "Client Services",
-    title: "The signed POA",
+    title: "The signed Welcome Packet",
     sortOrder: 230,
-    body: `Awaiting Collections stays locked until a signed POA is on the client.
+    body: `Awaiting Collections stays locked until a signed Welcome Packet is on the client.
 
-The signed copy counts when the POA file is on Documents, or when the signed date is already stored on the client. Sending the Welcome Packet for signature, and uploading a POA you already have, are both valid. A conversation is not.
+The signed copy counts when the Welcome Packet is on Documents, or when the signed date is already stored on the client. Sending it for signature, and uploading a signed copy you already have, are both valid. A conversation is not.
 
 ## What you do
 
 1. Open the client and click **Documents**.
 2. If E-Sign is visible, send the document that belongs to this client's MID. Do not send another MID's file.
-3. If E-Sign is hidden, click **Upload +**, choose **POA File**, and add the signed PDF.
+3. If E-Sign is hidden, click **Upload +**, choose **Welcome Packet**, and add the signed PDF.
 4. Return to the stage dropdown and choose **Awaiting Collections**.
 
-The client header can show a missing-paperwork notice. Click it. For a missing POA it opens the upload form with POA already selected.
+The client header can show a missing-paperwork notice. Click it. For a missing Welcome Packet it opens the upload form with Welcome Packet already selected.
 
-The POA does not move the client by itself in every case. After it is on file, you still confirm the stage. Credit card authorization never moves the stage for you, and an audio file never does either.
+The Welcome Packet does not move the client by itself in every case. After it is on file, you still confirm the stage. Credit card authorization never moves the stage for you, and an audio file never does either.
 `,
   },
   {
@@ -348,7 +348,7 @@ Use **Back to Clients** at the top when you are done. Do not use the browser bac
 If the next stage is blocked, a notice appears at the top of Overview. It is a link, not a progress bar. Click it.
 
 - A missing credit card authorization opens Documents for that signature.
-- A missing POA opens the upload form with POA already selected.
+- A missing Welcome Packet opens the upload form with Welcome Packet already selected.
 
 The notice is only on Overview. If you are on Documents, you will not see it. Go back to Overview.
 
@@ -376,7 +376,7 @@ This tab is the file cabinet. Uploads are always here. E-Sign may be hidden. Rea
 ## Upload a file
 
 1. Click **Upload +**.
-2. Choose the file type before you pick the file. The common ones are **CC Authorization**, **POA File**, **Collection Letter**, **Audio Recording**, and **Other**.
+2. Choose the file type before you pick the file. The common ones are **CC Authorization**, **Welcome Packet**, **Collection Letter**, **Audio Recording**, and **Other**.
 3. Choose the file from your computer. PDF, text, pictures, common audio, video, and Word files are accepted.
 4. Notes are optional. They are for staff, not for the client.
 5. Click **Upload** and wait until the file appears in the list.
