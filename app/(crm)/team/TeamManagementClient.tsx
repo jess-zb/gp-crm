@@ -6,6 +6,7 @@ import { CheckCircle2, Loader2, Pencil, UserPlus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/app/components/Toast";
 import { CrmPageHeader } from "@/app/components/CrmPageHeader";
+import { ModalOverlay } from "@/app/components/ModalOverlay";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { STARRED_EMAILS, STARRED_MEDALS } from "@/lib/team/starred";
 import { getRoleDisplayName } from "@/lib/utils/roles";
@@ -119,6 +120,7 @@ export function TeamManagementClient({
   const [tempPassword, setTempPassword] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [successInviteEmail, setSuccessInviteEmail] = useState("");
+  const [reissuedPassword, setReissuedPassword] = useState(false);
   const [inviteErrors, setInviteErrors] = useState<Record<string, string>>({});
 
   const [editRow, setEditRow] = useState<TeamMemberRow | null>(null);
@@ -229,6 +231,7 @@ export function TeamManagementClient({
         error?: string;
         tempPassword?: string;
         email?: string;
+        reissued?: boolean;
       };
       if (data.error) {
         toast.error(toUserFacingError(data.error));
@@ -236,6 +239,7 @@ export function TeamManagementClient({
       }
       setSuccessInviteEmail(data.email ?? inviteForm.email.trim());
       setTempPassword(data.tempPassword ?? "");
+      setReissuedPassword(data.reissued === true);
       setShowInviteModal(false);
       setShowSuccess(true);
       setInviteForm({ full_name: "", email: "", role: "acct_manager" });
@@ -350,18 +354,12 @@ export function TeamManagementClient({
       </div>
 
       {showInviteModal ? (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
-          onClick={(ev) => {
-            if (ev.target === ev.currentTarget) setShowInviteModal(false);
-          }}
-          role="presentation"
+        <ModalOverlay
+          labelledBy="invite-title"
+          className="z-[100] bg-black/40"
+          onBackdropClick={() => setShowInviteModal(false)}
         >
-          <div
-            className="mx-auto max-h-[90vh] w-full max-w-[min(28rem,calc(100vw-2rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
-            role="dialog"
-            aria-labelledby="invite-title"
-          >
+          <div className="mx-auto flex max-h-[calc(100vh-2rem)] w-full max-w-[min(28rem,calc(100vw-2rem))] flex-col overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <h2
               id="invite-title"
               className="text-lg font-bold text-slate-900 dark:text-white"
@@ -456,18 +454,21 @@ export function TeamManagementClient({
               </div>
             </form>
           </div>
-        </div>
+        </ModalOverlay>
       ) : null}
 
       {showSuccess ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4">
+        <ModalOverlay labelledBy="invite-success-title" className="z-[100] bg-black/40">
           <div className="mx-auto w-full max-w-[min(24rem,calc(100vw-2rem))] rounded-xl bg-white p-4 shadow-xl sm:p-6 dark:bg-[#1C1C1C]">
             <div className="mb-4 text-center">
               <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-emerald-950/60">
                 <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-emerald-400" />
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
-                Team member created!
+              <h3
+                id="invite-success-title"
+                className="font-semibold text-gray-900 dark:text-white"
+              >
+                {reissuedPassword ? "Temporary password ready" : "Team member created!"}
               </h3>
             </div>
             <div className="mb-4 space-y-2 rounded-lg bg-gray-50 p-4 dark:bg-[#121212]">
@@ -478,8 +479,13 @@ export function TeamManagementClient({
                 <span className="font-medium">Temporary password:</span>{" "}
                 <span className="font-mono">{tempPassword}</span>
               </p>
+              {reissuedPassword ? (
+                <p className="text-xs text-gray-500 dark:text-slate-400">
+                  This email already had an account, so a new temporary password was issued.
+                </p>
+              ) : null}
               <p className="mt-2 text-xs text-gray-400 dark:text-slate-500">
-                Please share these credentials securely.
+                Please share these credentials securely. Sign-in uses this email and password.
               </p>
             </div>
             <div className="flex gap-2">
@@ -505,6 +511,7 @@ export function TeamManagementClient({
                   setShowSuccess(false);
                   setTempPassword("");
                   setSuccessInviteEmail("");
+                  setReissuedPassword(false);
                 }}
                 className="flex-1 rounded-lg bg-[#A87830] py-2 text-sm font-medium text-[#161616] hover:bg-[#8C6428]"
               >
@@ -512,22 +519,16 @@ export function TeamManagementClient({
               </button>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       ) : null}
 
       {editRow ? (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
-          onClick={(ev) => {
-            if (ev.target === ev.currentTarget) setEditRow(null);
-          }}
-          role="presentation"
+        <ModalOverlay
+          labelledBy="edit-role-title"
+          className="z-[100] bg-black/40"
+          onBackdropClick={() => setEditRow(null)}
         >
-          <div
-            className="mx-auto w-full max-w-[min(24rem,calc(100vw-2rem))] rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]"
-            role="dialog"
-            aria-labelledby="edit-role-title"
-          >
+          <div className="mx-auto flex max-h-[calc(100vh-2rem)] w-full max-w-[min(24rem,calc(100vw-2rem))] flex-col overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-xl sm:p-6 dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
             <h2
               id="edit-role-title"
               className="text-lg font-bold text-slate-900 dark:text-white"
@@ -651,7 +652,7 @@ export function TeamManagementClient({
               </button>
             </div>
           </div>
-        </div>
+        </ModalOverlay>
       ) : null}
     </div>
   );

@@ -139,11 +139,16 @@ export async function POST(request: Request) {
     });
 
     if (profileError) {
+      // The signup trigger already inserted this profile. The account exists
+      // and the temporary password is still valid.
       if (
         profileError.code === "23505" ||
         profileError.message.toLowerCase().includes("duplicate")
       ) {
-        return NextResponse.json({ status: "exists" });
+        return NextResponse.json({
+          status: "created",
+          tempPassword,
+        });
       }
       return NextResponse.json({
         status: "failed",
