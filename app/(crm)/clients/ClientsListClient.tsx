@@ -281,14 +281,7 @@ function clientListDncStageBadge(client: ClientsListItem, compact: boolean) {
   );
 }
 
-function statusBadge(stage: string, isActive: boolean | null) {
-  if (stage === "closed") {
-    return (
-      <span className="inline-flex rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-800 ring-1 ring-inset ring-red-600/20 dark:bg-red-950/40 dark:text-red-200">
-        Archived
-      </span>
-    );
-  }
+function statusBadge(isActive: boolean | null) {
   if (isActive === true) {
     return (
       <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-inset ring-emerald-600/15 dark:bg-emerald-950/40 dark:text-emerald-200">
@@ -299,26 +292,6 @@ function statusBadge(stage: string, isActive: boolean | null) {
   return (
     <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-500/15 dark:bg-[#1C1C1C] dark:text-slate-300">
       Inactive
-    </span>
-  );
-}
-
-/**
- * Search results span active and archived clients at once, so the row needs to
- * say which side it came from. Kept narrower than `statusBadge` because it sits
- * inline next to the name.
- */
-function searchScopeBadge(isActive: boolean | null) {
-  if (isActive === true) {
-    return (
-      <span className="inline-flex shrink-0 rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 ring-1 ring-inset ring-emerald-600/15 dark:bg-emerald-950/40 dark:text-emerald-200">
-        Active
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex shrink-0 rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600 ring-1 ring-inset ring-slate-500/15 dark:bg-[#1C1C1C] dark:text-slate-300">
-      Archived
     </span>
   );
 }
@@ -376,18 +349,15 @@ SortableHeader.displayName = "SortableHeader";
 const ClientCell = memo(({
   client,
   colId,
-  searchActive = false,
 }: {
   client: ClientsListItem;
   colId: string;
-  /** Search spans every client, so each row states which bucket it belongs to. */
-  searchActive?: boolean;
 }) => {
   switch (colId) {
     case "client_status":
       return (
         <td className="hidden whitespace-nowrap px-4 py-2.5 md:table-cell">
-          {statusBadge(client.stage, client.is_active)}
+          {statusBadge(client.is_active)}
         </td>
       );
     case "name": {
@@ -397,15 +367,12 @@ const ClientCell = memo(({
       const titleExtra = [nick ? `"${nick}"` : null, secondary || null].filter(Boolean).join(" · ");
       return (
         <td className="min-w-0 px-2 py-2.5 max-md:max-w-none md:max-w-[220px] md:px-4">
-          <div className="flex min-w-0 items-center gap-1.5">
-            <p
-              className="text-sm font-medium text-gray-900 max-md:whitespace-normal max-md:break-words md:truncate dark:text-slate-100"
-              title={titleExtra ? `${displayName} (${titleExtra})` : displayName}
-            >
-              {displayName}
-            </p>
-            {searchActive ? searchScopeBadge(client.is_active) : null}
-          </div>
+          <p
+            className="text-sm font-medium text-gray-900 max-md:whitespace-normal max-md:break-words md:truncate dark:text-slate-100"
+            title={titleExtra ? `${displayName} (${titleExtra})` : displayName}
+          >
+            {displayName}
+          </p>
           <p className="truncate text-[11px] text-slate-500 dark:text-slate-400">
             {client.mid_name?.trim() || "No MID"}
           </p>
@@ -486,7 +453,6 @@ const ClientRow = memo(
     canDeleteOne,
     onDeleteOne,
     orderedVisibleColumns,
-    searchActive,
   }: {
     client: ClientsListItem;
     isSelected: boolean;
@@ -498,7 +464,6 @@ const ClientRow = memo(
     canDeleteOne: boolean;
     onDeleteOne: (id: string) => void;
     orderedVisibleColumns: string[];
-    searchActive: boolean;
   }) => {
     const displayName = `${client.first_name ?? ""} ${client.last_name ?? ""}`.trim() || "—";
     return (
@@ -528,7 +493,6 @@ const ClientRow = memo(
             key={colId}
             client={client}
             colId={colId}
-            searchActive={searchActive}
           />
         ))}
         <td
@@ -923,12 +887,7 @@ export function ClientsListClient({
       header.join(","),
       ...rows.map((c) => {
         const name = `${c.first_name ?? ""} ${c.last_name ?? ""}`.trim();
-        const st =
-          c.stage === "closed"
-            ? "Archived"
-            : c.is_active === true
-              ? "Active"
-              : "Inactive";
+        const st = c.is_active === true ? "Active" : "Inactive";
         const added = c.created_at
           ? formatDate(c.created_at, {
               month: "numeric",
@@ -1172,7 +1131,7 @@ export function ClientsListClient({
 
       {searchActive ? (
         <p className="mt-4 text-[13px] text-slate-500 dark:text-slate-400">
-          Showing matches across all clients, active and archived.
+          Showing matches across all clients, active and inactive.
         </p>
       ) : null}
 
@@ -1468,7 +1427,6 @@ export function ClientsListClient({
                         canDeleteOne={canDeleteOne}
                         onDeleteOne={onDeleteOne}
                         orderedVisibleColumns={orderedVisibleColumns}
-                        searchActive={searchActive}
                       />
                     ))}
                   </tbody>

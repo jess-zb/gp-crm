@@ -24,6 +24,7 @@ import {
   canUseStageDropdown,
 } from "@/lib/roles";
 import {
+  isActiveForStageMove,
   isForwardPipelineTransition,
   normalizePipelineStage,
   pipelineStageAuditAction,
@@ -403,6 +404,10 @@ export function ClientStageHeader({
       stage: newStage,
       stage_entered_at: new Date().toISOString(),
     };
+    const activeAfterMove = isActiveForStageMove(oldS, newStage);
+    if (activeAfterMove !== undefined) {
+      stageUpdate.is_active = activeAfterMove;
+    }
     const { error: updateErr } = await supabase
       .from("clients")
       .update(stageUpdate)
@@ -910,11 +915,7 @@ export function ClientStageHeader({
           ) : (
             <StagePill stage={current} />
           )}
-          {isClosed ? (
-            <span className="inline-flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-bold text-slate-800 dark:bg-slate-700 dark:text-slate-100">
-              Case Closed
-            </span>
-          ) : canCancel ? (
+          {!isClosed && canCancel ? (
             <button
               type="button"
               onClick={() => {

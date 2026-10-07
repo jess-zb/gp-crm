@@ -5,7 +5,7 @@ import { buildSearchQuery } from "@/lib/clients/client-search";
 export const CLIENT_LIST_SELECT =
   "id, first_name, last_name, nickname, secondary_first_name, spouse_first_name, spouse_last_name, spouse_name, email, phone, phone_mobile, phone_work, phone_home, street_address, city, zip_code, stage, is_active, created_at, stage_entered_at, assigned_to, assigned_services_id, dnc_reason, mid_id, mids(name)";
 
-const TERMINAL_STAGES = "(dnc,not_interested,dnq,mortgage,closed)";
+const CLIENT_LIST_CUTOFF = "2026-06-02T00:00:00+00:00";
 
 export type ClientsListTab = "all" | "active" | "archives";
 
@@ -83,17 +83,14 @@ export async function fetchClientsListPage(
   const qSearch = search.trim();
 
   // A search spans every client regardless of tab, with no created-date floor.
-  // The tab filters do not partition the client set: a client with
-  // is_active = true in a terminal stage is excluded from both `active` and
-  // `archives`, so scoping search to a tab would make those records
-  // unreachable once the `all` tab is hidden.
+  // Status is is_active. Stage is not a second status.
   if (!qSearch) {
     if (tab === "all") {
-      q = q.gte("created_at", "2026-06-02T00:00:00+00:00");
+      q = q.gte("created_at", CLIENT_LIST_CUTOFF);
     } else if (tab === "active") {
-      q = q.eq("is_active", true).not("stage", "in", TERMINAL_STAGES);
+      q = q.eq("is_active", true);
     } else if (tab === "archives") {
-      q = q.eq("is_active", false).gte("created_at", "2026-06-02T00:00:00+00:00");
+      q = q.eq("is_active", false).gte("created_at", CLIENT_LIST_CUTOFF);
     }
   }
 

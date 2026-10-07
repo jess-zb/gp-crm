@@ -46,7 +46,11 @@ export function AttorneyCaseStageActions({
     const oldS = newStage === "closed" ? "case_sent_to_attorneys" : "closed";
     const { error: uErr } = await supabase
       .from("clients")
-      .update({ stage: newStage, stage_entered_at: new Date().toISOString() })
+      .update({
+        stage: newStage,
+        stage_entered_at: new Date().toISOString(),
+        is_active: newStage !== "closed",
+      })
       .eq("id", clientId);
 
     if (uErr) {

@@ -18,6 +18,32 @@ export function normalizePipelineStage(raw: string | null | undefined): string {
   return normalizeStageKey(raw);
 }
 
+/** Stages that leave the working pipeline. Archives includes these even if `is_active` was left true. */
+export const ARCHIVE_STAGES = [
+  "dnc",
+  "not_interested",
+  "dnq",
+  "mortgage",
+  "closed",
+] as const;
+
+export function isArchiveStage(stage: string | null | undefined): boolean {
+  return (ARCHIVE_STAGES as readonly string[]).includes((stage ?? "").trim());
+}
+
+/**
+ * `false` when the move archives the file, `true` when it leaves an archive
+ * stage, otherwise leave `is_active` untouched.
+ */
+export function isActiveForStageMove(
+  oldStage: string,
+  newStage: string
+): boolean | undefined {
+  if (isArchiveStage(newStage)) return false;
+  if (isArchiveStage(oldStage)) return true;
+  return undefined;
+}
+
 export function pipelineStageAuditAction(
   oldStage: string,
   newStage: string

@@ -85,7 +85,7 @@ function clientLabel(client: ClientHit): string {
 
 function clientMeta(client: ClientHit): string {
   const stage = STAGE_LABELS[client.stage ?? ""] || "No stage";
-  const scope = client.is_active === true ? "Active" : "Archived";
+  const scope = client.is_active === true ? "Active" : "Inactive";
   return `${stage} · ${scope}`;
 }
 

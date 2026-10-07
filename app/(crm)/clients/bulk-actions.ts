@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import { canBulkDeleteClients, isCrmStaffRole } from "@/lib/roles";
 import { ALL_STAGE_ORDER, isPipelineStageHidden } from "@/lib/constants/stages";
+import { ARCHIVE_STAGES, isArchiveStage } from "@/lib/clients/pipeline-status";
 
 const STAGES = new Set<string>(
   [...ALL_STAGE_ORDER].filter((s) => !isPipelineStageHidden(s))
@@ -79,11 +80,26 @@ export async function bulkChangeStage(
     }
   }
 
-  const { error } = await supabase
-    .from("clients")
-    .update({ stage, stage_entered_at: new Date().toISOString() })
-    .in("id", valid);
-  if (error) return { ok: false, error: error.message };
+  const now = new Date().toISOString();
+  if (isArchiveStage(stage)) {
+    const { error } = await supabase
+      .from("clients")
+      .update({ stage, stage_entered_at: now, is_active: false })
+      .in("id", valid);
+    if (error) return { ok: false, error: error.message };
+  } else {
+    const { error: reopenErr } = await supabase
+      .from("clients")
+      .update({ is_active: true })
+      .in("id", valid)
+      .in("stage", [...ARCHIVE_STAGES]);
+    if (reopenErr) return { ok: false, error: reopenErr.message };
+    const { error } = await supabase
+      .from("clients")
+      .update({ stage, stage_entered_at: now })
+      .in("id", valid);
+    if (error) return { ok: false, error: error.message };
+  }
   revalidatePath("/clients");
   revalidatePath("/pipeline");
   return { ok: true };

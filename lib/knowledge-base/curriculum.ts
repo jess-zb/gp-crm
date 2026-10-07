@@ -137,13 +137,13 @@ One person can be in both departments. Admins are already in both, so they show 
     body: `You will see the same words on every page. Here is what they mean in this company.
 
 - **Client** is the person Golden Pathway is helping. Their spouse can be on the file too. The spouse is not a second client.
-- **Stage** is where the file sits in the work. The usual path is New Lead, then Account Manager, then Client Services, then Awaiting Collections, then Case Sent to Attorneys.
+- **Stage** is where the file sits in the work. The usual path is New Lead, then Account Manager, then Client Services, then Awaiting Collections, then Case Sent to Attorneys. Closed is a stage. It is not a status.
 - **MID** is a label on the client, such as Golden Pathway. It chooses which signature documents that client is offered. It does not hide the client from other staff. Everyone on the staff side can open every client.
 - **Credit card authorization** is the signed card form. It must be on the file before the client leaves Account Manager.
 - **Welcome Packet** is the signed packet. It must be on the file before the client leaves Client Services for Awaiting Collections.
 - **Appointment** is a call or meeting on the calendar. It is not an email.
 - **Drip** is an automatic email sequence. It is not a text message, and nothing is mailed on paper.
-- **Archive** means the file is closed or inactive. It is still searchable.
+- **Status** is Active or Inactive. Cancel marks the file Inactive, and so does moving the stage to Closed, DNC, DNQ, Not Interested, or Mortgage. **Archives** is the list of inactive files. Search still finds them.
 
 There is no shipping, no tracking number, and no print vendor in this system. Documents go out for signature on the screen, or a staff member uploads a file that was already signed.
 `,
@@ -507,7 +507,7 @@ Use Pipeline when you want to see volume. Use your dashboard when you want to se
 3. Read the confirmation before you accept it. This is hard to undo casually.
 4. If the company owes a refund, an admin handles that from **Clients**, then **Refunds**. Account Managers and Client Services do not see the Refunds tab. They can still request the cancel. An admin marks the refund complete.
 
-Closed and archived files stay in search. **Archives** on the Clients page is the list of inactive files. If you do not see **All Clients**, use Active, Archives, and the search button.
+Cancel marks the file Inactive and moves the stage. **Archives** on the Clients page is that inactive list. The stage name stays whatever you chose, including Closed. Search still finds them. If you do not see **All Clients**, use Active, Archives, and the search button.
 
 Do not delete a client to hide a mistake. Tell an admin.
 `,

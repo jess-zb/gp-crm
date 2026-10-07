@@ -108,9 +108,13 @@ assert.match(
 );
 assert.match(listQuery, /2026-06-02T00:00:00\+00:00/);
 assert.match(tabCounts, /2026-06-02T00:00:00\+00:00/);
-assert.match(tabCounts, /\(dnc,not_interested,dnq,mortgage,closed\)/);
-assert.match(listQuery, /\(dnc,not_interested,dnq,mortgage,closed\)/);
-console.log("  ✓ client list still exact-counts the page; search/date/active filters unchanged");
+assert.match(listQuery, /\.eq\("is_active", true\)/);
+assert.match(listQuery, /\.eq\("is_active", false\)/);
+assert.match(tabCounts, /\.eq\("is_active", true\)/);
+assert.match(tabCounts, /\.eq\("is_active", false\)/);
+assert.doesNotMatch(listQuery, /stage\.in\./);
+assert.doesNotMatch(tabCounts, /stage\.in\./);
+console.log("  ✓ client list still exact-counts the page; status is is_active, not stage");
 
 assert.match(allowlist, /\/api\/clients\/documents\/download/);
 console.log("  ✓ attorney download allowlist untouched");

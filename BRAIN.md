@@ -20,6 +20,12 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-07 — Stage is the file, status is Active or Inactive
+
+Supersedes the same-day note that treated a closed stage as an Archived status.
+
+The stage label is Closed. Status is only Active or Inactive, from `is_active`. The Clients list, the Archives tab, search, and the record toggle all read that flag. They do not also treat the stage as a status. Cancel already sets `is_active` false and writes the outcome stage (DNC, DNQ, Not Interested, or the refund path). Choosing Closed, DNC, DNQ, Not Interested, or Mortgage does the same. Leaving one of those stages marks the file Active again. Archives is the inactive list.
+
 ### 2026-10-06 — The file is called a Welcome Packet
 
 Uploads, the Client Services dashboard, the stage block, attorney files, and the knowledge base say Welcome Packet wherever they used to say POA. The gate is unchanged: a signed copy still has to be on the file before Client Services can move to Awaiting Collections, and those files still cannot be deleted. Stored type values are not renamed.

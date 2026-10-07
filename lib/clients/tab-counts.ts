@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+const CLIENT_LIST_CUTOFF = "2026-06-02T00:00:00+00:00";
+
 export type TabCounts = {
   all: number;
   active: number;
@@ -7,8 +9,6 @@ export type TabCounts = {
   /** Refunds requested but not yet marked refunded. */
   refunds?: number;
 };
-
-const TERMINAL_STAGES = "(dnc,not_interested,dnq,mortgage,closed)";
 
 /**
  * Tab totals without search filter; respects team scope (assigned_to). Each
@@ -58,16 +58,16 @@ export async function fetchTabCounts(
 
   const [allRes, activeRes, archivesRes] = await Promise.all([
     includeAll
-      ? scopedHead().gte("created_at", "2026-06-02T00:00:00+00:00")
+      ? scopedHead().gte("created_at", CLIENT_LIST_CUTOFF)
       : Promise.resolve({ count: 0 }),
     (() => {
       let q = scopedHead();
-      q = q.eq("is_active", true).not("stage", "in", TERMINAL_STAGES);
+      q = q.eq("is_active", true);
       return q;
     })(),
     (() => {
       let q = scopedHead();
-      q = q.eq("is_active", false).gte("created_at", "2026-06-02T00:00:00+00:00");
+      q = q.eq("is_active", false).gte("created_at", CLIENT_LIST_CUTOFF);
       return q;
     })(),
   ]);

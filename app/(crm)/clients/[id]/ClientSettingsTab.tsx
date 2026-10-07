@@ -140,7 +140,7 @@ export function ClientSettingsTab({
         .eq("id", clientId);
       if (error) throw error;
       setRecordActive(next);
-      toast.success(next ? "Record marked active" : "Record archived");
+      toast.success(next ? "Record marked active" : "Record marked inactive");
       router.refresh();
     } catch (e) {
       toast.error(toUserFacingError(e instanceof Error ? e.message : "Update failed"));
@@ -261,7 +261,7 @@ export function ClientSettingsTab({
                 recordActive ? "bg-[#A87830]" : "bg-gray-300 dark:bg-slate-600"
               }`}
               aria-pressed={recordActive}
-              aria-label={recordActive ? "Mark archived" : "Mark active"}
+              aria-label={recordActive ? "Mark inactive" : "Mark active"}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
@@ -274,7 +274,7 @@ export function ClientSettingsTab({
                 recordActive ? "text-[#A87830] dark:text-[#A87830]" : "text-gray-400 dark:text-slate-500"
               }`}
             >
-              {recordActive ? "Active" : "Archived"}
+              {recordActive ? "Active" : "Inactive"}
             </span>
           </div>
 

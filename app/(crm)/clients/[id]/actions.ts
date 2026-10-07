@@ -14,6 +14,7 @@ import {
   isDevOrAdmin,
 } from "@/lib/roles";
 import {
+  isActiveForStageMove,
   normalizePipelineStage,
   pipelineStageAuditAction,
 } from "@/lib/clients/pipeline-status";
@@ -208,6 +209,7 @@ export async function updateClient(
 interface ClientSettingsPayload {
   stage?: PipelineStageKey;
   stage_entered_at?: string;
+  is_active?: boolean;
   assigned_to?: string | null;
   assigned_services_id?: string | null;
   attorney_id?: string | null;
@@ -234,6 +236,8 @@ export async function updateClientSettings(
     if (canEditStage && newStage !== oldStage) {
       payload.stage = newStage;
       payload.stage_entered_at = new Date().toISOString();
+      const activeAfterMove = isActiveForStageMove(oldStage, newStage);
+      if (activeAfterMove !== undefined) payload.is_active = activeAfterMove;
     }
 
     if (canReassignClient(profile.role)) {

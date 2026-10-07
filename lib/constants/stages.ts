@@ -108,7 +108,7 @@ export const STAGE_CONFIG: Record<
     hex: "#9CA3AF",
   },
   closed: {
-    label: "Closed / Archived",
+    label: "Closed",
     color: "bg-gray-100 text-gray-600",
     dot: "bg-gray-400",
     border: "border-gray-200",

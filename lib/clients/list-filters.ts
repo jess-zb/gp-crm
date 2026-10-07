@@ -22,7 +22,7 @@ export function applyClientListFiltersWithoutSearch<
   } else if (opts.tab === "inactive") {
     query = query.eq("is_active", false);
   } else if (opts.tab === "archived") {
-    query = query.eq("stage", "closed");
+    query = query.eq("is_active", false);
   } else {
     query = query.eq("is_active", true);
   }
