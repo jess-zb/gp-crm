@@ -33,6 +33,7 @@ import { StagePill } from "@/app/components/StagePill";
 import { formatDate } from "@/lib/utils/date";
 import type { TabCounts } from "@/lib/clients/tab-counts";
 import { softDeleteClient } from "./actions";
+import { LeadFileDrop } from "./LeadFileDrop";
 import {
   bulkAssign,
   bulkChangeStage,
@@ -1050,8 +1051,9 @@ export function ClientsListClient({
 
   return (
     <>
+      <LeadFileDrop />
       <div
-        className="mt-5 flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap"
+        className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap"
         role="search"
       >
         <label className="sr-only" htmlFor="client-search">

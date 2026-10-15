@@ -20,6 +20,10 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-15 — Staff can drop a lead text file on Clients
+
+The Clients list has a drop area for the same `.txt` export the partner API accepts. One file becomes one New Lead. The contact fields and the Enrolled Cards file are unchanged, and the welcome email still does not start. The browser never sees `LEADS_API_KEY`. The drop is staff-only. This is not written into the Knowledge Base.
+
 ### 2026-10-07 — Stage is the file, status is Active or Inactive
 
 Supersedes the same-day note that treated a closed stage as an Archived status.

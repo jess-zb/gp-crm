@@ -18,6 +18,7 @@ export type SavePartnerExportResult =
         created: true;
         id: string;
         document_id: string;
+        name: string;
       };
     }
   | {
@@ -78,7 +79,14 @@ async function storeExportFile(
  */
 export async function savePartnerExport(
   admin: SupabaseClient,
-  args: { text: string; fileName?: string | null; source?: string | null }
+  args: {
+    text: string;
+    fileName?: string | null;
+    source?: string | null;
+    /** Set when a signed-in staff member drops the file. The partner API leaves these empty. */
+    performedBy?: string | null;
+    performedByName?: string | null;
+  }
 ): Promise<SavePartnerExportResult> {
   if (args.text.includes("\0")) {
     return { ok: false, status: 400, body: { ok: false, error: "Request body must be a text file." } };
@@ -150,7 +158,8 @@ export async function savePartnerExport(
     client_id: clientId,
     action: "inbound_lead",
     new_value: { source: lead.source, file_name: fileName },
-    performed_by_name: "Partner API",
+    ...(args.performedBy ? { performed_by: args.performedBy } : {}),
+    performed_by_name: args.performedByName?.trim() || "Partner API",
   });
   if (auditErr) console.error("[api/leads] audit:", auditErr.message);
 
@@ -162,6 +171,7 @@ export async function savePartnerExport(
       created: true,
       id: clientId,
       document_id: stored.documentId,
+      name: `${lead.first_name} ${lead.last_name}`.trim(),
     },
   };
 }
