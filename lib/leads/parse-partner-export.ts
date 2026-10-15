@@ -12,7 +12,8 @@ export type PartnerExport = {
   city: string;
   state: string;
   zip_code: string;
-  email: string;
+  /** Blank when the text file has no email line. A bad address is still refused. */
+  email: string | null;
   source: string;
 };
 
@@ -82,9 +83,6 @@ export function parsePartnerExport(
     source: source ?? undefined,
   });
   if (!core.ok) return core;
-  if (!core.lead.email) {
-    return { ok: false, fields: { email: "Email is required." } };
-  }
 
   const primary = core.lead.phone;
   const phone_home =

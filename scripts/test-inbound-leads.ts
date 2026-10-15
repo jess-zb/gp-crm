@@ -197,4 +197,12 @@ const again = parsePartnerExport(EXPORT);
 assert.equal(again.ok, true);
 console.log("  ✓ partner text keeps contact fields only; a repeat still parses as its own lead");
 
+const noEmail = parsePartnerExport(EXPORT.replace(/\nEmail : JANE@EXAMPLE.COM/, ""));
+assert.equal(noEmail.ok, true);
+if (noEmail.ok) assert.equal(noEmail.lead.email, null);
+const badEmail = parsePartnerExport(EXPORT.replace("JANE@EXAMPLE.COM", "not-an-email"));
+assert.equal(badEmail.ok, false);
+if (!badEmail.ok) assert.match(badEmail.fields.email ?? "", /valid/);
+console.log("  ✓ a missing email still parses; a bad email is refused");
+
 console.log("\nAll inbound lead checks passed.");

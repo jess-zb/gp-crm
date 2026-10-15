@@ -1051,7 +1051,7 @@ export function ClientsListClient({
 
   return (
     <>
-      <LeadFileDrop />
+      <LeadFileDrop tab={tab} />
       <div
         className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap"
         role="search"

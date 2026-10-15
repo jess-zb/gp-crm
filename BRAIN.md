@@ -20,6 +20,10 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-15 — A dropped lead file does not need an email, and there is no file cap
+
+Extends the same-day drop-area note. A text file still creates a New Lead when the email line is missing. A line that is present but is not an email address is still refused. Staff can drop as many files as they have; each one is saved in order, and the time it takes follows the number of files. The partner API keeps its own per-minute limit. After the drop, the Clients list opens on the first page, newest first, so those leads are at the top. This is not written into the Knowledge Base.
+
 ### 2026-10-15 — Staff can drop a lead text file on Clients
 
 The Clients list has a drop area for the same `.txt` export the partner API accepts. One file becomes one New Lead. The contact fields and the Enrolled Cards file are unchanged, and the welcome email still does not start. The browser never sees `LEADS_API_KEY`. The drop is staff-only. This is not written into the Knowledge Base.

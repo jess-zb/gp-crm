@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import { isCrmStaffRole } from "@/lib/roles";
-import { consumeLeadIntakeSlot } from "@/lib/leads/intake-rate";
 import { savePartnerExport } from "@/lib/leads/save-partner-export";
 import type { InboundLeadFields } from "@/lib/leads/parse-inbound-lead";
 
@@ -59,17 +58,6 @@ export async function importLeadTextFile(formData: FormData): Promise<ImportLead
   }
 
   const admin = createAdminClient();
-  const rate = await consumeLeadIntakeSlot(admin);
-  if (rate === "limited") {
-    return {
-      ok: false,
-      error: "Too many leads were added just now. Wait a minute and drop the file again.",
-    };
-  }
-  if (rate === "unavailable") {
-    return { ok: false, error: "Could not add that lead." };
-  }
-
   const result = await savePartnerExport(admin, {
     text,
     fileName: name,
