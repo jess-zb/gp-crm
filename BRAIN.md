@@ -20,6 +20,10 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-15 — DVCR pages are not part of the Knowledge Base
+
+Articles whose title or body contained DVCR were removed. They were a pasted archive, not staff training. The guide staff should follow is still **Knowledge Base**, starting with **The path of a client**. Users, Admins, and Devs can open it. Attorneys and clients cannot.
+
 ### 2026-10-15 — Uploads walk the client down the path
 
 Supersedes the 2026-10-03 line that said a credit card authorization never moves the stage, and the part of that line that sent a Welcome Packet from Account Manager straight to Awaiting Collections.
