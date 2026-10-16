@@ -185,6 +185,14 @@ export async function runStageEntrySideEffects(
   }
 
   if (newStage === "awaiting_collection_letter") {
+    // The Account Manager nudge is done once they are waiting on the letter,
+    // including when the card form and the Welcome Packet land together.
+    await cancelSequencesByKeys(
+      supabase,
+      clientId,
+      ["partial_arc"],
+      "awaiting_collection_letter"
+    );
     // Resume active_arc from exactly where it left off if this client was pushed
     // back from case_sent_to_attorneys (user error). No-op if arc is still running.
     // Falls back to a fresh enrollment if no prior arc exists.

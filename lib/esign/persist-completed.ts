@@ -1,10 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildClientDocumentStoragePath } from "@/lib/clients/document-upload";
 import {
+  advanceClientAfterCcAuthUpload,
   advanceClientAfterPoaUpload,
   isPoaDocumentType,
   markPoaSignedOnClient,
 } from "@/lib/clients/poa-upload-advance";
+import { runStageEntrySideEffects } from "@/lib/reminders/stage-entry-appointments";
 import { documentTypeForBehavior, esignSignedFileStem } from "./types";
 
 const BUCKET = "client-documents";
@@ -67,7 +69,7 @@ export async function persistCompletedEsignBytes(args: {
 
   const { data: clientRow } = await args.admin
     .from("clients")
-    .select("stage")
+    .select("stage, assigned_to")
     .eq("id", args.clientId)
     .maybeSingle();
   const stageBefore = (clientRow?.stage as string | null) ?? null;
@@ -126,17 +128,70 @@ export async function persistCompletedEsignBytes(args: {
     await markPoaSignedOnClient(args.admin, args.clientId);
     const advanced = await advanceClientAfterPoaUpload(args.admin, args.clientId);
     if (advanced) {
+      const { data: moved } = await args.admin
+        .from("clients")
+        .select("stage")
+        .eq("id", args.clientId)
+        .maybeSingle();
       await args.admin.from("audit_log").insert({
         client_id: args.clientId,
         action: "stage_auto_advanced",
         new_value: {
-          stage: "awaiting_collection_letter",
+          stage: (moved?.stage as string | null) ?? "awaiting_collection_letter",
           trigger: "esign_welcome_packet_poa",
           from_stage: stageBefore,
           document_id: signedId,
         },
         performed_by_name: "System",
       });
+    }
+  }
+
+  if (signedId && documentType === "cc_authorization") {
+    const advanced = await advanceClientAfterCcAuthUpload(args.admin, args.clientId);
+    if (advanced) {
+      const { data: moved } = await args.admin
+        .from("clients")
+        .select("stage")
+        .eq("id", args.clientId)
+        .maybeSingle();
+      await args.admin.from("audit_log").insert({
+        client_id: args.clientId,
+        action: "stage_auto_advanced",
+        new_value: {
+          stage: (moved?.stage as string | null) ?? "client_services",
+          trigger: "esign_cc_authorization",
+          from_stage: stageBefore,
+          document_id: signedId,
+        },
+        performed_by_name: "System",
+      });
+    }
+  }
+
+  if (signedId && stageBefore) {
+    const { data: after } = await args.admin
+      .from("clients")
+      .select("stage")
+      .eq("id", args.clientId)
+      .maybeSingle();
+    const stageNow = (after?.stage as string | null) ?? stageBefore;
+    if (stageNow !== stageBefore) {
+      try {
+        await runStageEntrySideEffects(args.admin, {
+          clientId: args.clientId,
+          oldStage: stageBefore,
+          newStage: stageNow,
+          assignedTo: (clientRow?.assigned_to as string | null) ?? null,
+          performerId: uploadedBy,
+          forward: true,
+        });
+      } catch (err) {
+        console.warn(
+          "[esign persist] stage side effects:",
+          err instanceof Error ? err.message : err
+        );
+      }
     }
   }
 

@@ -27,7 +27,7 @@ export function isEsignBehavior(value: string): value is EsignBehavior {
 }
 
 export const ESIGN_BEHAVIOR_LABELS: Record<EsignBehavior, string> = {
-  cc_authorization: "Credit card authorization",
+  cc_authorization: "Credit card authorization (moves the client to Client Services once signed)",
   welcome_packet: "Welcome Packet (advances the client once signed)",
   agreement: "Agreement",
   other: "Other",
@@ -111,9 +111,9 @@ export function esignSentAuditAction(behavior: string): string {
   return `esign_${behavior}_sent`;
 }
 
-/** Signing a welcome packet files a POA, which advances the stage. */
+/** Signing the card form or the Welcome Packet files a document, which moves the stage. */
 export function advancesStageOnSign(behavior: string): boolean {
-  return behavior === "welcome_packet";
+  return behavior === "welcome_packet" || behavior === "cc_authorization";
 }
 
 export function canShowEsignActions(stage: string | null | undefined): boolean {

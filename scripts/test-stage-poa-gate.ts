@@ -13,6 +13,13 @@ import {
   poaAdvanceAlreadyApplied,
   shouldAttemptPoaAdvance,
 } from "../lib/clients/poa-upload-advance";
+import {
+  ccAdvanceAlreadyApplied,
+  stageAfterCcAuthorizationUpload,
+  stageAfterWelcomePacketUpload,
+  uploadStageMessage,
+} from "../lib/workflow/document-stage-advance";
+import { nextStepForClient } from "../lib/workflow/next-step";
 
 console.log("POA stage gate smoke test\n");
 
@@ -75,7 +82,8 @@ console.log("  ✓ hasSignedPoaOnRecord matches checklist logic");
 assert.equal(poaAdvanceAlreadyApplied("client_services", "awaiting_collection_letter"), true);
 assert.equal(poaAdvanceAlreadyApplied("account_manager", "awaiting_collection_letter"), true);
 assert.equal(poaAdvanceAlreadyApplied("client_services", "client_services"), false);
-assert.equal(poaAdvanceAlreadyApplied("lead", "awaiting_collection_letter"), false);
+assert.equal(poaAdvanceAlreadyApplied("lead", "account_manager"), true);
+assert.equal(poaAdvanceAlreadyApplied("lead", "awaiting_collection_letter"), true);
 assert.equal(shouldAttemptPoaAdvance("account_manager"), true);
 assert.equal(shouldAttemptPoaAdvance("client_services"), true);
 assert.equal(shouldAttemptPoaAdvance("awaiting_collection_letter"), false);
@@ -124,5 +132,38 @@ assert.equal(
   false
 );
 console.log("  ✓ Account Manager exit requires a signed CC authorization");
+
+assert.equal(stageAfterCcAuthorizationUpload("lead", false), "client_services");
+assert.equal(stageAfterCcAuthorizationUpload("lead", true), "awaiting_collection_letter");
+assert.equal(stageAfterCcAuthorizationUpload("account_manager", false), "client_services");
+assert.equal(
+  stageAfterCcAuthorizationUpload("account_manager", true),
+  "awaiting_collection_letter"
+);
+assert.equal(stageAfterCcAuthorizationUpload("client_services", false), null);
+assert.equal(stageAfterWelcomePacketUpload("client_services", false), "awaiting_collection_letter");
+assert.equal(stageAfterWelcomePacketUpload("account_manager", false), null);
+assert.equal(
+  stageAfterWelcomePacketUpload("account_manager", true),
+  "awaiting_collection_letter"
+);
+assert.equal(stageAfterWelcomePacketUpload("lead", true), "awaiting_collection_letter");
+assert.equal(stageAfterWelcomePacketUpload("lead", false), "account_manager");
+assert.equal(ccAdvanceAlreadyApplied("account_manager", "client_services"), true);
+assert.equal(ccAdvanceAlreadyApplied("lead", "client_services"), true);
+assert.match(
+  uploadStageMessage({
+    kind: "welcome_packet",
+    fromStage: "account_manager",
+    toStage: "account_manager",
+  }) ?? "",
+  /stays in Account Manager/
+);
+assert.match(nextStepForClient({
+  stage: "case_sent_to_attorneys",
+  hasCcAuthorization: true,
+  hasWelcomePacket: true,
+}) ?? "", /Successful/);
+console.log("  ✓ uploads move Account Manager and Client Services in order");
 
 console.log("\nAll POA stage gate checks passed.");

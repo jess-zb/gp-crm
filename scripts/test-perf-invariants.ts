@@ -27,12 +27,12 @@ const listQuery = read("lib/clients/clients-list-query.ts");
 const tabCounts = read("lib/clients/tab-counts.ts");
 const allowlist = read("lib/attorney/portal-api-allowlist.ts");
 
-assert.doesNotMatch(
+assert.match(
   uploadComplete,
   /runStageEntrySideEffects/,
-  "Uploads API must not run stage-entry appointment/drip side effects"
+  "A document that moves the stage must run the same drip and appointment side effects as a manual move"
 );
-console.log("  ✓ upload-complete does not call runStageEntrySideEffects");
+console.log("  ✓ upload-complete runs stage-entry side effects when a file moves the stage");
 
 assert.match(
   uploadComplete,
@@ -52,8 +52,9 @@ console.log("  ✓ collection-letter / case-sent path still present");
 assert.match(poaAdvance, /account_manager/);
 assert.match(poaAdvance, /client_services/);
 assert.match(poaAdvance, /awaiting_collection_letter/);
+assert.match(poaAdvance, /advanceClientAfterCcAuthUpload/);
 assert.match(poaAdvance, /\.is\("poa_signed_at", null\)/);
-console.log("  ✓ POA auto-advance still AM + CS; poa_signed_at is first-write-only");
+console.log("  ✓ Welcome Packet and credit-card uploads still move the stage; poa_signed_at is first-write-only");
 
 const functionsSql = read("supabase/migrations/0004_functions.sql");
 const poaFn = functionsSql.slice(
@@ -64,7 +65,17 @@ assert.ok(poaFn.includes("handle_poa_upload"), "handle_poa_upload must live in t
 assert.match(poaFn, /account_manager/);
 assert.match(poaFn, /client_services/);
 assert.match(poaFn, /awaiting_collection_letter/);
-console.log("  ✓ handle_poa_upload still advances AM and CS");
+console.log("  ✓ handle_poa_upload still exists in the base functions");
+
+const stageAdvanceSql = read("supabase/migrations/0033_document_stage_advances.sql");
+assert.match(stageAdvanceSql, /handle_cc_auth_upload/);
+assert.match(stageAdvanceSql, /client_services/);
+assert.match(stageAdvanceSql, /cc_authorization/);
+assert.match(stageAdvanceSql, /from_stage = 'client_services'/);
+assert.match(stageAdvanceSql, /from_stage IN \('lead', 'account_manager'\) AND EXISTS/);
+assert.match(stageAdvanceSql, /next_stage := 'account_manager'/);
+assert.match(stageAdvanceSql, /from_stage NOT IN \('lead', 'account_manager'\)/);
+console.log("  ✓ card form and Welcome Packet triggers follow the path");
 
 assert.match(
   documentsTab,

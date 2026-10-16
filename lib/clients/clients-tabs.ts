@@ -20,6 +20,7 @@ const TAB_DEFS: readonly {
 }[] = [
   { id: "all", label: "All Clients", group: "list" },
   { id: "active", label: "Active", group: "list" },
+  { id: "successful", label: "Successful", group: "list" },
   { id: "archives", label: "Archives", group: "list" },
   { id: "refunds", label: "Refunds", group: "board" },
 ] as const;
@@ -56,7 +57,7 @@ export function parseClientsTab(
 }
 
 export function isClientsListTab(tab: ClientsPageTab): tab is ClientsListTab {
-  return tab === "all" || tab === "active" || tab === "archives";
+  return tab === "all" || tab === "active" || tab === "successful" || tab === "archives";
 }
 
 export function buildClientsHref(parts: {

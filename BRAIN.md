@@ -14,11 +14,25 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 - Staff departments are Account Managers and Client Services. MIDs are labels, not tenancy. There is no physical mail and no third-party e-sign vendor.
 - Leaving Account Manager for a later pipeline stage requires a signed credit card authorization on file (`cc_authorization`), from e-sign or a direct upload.
-- Leaving Client Services for Awaiting Collections still requires a signed Welcome Packet. Staff see that name. The stored document types stay `poa_document`, `poa`, `poa_signed`, and `power_of_attorney`.
+- Leaving Client Services for Awaiting Collections still requires a signed Welcome Packet. Staff see that name. The stored document types stay `poa_document`, `poa`, `poa_signed`, and `power_of_attorney`. Uploading the credit card form moves a New Lead or Account Manager to Client Services. Uploading the Welcome Packet moves Client Services onward. See the 2026-10-15 decision.
 - Cancel and disqualify destinations stay open with no paperwork: `retention`, `dnc`, `not_interested`, `dnq`, `mortgage`, `closed`.
 - Uploading any e-sign PDF suggests general client fields from the text. Cards, amounts, and anything the scan misses stay manual in the drag-and-drop editor. Staff edit values in Confirm Before Sending.
 
 ## Decisions
+
+### 2026-10-15 — Uploads walk the client down the path
+
+Supersedes the 2026-10-03 line that said a credit card authorization never moves the stage, and the part of that line that sent a Welcome Packet from Account Manager straight to Awaiting Collections.
+
+The happy path is New Lead, Account Manager, Client Services, Awaiting Collections, then Case Sent to Attorneys. The stage label stays Awaiting Collections. That last stage is the success. **Clients → Successful** lists the active people who are there. Closed still means the file stopped and is Inactive. Do not use Closed for a win.
+
+A text-file lead starts as a New Lead with nobody assigned. After a card charges, a person moves them to Account Manager and picks who they talk to. Uploading the credit card form moves a New Lead or an Account Manager client to Client Services. If the Welcome Packet is already on file, that same upload moves them to Awaiting Collections. Uploading the Welcome Packet moves Client Services to Awaiting Collections. If the packet is uploaded first on a New Lead, the client moves to Account Manager. If it is uploaded first while they are already in Account Manager, they stay there until the card form is there. Uploading the collection letter still moves them to Case Sent to Attorneys.
+
+Code: `lib/workflow/document-stage-advance.ts`, `handle_cc_auth_upload`, `handle_poa_upload`. The walkthrough is the Knowledge Base article **The path of a client**.
+
+### 2026-10-15 — A completed refund is written into Notes
+
+Marking a refund complete adds a note on the client: the date, the amount, the card last four, and the processor. Cards refunded the same day stay on one note. The note is also what staff see in Overview. The activity log still records the same refund.
 
 ### 2026-10-15 — Secondary can point at another client profile
 

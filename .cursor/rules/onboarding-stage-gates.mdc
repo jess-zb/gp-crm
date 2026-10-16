@@ -36,9 +36,16 @@ Staff-facing copy says **Welcome Packet**. Stored types stay `poa_document`,
   alone.
 - POA upload through Documents must call `markPoaSignedOnClient()` so dashboard
   widgets stay aligned with Uploads.
-- POA auto-advance (`advanceClientAfterPoaUpload` + `handle_poa_upload`) moves
-  **Account Manager or Client Services → `awaiting_collection_letter`** when a
-  POA lands on Uploads. CC Auth never auto-stages.
+- Welcome Packet upload (`advanceClientAfterPoaUpload` + `handle_poa_upload`)
+  moves **Client Services → `awaiting_collection_letter`**. From New Lead
+  with no credit card form it moves to **Account Manager**. From New Lead or
+  Account Manager it moves to Awaiting Collections only when a credit card
+  authorization is already on file.
+- Credit card authorization upload (`advanceClientAfterCcAuthUpload` +
+  `handle_cc_auth_upload`) moves **New Lead or Account Manager →
+  `client_services`**. If the Welcome Packet is already on file, that same
+  upload goes on to `awaiting_collection_letter`. The staff label for that
+  stage stays **Awaiting Collections**.
 
 ### Audio recording — optional, never a gate
 

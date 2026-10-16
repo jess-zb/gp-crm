@@ -15,6 +15,8 @@ function countForTab(tab: ClientsPageTab, counts: TabCounts): number | null {
       return counts.all;
     case "active":
       return counts.active;
+    case "successful":
+      return counts.successful;
     case "archives":
       return counts.archives;
     case "refunds":

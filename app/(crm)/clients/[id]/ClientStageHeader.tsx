@@ -42,6 +42,8 @@ import {
   blockAdvanceFromClientServicesWithoutPoa,
   CC_AUTH_GATE_TITLE,
 } from "@/lib/workflow/stage-blockers";
+import { nextStepForClient } from "@/lib/workflow/next-step";
+import { hasSignedPoaOnRecord } from "@/lib/clients/poa-upload-advance";
 import {
   getStageDropdownOptionLabel,
   getStageDropdownOptions,
@@ -879,6 +881,11 @@ export function ClientStageHeader({
   }, []);
 
   const stageDropdownOpts = getStageDropdownOptions(stage);
+  const nextStep = nextStepForClient({
+    stage: current,
+    hasCcAuthorization: Boolean(hasCcAuthorization),
+    hasWelcomePacket: hasSignedPoaOnRecord({ poaSignedAt, hasPoaDocument }),
+  });
   const showStageSelect = Boolean(
     canUseStageDropdown(userRole) &&
       !isClosed &&
@@ -955,6 +962,9 @@ export function ClientStageHeader({
             </button>
           ) : null}
         </div>
+        {nextStep ? (
+          <p className="mt-2 max-w-xl text-sm text-slate-600 dark:text-slate-300">{nextStep}</p>
+        ) : null}
 
         {missingBeforeNext && missingHost
           ? createPortal(

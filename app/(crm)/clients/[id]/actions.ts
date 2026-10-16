@@ -28,6 +28,7 @@ import {
 import { runCaseSentToAttorneysTriggers } from "@/lib/clients/case-sent-triggers";
 import { createWorkflowTask } from "@/lib/reminders/workflow";
 import {
+  advanceClientAfterCcAuthUpload,
   advanceClientAfterPoaUpload,
   isPoaDocumentType,
   markPoaSignedOnClient,
@@ -662,15 +663,25 @@ export async function uploadClientDocument(
       return { ok: false, error: toUserFacingError(insErr.message) };
     }
 
-    if (isPoaDocumentType(document_type)) {
-      await markPoaSignedOnClient(supabase, clientId);
+    if (isPoaDocumentType(document_type) || document_type === "cc_authorization") {
       const fromStage = String(client.stage ?? "");
-      const advanced = await advanceClientAfterPoaUpload(supabase, clientId);
-      if (advanced) {
+      if (isPoaDocumentType(document_type)) {
+        await markPoaSignedOnClient(supabase, clientId);
+        await advanceClientAfterPoaUpload(supabase, clientId);
+      } else {
+        await advanceClientAfterCcAuthUpload(supabase, clientId);
+      }
+      const { data: afterStage } = await supabase
+        .from("clients")
+        .select("stage")
+        .eq("id", clientId)
+        .maybeSingle();
+      const stageNow = String(afterStage?.stage ?? fromStage);
+      if (stageNow !== fromStage) {
         await runStageEntrySideEffects(supabase, {
           clientId,
           oldStage: fromStage || "client_services",
-          newStage: "awaiting_collection_letter",
+          newStage: stageNow,
           assignedTo: (client.assigned_to as string | null) ?? null,
           performerId: user.id,
           forward: true,

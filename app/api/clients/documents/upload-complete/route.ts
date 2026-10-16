@@ -4,17 +4,50 @@ import { createClient } from "@/lib/supabase/server";
 import { getProfileForUser } from "@/lib/supabase/profile";
 import { canAccessClientRecord } from "@/lib/roles";
 import {
+  advanceClientAfterCcAuthUpload,
   advanceClientAfterPoaUpload,
   isPoaDocumentType,
   markPoaSignedOnClient,
   poaAdvanceAlreadyApplied,
-  POA_STAGE_ADVANCE_TOAST,
   shouldAttemptPoaAdvance,
 } from "@/lib/clients/poa-upload-advance";
 import { runCaseSentToAttorneysTriggers } from "@/lib/clients/case-sent-triggers";
 import { normalizeUploadMimeType } from "@/lib/clients/document-upload";
+import { runStageEntrySideEffects } from "@/lib/reminders/stage-entry-appointments";
+import {
+  ccAdvanceAlreadyApplied,
+  uploadStageMessage,
+} from "@/lib/workflow/document-stage-advance";
 
 const BUCKET = "client-documents";
+
+/** Drips and the Client Services intro follow the stage the file just entered. */
+async function runDocumentStageSideEffects(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  args: {
+    clientId: string;
+    oldStage: string;
+    newStage: string;
+    assignedTo: string | null;
+    performerId: string;
+  }
+): Promise<void> {
+  try {
+    await runStageEntrySideEffects(supabase, {
+      clientId: args.clientId,
+      oldStage: args.oldStage,
+      newStage: args.newStage,
+      assignedTo: args.assignedTo,
+      performerId: args.performerId,
+      forward: true,
+    });
+  } catch (err) {
+    console.warn(
+      "[upload-complete] stage side effects:",
+      err instanceof Error ? err.message : err
+    );
+  }
+}
 
 export async function POST(request: Request) {
   const startedAt = Date.now();
@@ -168,37 +201,59 @@ export async function POST(request: Request) {
         }
       | undefined;
 
+    const stageBeforeUpload = String(clientRow.stage ?? "");
+
     if (isPoaDocumentType(documentType)) {
       await markPoaSignedOnClient(supabase, clientId);
-      const stageBefore = String(clientRow.stage ?? "");
       const { data: afterMark } = await supabase
         .from("clients")
         .select("stage, poa_signed_at")
         .eq("id", clientId)
         .maybeSingle();
-      let stageNow = String(afterMark?.stage ?? stageBefore);
+      let stageNow = String(afterMark?.stage ?? stageBeforeUpload);
       const poaSignedAt = (afterMark?.poa_signed_at as string | null) ?? null;
 
       // Trigger already advanced during INSERT — do not update/audit again.
-      if (poaAdvanceAlreadyApplied(stageBefore, stageNow)) {
-        successMessage = POA_STAGE_ADVANCE_TOAST;
-      } else if (shouldAttemptPoaAdvance(stageNow)) {
+      if (
+        !poaAdvanceAlreadyApplied(stageBeforeUpload, stageNow) &&
+        shouldAttemptPoaAdvance(stageNow)
+      ) {
         const advanced = await advanceClientAfterPoaUpload(supabase, clientId);
         if (advanced) {
-          stageNow = "awaiting_collection_letter";
-          successMessage = POA_STAGE_ADVANCE_TOAST;
+          const { data: moved } = await supabase
+            .from("clients")
+            .select("stage")
+            .eq("id", clientId)
+            .maybeSingle();
+          stageNow = String(moved?.stage ?? stageNow);
           await supabase.from("audit_log").insert({
             client_id: clientId,
             action: "stage_auto_advanced",
             new_value: {
-              stage: "awaiting_collection_letter",
+              stage: stageNow,
               trigger: "poa_document_uploaded",
-              from_stage: stageBefore,
+              from_stage: stageBeforeUpload,
               document_id: document.id,
             },
             performed_by_name: "System",
           });
         }
+      }
+
+      successMessage =
+        uploadStageMessage({
+          kind: "welcome_packet",
+          fromStage: stageBeforeUpload,
+          toStage: stageNow,
+        }) ?? undefined;
+      if (stageNow !== stageBeforeUpload) {
+        await runDocumentStageSideEffects(supabase, {
+          clientId,
+          oldStage: stageBeforeUpload,
+          newStage: stageNow,
+          assignedTo: (clientRow.assigned_to as string | null) ?? null,
+          performerId: user.id,
+        });
       }
 
       clientPatch = {
@@ -209,7 +264,52 @@ export async function POST(request: Request) {
     }
 
     if (documentType === "cc_authorization") {
-      clientPatch = { ...clientPatch, hasCcAuthorization: true };
+      const { data: afterCc } = await supabase
+        .from("clients")
+        .select("stage")
+        .eq("id", clientId)
+        .maybeSingle();
+      let stageNow = String(afterCc?.stage ?? stageBeforeUpload);
+      if (!ccAdvanceAlreadyApplied(stageBeforeUpload, stageNow)) {
+        const advanced = await advanceClientAfterCcAuthUpload(supabase, clientId);
+        if (advanced) {
+          const { data: moved } = await supabase
+            .from("clients")
+            .select("stage")
+            .eq("id", clientId)
+            .maybeSingle();
+          stageNow = String(moved?.stage ?? stageNow);
+          await supabase.from("audit_log").insert({
+            client_id: clientId,
+            action: "stage_auto_advanced",
+            new_value: {
+              stage: stageNow,
+              trigger: "cc_authorization_uploaded",
+              from_stage: stageBeforeUpload,
+              document_id: document.id,
+            },
+            performed_by_name: "System",
+          });
+        }
+      }
+
+      const ccMessage = uploadStageMessage({
+        kind: "cc_authorization",
+        fromStage: stageBeforeUpload,
+        toStage: stageNow,
+      });
+      if (ccMessage) successMessage = ccMessage;
+      if (stageNow !== stageBeforeUpload) {
+        await runDocumentStageSideEffects(supabase, {
+          clientId,
+          oldStage: stageBeforeUpload,
+          newStage: stageNow,
+          assignedTo: (clientRow.assigned_to as string | null) ?? null,
+          performerId: user.id,
+        });
+      }
+
+      clientPatch = { ...clientPatch, hasCcAuthorization: true, stage: stageNow };
     }
 
     if (isCollection) {

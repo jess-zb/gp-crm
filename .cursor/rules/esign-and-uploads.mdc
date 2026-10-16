@@ -52,9 +52,9 @@ alwaysApply: false
 - Keep `send-invite-email.ts` spam-resistant: plain text + HTML, `reply_to`
   support, brand in the subject, no emojis or all-caps CTAs, visible site and
   full link.
-- The signed Welcome Packet is stored as `poa_signed` and drives POA
-  auto-advance. A signed CC authorization is what gates leaving Account
-  Manager. CC Auth must **not** auto-stage. See
+- The signed Welcome Packet is stored as `poa_signed` and moves Client
+  Services to Awaiting Collections. A signed credit card authorization
+  moves a New Lead or an Account Manager client to Client Services. See
   `.cursor/rules/onboarding-stage-gates.mdc`.
 - Confirm Before Sending is derived from the fields placed on that template
   intersected with `required_binds`. Empty required fields highlight. Client

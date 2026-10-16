@@ -54,7 +54,7 @@ assert.equal(documentTypeForBehavior("other"), "client_agreement");
 assert.equal(isEsignBehavior("welcome_packet"), true);
 assert.equal(isEsignBehavior("client_agreement"), false);
 assert.equal(advancesStageOnSign("welcome_packet"), true);
-assert.equal(advancesStageOnSign("cc_authorization"), false);
+assert.equal(advancesStageOnSign("cc_authorization"), true);
 assert.equal(esignSignedFileStem("Welcome Packet"), "Welcome-Packet");
 console.log("  ✓ behaviour maps to the filed document type");
 

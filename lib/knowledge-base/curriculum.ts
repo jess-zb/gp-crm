@@ -42,6 +42,8 @@ export const KNOWLEDGE_CURRICULUM: CurriculumArticle[] = [
 
 If you are not sure which job you have, read **Roles & Departments** before you do anything else.
 
+Read **The path of a client** before you work a file. That article is the order. Do not skip a step.
+
 ## How an article is written
 
 Each article has three kinds of help.
@@ -57,6 +59,76 @@ The pictures are of the live pages, not a drawing. Your screen may be light or d
 1. Look at the left sidebar. The gold row is the page you are on.
 2. Use the search button in the bottom-right corner. It is the magnifying glass. You can also press **Command** and **K** on a Mac, or **Control** and **K** on Windows.
 3. Ask an admin. Do not guess on a stage change, a refund, or a signature.
+`,
+  },
+  {
+    category: "Start here",
+    title: "The path of a client",
+    sortOrder: 15,
+    body: `This is the path every client should take. Do the steps in order. Three of the steps move by themselves when you upload the right file.
+
+## 1. New Lead
+
+A text file is dropped on the **Clients** page. That file has the person's name, phone, address, and cards. The same file is saved under **Documents**, so you can always open it.
+
+The client starts as **New Lead**. Nobody is assigned yet.
+
+If the credit card form is uploaded here, the client moves to **Client Services**. That catches a file when someone forgets to move it to Account Manager. If the Welcome Packet is already on the file, that same upload moves them to **Awaiting Collections**.
+
+If the Welcome Packet is uploaded here before the credit card form, the packet is saved and the client moves to **Account Manager**. Upload the card form next.
+
+## 2. Account Manager
+
+Charge the card. When the charge works, open the client and change the stage to **Account Manager**. Pick the Account Manager. That is the person the client talks to.
+
+Then get the credit card form signed on the phone.
+
+1. Click **Documents**.
+2. Click **Upload +**.
+3. Choose **CC Authorization**.
+4. Upload the signed form.
+
+The client moves to **Client Services** by itself. You do not change the stage for this step.
+
+## 3. Client Services
+
+This step is the Welcome Packet. Get it signed, then upload it.
+
+1. Click **Documents**.
+2. Click **Upload +**.
+3. Choose **Welcome Packet**.
+4. Upload the signed packet.
+
+The client moves to **Awaiting Collections** by itself.
+
+Do both uploads on the same call when you can. The best end of that call is Awaiting Collections.
+
+If you upload the Welcome Packet before the credit card form, the packet is saved and the client stays in Account Manager. Upload the card form next. If the packet is already there, that upload moves them the rest of the way.
+
+Pick a Client Services person on **Settings** if one is not picked yet. The stage moves even if you have not picked them. Do not leave the file with nobody.
+
+## 4. Awaiting Collections
+
+The letter may take weeks or months. When it arrives, upload it.
+
+1. Click **Documents**.
+2. Click **Upload +**.
+3. Choose **Collection Letter**.
+4. Upload the letter.
+
+The client moves to **Case Sent to Attorneys** by itself.
+
+## 5. Successful
+
+Case Sent to Attorneys is the best ending. The client went from New Lead all the way through.
+
+Open **Clients**, then **Successful**, to see everyone who made it.
+
+Do not use **Cancel** or **Closed** for this. Those mean the client stopped. Successful clients stay on the Successful list.
+
+## If they stop
+
+Use **Cancel** when the person is not going forward. That is not a success. Those files go to **Archives**.
 `,
   },
   {
@@ -118,7 +190,7 @@ The role is the second line under your name in the sidebar.
 A department is a checkbox an admin sets on **Team** for a User. There are exactly two.
 
 - **Account Managers** work the client while the file is in the Account Manager stage.
-- **Client Services** work the client after that, until the signed Welcome Packet is on file and the file can move on.
+- **Client Services** work the client after the credit card form is uploaded, until the signed Welcome Packet is on file. That upload moves the file to Awaiting Collections.
 
 One person can be in both departments. Admins are already in both, so they show up on Account Manager and Client Services lists without those checkboxes. If you are in both, and you are not an admin, your dashboard is the Account Manager dashboard.
 
@@ -137,10 +209,10 @@ One person can be in both departments. Admins are already in both, so they show 
     body: `You will see the same words on every page. Here is what they mean in this company.
 
 - **Client** is the person Golden Pathway is helping. Their spouse can be on the file too. The spouse is not a second client.
-- **Stage** is where the file sits in the work. The usual path is New Lead, then Account Manager, then Client Services, then Awaiting Collections, then Case Sent to Attorneys. Closed is a stage. It is not a status.
+- **Stage** is where the file sits in the work. The usual path is New Lead, then Account Manager, then Client Services, then Awaiting Collections, then Case Sent to Attorneys. That last step is a success. Closed is a different stage. It is not a success, and it is not a status.
 - **MID** is a label on the client, such as Golden Pathway. It chooses which signature documents that client is offered. It does not hide the client from other staff. Everyone on the staff side can open every client.
-- **Credit card authorization** is the signed card form. It must be on the file before the client leaves Account Manager.
-- **Welcome Packet** is the signed packet. It must be on the file before the client leaves Client Services for Awaiting Collections.
+- **Credit card authorization** is the signed card form. Uploading it while the client is in Account Manager moves them to Client Services.
+- **Welcome Packet** is the signed packet. Uploading it while the client is in Client Services moves them to Awaiting Collections.
 - **Appointment** is a call or meeting on the calendar. It is not an email.
 - **Drip** is an automatic email sequence. It is not a text message, and nothing is mailed on paper.
 - **Status** is Active or Inactive. Cancel marks the file Inactive, and so does moving the stage to Closed, DNC, DNQ, Not Interested, or Mortgage. **Archives** is the list of inactive files. Search still finds them.
@@ -157,11 +229,11 @@ There is no shipping, no tracking number, and no print vendor in this system. Do
 1. Open **Dashboard** and read who is waiting on you.
 2. Open **Clients** and choose **Add New Client** when someone new comes in. A MID and an Account Manager are required.
 3. Open the client. Check the phone, email, address, and verbal password on the left.
-4. Get the **credit card authorization** signed or uploaded. Until that file is on Documents, the client cannot leave Account Manager.
-5. Book the next call on **Appointments**.
-6. When the card authorization is on file, move the stage to Client Services and make sure a Client Services person is assigned.
+4. Get the **credit card authorization** signed on the phone and upload it. The client moves to Client Services by itself.
+5. Book the next call on **Appointments** if the call is not finished.
+6. You do not move the stage to Client Services by hand after the card form is uploaded. The upload does that. Still pick a Client Services person on Settings if one is not picked yet.
 
-You do not send paper packets. You do not need a signed Welcome Packet to leave Account Manager. The card authorization is the gate. The Welcome Packet matters later, when Client Services is ready to move the file to Awaiting Collections.
+You do not send paper packets. You do not need a signed Welcome Packet to leave Account Manager. The card form is what moves them. The Welcome Packet comes next, in Client Services, and that upload moves them to Awaiting Collections.
 
 If the person should leave the pipeline instead (they cancelled, they are not interested, or the file should close), use **Cancel client** on their page. Those exits are not held up by the missing card form.
 `,
@@ -227,22 +299,26 @@ The file counts if it was signed through e-sign, or if you uploaded the signed c
 2. If the top of the page says paperwork is missing before the next stage, click that notice. It opens Documents.
 3. If you can see **E-Sign**, send the card authorization for that client's MID. Send is for clients in Account Manager or Client Services.
 4. If you cannot see E-Sign, it is turned off. Uploads still work. Click **Upload +**, choose **CC Authorization**, and add the signed file.
-5. After the file is listed under Documents, go back to the stage dropdown and move the client.
+5. When the file appears in the list, the client moves to **Client Services** by itself. You do not change the stage for this step.
+
+If the Welcome Packet is already on the file, the same upload moves them to **Awaiting Collections** instead. Both steps are done.
 
 Clicking a name on the admin dashboard's **Missing CC Authorizations** list opens the upload box with CC Authorization already chosen.
 
-Audio recordings never replace the card form. A note that says the client agreed on the phone is not enough.
+Audio recordings never replace the card form. A note that says the client agreed on the phone is not enough. A New Lead moves the same way for the card form: it sends them to Client Services. Uploading the Welcome Packet on a New Lead moves them to Account Manager.
 `,
   },
   {
     category: "Account Managers",
     title: "Move a client out of Account Manager",
     sortOrder: 150,
-    body: `The stage control is the dropdown near the client's name. The usual next stage is **Client Services**.
+    body: `The usual way out of Account Manager is the credit card form. Upload it and the client moves to **Client Services** by itself.
+
+Use the stage dropdown near the client's name only when you need to move them by hand.
 
 1. Confirm the credit card authorization is on Documents. If it is not, the change is blocked and the page tells you why.
-2. Open **Settings** on the client, or click **Edit** next to Account Manager on the left. Assign a Client Services person before you hand the file off, so it does not sit with nobody.
-3. Change the stage to Client Services.
+2. Open **Settings** on the client, or click **Edit** next to Account Manager on the left. Assign a Client Services person so the file does not sit with nobody.
+3. Change the stage to Client Services if the upload did not already do it.
 4. If a box appears and will not let you continue, use the link in that box. It takes you to the missing document. Do not keep clicking the stage.
 
 ## When you are not moving them forward
@@ -262,9 +338,9 @@ After the file is in Client Services, your Account Manager dashboard no longer t
 2. Open each client. Read the notes and the Documents tab before you call.
 3. Collect the signed Welcome Packet.
 4. Book follow-up appointments.
-5. When the signed Welcome Packet is on the file, you can move the stage to **Awaiting Collections**.
+5. Upload the signed Welcome Packet. The client moves to **Awaiting Collections** by itself.
 
-You cannot make that move with the Welcome Packet missing. Uploading the Welcome Packet is the way through. There is no checklist card on the client page anymore. Do not look for boxes named CS Intro or Tracking Update. Those were removed.
+You cannot make that move with the Welcome Packet missing. There is no checklist card on the client page anymore. Do not look for boxes named CS Intro or Tracking Update. Those were removed.
 
 If a file has been in Client Services for a long time with no Welcome Packet, it shows on your dashboard as overdue.
 `,
@@ -303,11 +379,13 @@ The signed copy counts when the Welcome Packet is on Documents, or when the sign
 1. Open the client and click **Documents**.
 2. If E-Sign is visible, send the document that belongs to this client's MID. Do not send another MID's file.
 3. If E-Sign is hidden, click **Upload +**, choose **Welcome Packet**, and add the signed PDF.
-4. Return to the stage dropdown and choose **Awaiting Collections**.
+4. When the file is saved, the client moves to **Awaiting Collections** by itself. You do not change the stage for this step.
+
+Uploading the Welcome Packet on a New Lead moves that client to Account Manager. From Account Manager, upload the credit card form first. That moves them to Client Services. If the Welcome Packet is already on the file, the card form then moves them to Awaiting Collections. From Client Services, the Welcome Packet itself moves them to Awaiting Collections.
 
 The client header can show a missing-paperwork notice. Click it. For a missing Welcome Packet it opens the upload form with Welcome Packet already selected.
 
-The Welcome Packet does not move the client by itself in every case. After it is on file, you still confirm the stage. Credit card authorization never moves the stage for you, and an audio file never does either.
+An audio file never moves the stage.
 `,
   },
   {
@@ -382,6 +460,8 @@ This tab is the file cabinet. Uploads are always here. E-Sign may be hidden. Rea
 5. Click **Upload** and wait until the file appears in the list.
 
 Pick the real type. A card form uploaded as Other does not count as the credit card authorization, so the stage will stay blocked.
+
+**CC Authorization**, **Welcome Packet**, and **Collection Letter** can move the stage. The other types do not.
 
 You can preview a file from the list. Attorneys who are allowed onto the file can download from their own portal. You do not email the file to yourself to "save a copy" unless an admin asks.
 

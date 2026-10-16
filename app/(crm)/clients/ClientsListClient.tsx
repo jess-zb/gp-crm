@@ -1193,6 +1193,12 @@ export function ClientsListClient({
         }
       />
 
+      {tab === "successful" ? (
+        <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+          These clients went from New Lead all the way to the attorney. That is the best ending.
+        </p>
+      ) : null}
+
       {someSelected ? (
         <div className="mt-4 flex flex-col gap-3 rounded-xl border border-[#A87830]/30 bg-[#A87830]/10 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#3d5c3f] dark:bg-[#242424]/80">
           <p className="shrink-0 text-sm font-medium text-slate-800 dark:text-slate-200">
