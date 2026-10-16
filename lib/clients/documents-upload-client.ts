@@ -1,7 +1,5 @@
-import { createClient } from "@/lib/supabase/client";
 import { normalizeUploadMimeType } from "@/lib/clients/document-upload";
-
-const BUCKET = "client-documents";
+import { putFileToSignedUploadUrl } from "@/lib/supabase/put-signed-upload";
 
 export type UploadedDocumentRow = {
   id: string;
@@ -44,7 +42,7 @@ async function parseJsonOrThrow(res: Response, fallback: string): Promise<Record
  * Uploads a client document directly from the browser to Supabase Storage,
  * bypassing the Vercel request body limit. Flow:
  *   1) POST /api/clients/documents/upload-init → signed upload URL
- *   2) supabase-js uploads the file straight to Storage
+ *   2) Browser PUTs the file bytes straight to the signed Storage URL
  *   3) POST /api/clients/documents/upload-complete → records the DB row
  * Consumers still pass a FormData with the same fields as before.
  */
@@ -86,26 +84,12 @@ export async function uploadClientDocument(
     throw new Error(String(initJson.error ?? "Could not start upload"));
   }
   const path = String(initJson.path ?? "");
-  const token = String(initJson.token ?? "");
-  if (!path || !token) {
+  const signedUrl = String(initJson.signedUrl ?? "");
+  if (!path || !signedUrl) {
     throw new Error("Upload session invalid — please try again.");
   }
 
-  const supabase = createClient();
-  const { error: uploadErr } = await supabase.storage
-    .from(BUCKET)
-    .uploadToSignedUrl(path, token, file, {
-      contentType: mimeType,
-      upsert: false,
-    });
-  if (uploadErr) {
-    if (uploadErr.message.includes("already exists")) {
-      throw new Error(
-        "A file with this name already exists. Rename the file and try again."
-      );
-    }
-    throw new Error(uploadErr.message || "Upload to storage failed");
-  }
+  await putFileToSignedUploadUrl(signedUrl, file, mimeType);
 
   const completeRes = await fetch("/api/clients/documents/upload-complete", {
     method: "POST",

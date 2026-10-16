@@ -16,7 +16,10 @@ npm run verify:document-uploads   # requires DATABASE_URL in .env.local
 ## Upload flow (do not revert to single POST body)
 
 1. `POST /api/clients/documents/upload-init` — auth + MIME check + signed URL
-2. Browser → Supabase Storage (`client-documents` bucket)
+2. Browser → Supabase Storage (`client-documents` bucket) via
+   `putFileToSignedUploadUrl()` — a raw PUT of the file bytes.
+   Do not switch this back to `uploadToSignedUrl()`. That wraps the file in
+   FormData, and Safari 18 aborts the PUT with `Load failed` after the preflight.
 3. `POST /api/clients/documents/upload-complete` — DB row + stage triggers
 
 Bucket limit is **50 MB** (`client-documents.file_size_limit`); keep API max aligned.

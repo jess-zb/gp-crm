@@ -58,5 +58,10 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({ path: data.path, token: data.token, uploadToken });
+  return NextResponse.json({
+    path: data.path,
+    token: data.token,
+    signedUrl: data.signedUrl,
+    uploadToken,
+  });
 }

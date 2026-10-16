@@ -6,7 +6,7 @@ import { useState, useTransition } from "react";
 import { Loader2, Plus } from "lucide-react";
 import { useToast } from "@/app/components/Toast";
 import { toUserFacingError } from "@/lib/user-facing-error";
-import { createClient } from "@/lib/supabase/client";
+import { putFileToSignedUploadUrl } from "@/lib/supabase/put-signed-upload";
 import {
   ESIGN_BEHAVIORS,
   ESIGN_BEHAVIOR_LABELS,
@@ -76,22 +76,18 @@ export function MidDocumentsClient({
         error?: string;
         path?: string;
         token?: string;
+        signedUrl?: string;
         uploadToken?: string;
       };
-      if (!initRes.ok || !initJson.path || !initJson.token || !initJson.uploadToken) {
+      if (!initRes.ok || !initJson.path || !initJson.signedUrl || !initJson.uploadToken) {
         toast.error(toUserFacingError(initJson.error || "Could not start upload"));
         return;
       }
 
-      const supabase = createClient();
-      const { error: uploadErr } = await supabase.storage
-        .from("esign-templates")
-        .uploadToSignedUrl(initJson.path, initJson.token, file, {
-          contentType: "application/pdf",
-          upsert: false,
-        });
-      if (uploadErr) {
-        toast.error(toUserFacingError(uploadErr.message || "Upload failed"));
+      try {
+        await putFileToSignedUploadUrl(initJson.signedUrl, file, "application/pdf");
+      } catch (err) {
+        toast.error(toUserFacingError(err instanceof Error ? err.message : "Upload failed"));
         return;
       }
 

@@ -104,6 +104,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       path: data.path,
       token: data.token,
+      signedUrl: data.signedUrl,
     });
   } catch (err) {
     console.error("[upload-init] unexpected error:", err instanceof Error ? err.message : String(err));
