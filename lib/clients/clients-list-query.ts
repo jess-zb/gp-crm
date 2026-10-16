@@ -7,7 +7,7 @@ export const CLIENT_LIST_SELECT =
 
 const CLIENT_LIST_CUTOFF = "2026-06-02T00:00:00+00:00";
 
-export type ClientsListTab = "all" | "active" | "successful" | "archives";
+export type ClientsListTab = "all" | "active" | "archives";
 
 export type ClientsListSortField =
   | "active"
@@ -89,8 +89,6 @@ export async function fetchClientsListPage(
       q = q.gte("created_at", CLIENT_LIST_CUTOFF);
     } else if (tab === "active") {
       q = q.eq("is_active", true);
-    } else if (tab === "successful") {
-      q = q.eq("is_active", true).eq("stage", "case_sent_to_attorneys");
     } else if (tab === "archives") {
       q = q.eq("is_active", false).gte("created_at", CLIENT_LIST_CUTOFF);
     }

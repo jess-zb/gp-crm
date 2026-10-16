@@ -28,8 +28,9 @@ const PIPELINE_COUNT_STAGES = [
 const PIPELINE_SELECT =
   "id, first_name, last_name, phone_mobile, email, stage, created_at, stage_entered_at, is_active, dnc_reason, assigned_to, assigned_services_id, assigned_user:profiles!assigned_to(full_name, direct_line), services_manager:profiles!assigned_services_id(full_name, direct_line)";
 
-function parseActiveStage(raw: string | undefined): PipelinePageStage {
+function parseActiveStage(raw: string | undefined): PipelinePageStage | "successful" {
   const s = (raw ?? "").trim();
+  if (s === "successful") return "successful";
   if (PIPELINE_PAGE_STAGES.includes(s as PipelinePageStage)) {
     return s as PipelinePageStage;
   }
@@ -63,6 +64,7 @@ export default async function PipelinePage({
     profile.role === "admin";
 
   const activeStage = parseActiveStage(searchParams.stage);
+  const queryStage = activeStage === "successful" ? "case_sent_to_attorneys" : activeStage;
 
   const PIPELINE_PAGE_SIZE = 1000;
 
@@ -77,7 +79,7 @@ export default async function PipelinePage({
     let q = admin
       .from("clients")
       .select(PIPELINE_SELECT)
-      .eq("stage", activeStage)
+      .eq("stage", queryStage)
       .eq("is_active", true);
 
     if (!elevated && deptProfile?.is_accounts) {

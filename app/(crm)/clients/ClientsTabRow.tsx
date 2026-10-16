@@ -15,8 +15,6 @@ function countForTab(tab: ClientsPageTab, counts: TabCounts): number | null {
       return counts.all;
     case "active":
       return counts.active;
-    case "successful":
-      return counts.successful;
     case "archives":
       return counts.archives;
     case "refunds":
@@ -65,7 +63,7 @@ export function ClientsTabRow({
         {tabs.map((t, i) => {
           const active = !suppressActive && activeTab === t.id;
           const count = countForTab(t.id, counts);
-          // Separates browsing the client list from Refunds.
+          // Separates the working lists from Refunds.
           const startsBoardGroup =
             i > 0 && t.group === "board" && tabs[i - 1].group !== "board";
           return (

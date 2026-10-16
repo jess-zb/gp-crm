@@ -20,6 +20,10 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-15 — Daily workflow is the on-screen tour
+
+Users, Admins, and Devs start a tour from the round button at the bottom right, with the Arizona clock, search, and chat. **Daily workflow** is the first tour. It highlights the real screens for the path in **The path of a client**: the text-file drop, a client row, the stage, who they talk to, Documents, and Upload +. Every card stays on a real control. There is no helper sentence under the stage menu. Successful is the last tab on Pipeline, under Service, after Case Sent to Attorneys. It is the same people: active clients in Case Sent to Attorneys. It is not a Clients tab. The tour uses [driver.js](https://github.com/kamranahmedse/driver.js). It does not click or upload for them. The first time someone opens Clients, the tour starts once. After that they start it themselves.
+
 ### 2026-10-15 — DVCR pages are not part of the Knowledge Base
 
 Articles whose title or body contained DVCR were removed. They were a pasted archive, not staff training. The guide staff should follow is still **Knowledge Base**, starting with **The path of a client**. Users, Admins, and Devs can open it. Attorneys and clients cannot.
@@ -28,7 +32,7 @@ Articles whose title or body contained DVCR were removed. They were a pasted arc
 
 Supersedes the 2026-10-03 line that said a credit card authorization never moves the stage, and the part of that line that sent a Welcome Packet from Account Manager straight to Awaiting Collections.
 
-The happy path is New Lead, Account Manager, Client Services, Awaiting Collections, then Case Sent to Attorneys. The stage label stays Awaiting Collections. That last stage is the success. **Clients → Successful** lists the active people who are there. Closed still means the file stopped and is Inactive. Do not use Closed for a win.
+The happy path is New Lead, Account Manager, Client Services, Awaiting Collections, then Case Sent to Attorneys. The stage label stays Awaiting Collections. That last stage is the success. **Pipeline → Service → Successful** lists the active people who are there. Closed still means the file stopped and is Inactive. Do not use Closed for a win.
 
 A text-file lead starts as a New Lead with nobody assigned. After a card charges, a person moves them to Account Manager and picks who they talk to. Uploading the credit card form moves a New Lead or an Account Manager client to Client Services. If the Welcome Packet is already on file, that same upload moves them to Awaiting Collections. Uploading the Welcome Packet moves Client Services to Awaiting Collections. If the packet is uploaded first on a New Lead, the client moves to Account Manager. If it is uploaded first while they are already in Account Manager, they stay there until the card form is there. Uploading the collection letter still moves them to Case Sent to Attorneys.
 

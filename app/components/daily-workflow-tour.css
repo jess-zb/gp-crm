@@ -1,0 +1,44 @@
+.gp-tour-popover.driver-popover {
+  max-width: 22.5rem;
+  border-radius: 12px;
+  padding: 16px 16px 14px;
+  font-family: inherit;
+}
+
+.gp-tour-popover .driver-popover-title {
+  font-size: 16px;
+  line-height: 1.35;
+  padding-right: 28px;
+  color: #161616;
+}
+
+.gp-tour-popover .driver-popover-description {
+  font-size: 14px;
+  line-height: 1.45;
+  color: #3f3f46;
+}
+
+.gp-tour-popover .driver-popover-next-btn {
+  background-color: #a87830;
+  color: #161616;
+  border-color: #a87830;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.gp-tour-popover .driver-popover-next-btn:hover,
+.gp-tour-popover .driver-popover-next-btn:focus {
+  background-color: #8c6428;
+  color: #161616;
+}
+
+.gp-tour-popover .driver-popover-prev-btn {
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.gp-tour-popover .driver-popover-close-btn {
+  color: #71717a;
+}

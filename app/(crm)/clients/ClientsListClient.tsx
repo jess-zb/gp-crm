@@ -454,6 +454,7 @@ const ClientRow = memo(
     canDeleteOne,
     onDeleteOne,
     orderedVisibleColumns,
+    tourAnchor = false,
   }: {
     client: ClientsListItem;
     isSelected: boolean;
@@ -465,12 +466,15 @@ const ClientRow = memo(
     canDeleteOne: boolean;
     onDeleteOne: (id: string) => void;
     orderedVisibleColumns: string[];
+    tourAnchor?: boolean;
   }) => {
     const displayName = `${client.first_name ?? ""} ${client.last_name ?? ""}`.trim() || "—";
     return (
       <tr
         role="button"
         tabIndex={0}
+        data-tour={tourAnchor ? "first-client" : undefined}
+        data-client-id={tourAnchor ? client.id : undefined}
         onClick={() => goView(client.id)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -1193,12 +1197,6 @@ export function ClientsListClient({
         }
       />
 
-      {tab === "successful" ? (
-        <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
-          These clients went from New Lead all the way to the attorney. That is the best ending.
-        </p>
-      ) : null}
-
       {someSelected ? (
         <div className="mt-4 flex flex-col gap-3 rounded-xl border border-[#A87830]/30 bg-[#A87830]/10 px-4 py-3 md:flex-row md:items-center md:justify-between dark:border-[#3d5c3f] dark:bg-[#242424]/80">
           <p className="shrink-0 text-sm font-medium text-slate-800 dark:text-slate-200">
@@ -1291,13 +1289,15 @@ export function ClientsListClient({
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
-                  {displayRows.map((client) => {
+                  {displayRows.map((client, index) => {
                     const displayName = `${client.first_name ?? ""} ${client.last_name ?? ""}`.trim() || "—";
                     return (
                       <div
                         key={client.id}
                         role="button"
                         tabIndex={0}
+                        data-tour={index === 0 ? "first-client" : undefined}
+                        data-client-id={index === 0 ? client.id : undefined}
                         onClick={() => goView(client.id)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
@@ -1422,9 +1422,10 @@ export function ClientsListClient({
                   </tbody>
                 ) : (
                   <tbody className="divide-y divide-slate-100 dark:divide-[#2E2E2E]">
-                    {displayRows.map((client) => (
+                    {displayRows.map((client, index) => (
                       <ClientRow
                         key={client.id}
+                        tourAnchor={index === 0}
                         client={client}
                         isSelected={selected.has(client.id)}
                         toggleOne={toggleOne}

@@ -36,13 +36,13 @@ export function CommandMenuTrigger({ className = "" }: { className?: string }) {
       aria-label={`Search clients or jump to a page, ${COMMAND_SHORTCUT_LABEL}`}
       className={`pointer-events-auto flex h-11 items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 text-slate-600 shadow-sm transition-colors hover:border-[#A87830] hover:text-[#A87830] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A87830] dark:border-[#2E2E2E] dark:bg-[#1C1C1C] dark:text-slate-300 dark:hover:border-[#A87830] dark:hover:text-[#A87830] ${className}`}
     >
-      <Search className="h-4 w-4 shrink-0" aria-hidden />
+      <Search className="h-5 w-5 shrink-0" aria-hidden />
       <kbd className="font-sans text-[10px] font-medium tracking-wide">{COMMAND_SHORTCUT_LABEL}</kbd>
     </button>
   );
 }
 
-export const COMMAND_SHORTCUT_LABEL = "⌘K / Ctrl+K";
+export const COMMAND_SHORTCUT_LABEL = "⌘K";
 
 type ClientHit = {
   id: string;

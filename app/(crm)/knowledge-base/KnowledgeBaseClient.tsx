@@ -222,6 +222,7 @@ export function KnowledgeBaseClient({ canEdit }: { canEdit: boolean }) {
     <div className="space-y-4">
       <p className="text-[13px] text-slate-600 dark:text-slate-400">
         A walkthrough for each role and department. Follow one article at a time. The pictures are the real screens.
+        The guided tour button is at the bottom right, next to the Arizona clock.
         {canEdit ? " Admins can edit these articles." : " You can read these articles."}
       </p>
 

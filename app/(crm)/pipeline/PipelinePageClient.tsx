@@ -16,10 +16,11 @@ const SALES_TABS: { id: PipelinePageStage; label: string }[] = [
   { id: "retention", label: "Retention" },
 ];
 
-const SERVICE_TABS: { id: PipelinePageStage; label: string }[] = [
+const SERVICE_TABS: { id: PipelinePageStage | "successful"; label: string }[] = [
   { id: "client_services", label: "Client Services" },
   { id: "awaiting_collection_letter", label: "Awaiting Collection Letter" },
   { id: "case_sent_to_attorneys", label: "Case Sent to Attorneys" },
+  { id: "successful", label: "Successful" },
 ];
 
 export type PipelinePageRow = {
@@ -92,13 +93,14 @@ function displayPhone(mobile: string | null): string {
 type Props = {
   rows: PipelinePageRow[];
   stageCounts: Record<string, number>;
-  activeStage: PipelinePageStage;
+  activeStage: PipelinePageStage | "successful";
 };
 
 const SERVICE_STAGES = new Set<string>([
   "client_services",
   "awaiting_collection_letter",
   "case_sent_to_attorneys",
+  "successful",
 ]);
 
 const PipelineRow = memo(({
@@ -254,7 +256,7 @@ export const PipelinePageClient = memo(function PipelinePageClient({
   }, [rows, deferredSearch]);
 
   const goStage = useCallback(
-    (stage: PipelinePageStage) => {
+    (stage: PipelinePageStage | "successful") => {
       router.push(`/pipeline?stage=${encodeURIComponent(stage)}`);
     },
     [router]
@@ -317,13 +319,24 @@ export const PipelinePageClient = memo(function PipelinePageClient({
       <div className="mb-4 flex flex-wrap items-center justify-between gap-y-1 border-b border-slate-200 dark:border-[#2E2E2E]">
         <div className="flex min-w-0 flex-1 flex-wrap gap-1">
           {activeTabs.map((tab) => {
-            const count = stageCounts[tab.id] ?? 0;
-            const tabCfg = getStageConfig(tab.id);
+            const count =
+              tab.id === "successful"
+                ? stageCounts.case_sent_to_attorneys ?? 0
+                : stageCounts[tab.id] ?? 0;
+            const tabCfg =
+              tab.id === "successful"
+                ? {
+                    color: "bg-[#F4E8D4] text-[#8C6428]",
+                    border: "border-[#E2C48A]",
+                    hex: "#A87830",
+                  }
+                : getStageConfig(tab.id);
             const isActive = activeStage === tab.id;
             return (
               <button
                 key={tab.id}
                 type="button"
+                data-tour={tab.id === "successful" ? "tab-successful" : undefined}
                 onClick={() => goStage(tab.id)}
                 className={`crm-tab !px-2.5 !py-2 ${
                   isActive ? "border-current" : ""
@@ -390,6 +403,12 @@ export const PipelinePageClient = memo(function PipelinePageClient({
         </div>
       </div>
 
+      {activeStage === "successful" ? (
+        <p className="mb-4 text-sm text-slate-600 dark:text-slate-300">
+          These clients made it to Case Sent to Attorneys. This is the ending. Do not mark them Closed.
+        </p>
+      ) : null}
+
       <div className="crm-table-wrap">
         <table className="w-full min-w-[640px] table-fixed border-collapse text-left dark:divide-[#2E2E2E]">
           <thead>
@@ -455,12 +474,16 @@ export const PipelinePageClient = memo(function PipelinePageClient({
                   className="crm-table-td py-12 text-center"
                 >
                   <p className="text-base font-medium text-slate-700 dark:text-slate-300">
-                    No clients in this stage{search.trim() ? " match your search" : ""}.
+                    {activeStage === "successful"
+                      ? `No successful clients${search.trim() ? " match your search" : " yet"}.`
+                      : `No clients in this stage${search.trim() ? " match your search" : ""}.`}
                   </p>
                   <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                     {search.trim()
                       ? "Try searching for a different name or checking another stage."
-                      : "New clients will appear here as they move into this stage. Check other stages or search to find specific clients."}
+                      : activeStage === "successful"
+                        ? "They show up here after the collection letter is uploaded."
+                        : "New clients will appear here as they move into this stage. Check other stages or search to find specific clients."}
                   </p>
                 </td>
               </tr>

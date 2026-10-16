@@ -15,6 +15,7 @@ import {
 import { MessageCircleIcon } from "@/components/ui/message-circle-icon";
 import { CommandMenuTrigger } from "@/app/components/CommandMenu";
 import { ArizonaClock } from "@/app/components/ArizonaClock";
+import { DailyWorkflowButton } from "@/app/components/DailyWorkflowButton";
 import { createClient } from "@/lib/supabase/client";
 import { isHiddenFromRole } from "@/lib/constants/hidden-accounts";
 
@@ -1099,6 +1100,7 @@ export function ChatWidget({
       <div className="pointer-events-auto flex items-center gap-2">
         <ArizonaClock />
         <CommandMenuTrigger />
+        <DailyWorkflowButton />
         <button
           type="button"
           onClick={handleOpen}

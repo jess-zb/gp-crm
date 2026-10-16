@@ -28,7 +28,7 @@ export function nextStepForClient(args: {
     case "awaiting_collection_letter":
       return "Next: when the collection letter comes in, upload it under Documents. That sends the case to the attorney.";
     case "case_sent_to_attorneys":
-      return "This client made it. They went from New Lead all the way to the attorney. Clients, then Successful, lists everyone who did.";
+      return "This client made it. They went from New Lead all the way to the attorney. Pipeline, then Service, then Successful, lists everyone who did.";
     default:
       return null;
   }

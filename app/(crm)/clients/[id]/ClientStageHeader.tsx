@@ -42,8 +42,6 @@ import {
   blockAdvanceFromClientServicesWithoutPoa,
   CC_AUTH_GATE_TITLE,
 } from "@/lib/workflow/stage-blockers";
-import { nextStepForClient } from "@/lib/workflow/next-step";
-import { hasSignedPoaOnRecord } from "@/lib/clients/poa-upload-advance";
 import {
   getStageDropdownOptionLabel,
   getStageDropdownOptions,
@@ -881,11 +879,6 @@ export function ClientStageHeader({
   }, []);
 
   const stageDropdownOpts = getStageDropdownOptions(stage);
-  const nextStep = nextStepForClient({
-    stage: current,
-    hasCcAuthorization: Boolean(hasCcAuthorization),
-    hasWelcomePacket: hasSignedPoaOnRecord({ poaSignedAt, hasPoaDocument }),
-  });
   const showStageSelect = Boolean(
     canUseStageDropdown(userRole) &&
       !isClosed &&
@@ -919,6 +912,7 @@ export function ClientStageHeader({
           </p>
         ) : null}
         <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span data-tour="client-stage" className="inline-flex">
           {showStageSelect && stageDropdownOpts ? (
             <select
               value={current}
@@ -938,6 +932,7 @@ export function ClientStageHeader({
           ) : (
             <StagePill stage={current} />
           )}
+          </span>
           {!isClosed && canCancel ? (
             <button
               type="button"
@@ -962,9 +957,6 @@ export function ClientStageHeader({
             </button>
           ) : null}
         </div>
-        {nextStep ? (
-          <p className="mt-2 max-w-xl text-sm text-slate-600 dark:text-slate-300">{nextStep}</p>
-        ) : null}
 
         {missingBeforeNext && missingHost
           ? createPortal(
@@ -983,7 +975,7 @@ export function ClientStageHeader({
           : null}
 
         <div className="mt-4 border-t border-slate-100 pt-3 dark:border-[#2E2E2E]">
-        <dl className="space-y-2">
+        <dl data-tour="client-people" className="space-y-2">
           <div>
             <div className="flex items-center justify-between gap-2">
               <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">

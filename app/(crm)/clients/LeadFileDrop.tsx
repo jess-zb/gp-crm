@@ -66,6 +66,7 @@ export function LeadFileDrop({ tab }: { tab: string }) {
 
   return (
     <div
+      data-tour="lead-drop"
       className={`w-full justify-self-end rounded-md border border-dashed px-3 py-2 transition-colors md:w-auto ${
         over
           ? "border-[#A87830] bg-[#A87830]/10"

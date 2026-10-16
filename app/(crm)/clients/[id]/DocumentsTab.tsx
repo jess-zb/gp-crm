@@ -380,6 +380,7 @@ export function DocumentsTab({
         </div>
         <button
           type="button"
+          data-tour="upload-button"
           onClick={() => setModalOpen(true)}
           className="rounded-lg bg-[#A87830] px-4 py-2.5 text-sm font-bold text-[#161616] shadow-md transition hover:opacity-95"
         >

@@ -5,8 +5,6 @@ const CLIENT_LIST_CUTOFF = "2026-06-02T00:00:00+00:00";
 export type TabCounts = {
   all: number;
   active: number;
-  /** Active clients whose case was sent to the attorney. */
-  successful: number;
   archives: number;
   /** Refunds requested but not yet marked refunded. */
   refunds?: number;
@@ -38,12 +36,10 @@ export async function fetchTabCounts(
       archives_count?: number | string | null;
     };
     const toN = (v: number | string | null | undefined) => Number(v ?? 0);
-    const successful = await countSuccessfulClients(supabase, teamUserId);
     console.info(`[perf] fetchTabCounts rpc ${Date.now() - startedAt}ms`);
     return {
       all: includeAll ? toN(row.all_count) : 0,
       active: toN(row.active_count),
-      successful,
       archives: toN(row.archives_count),
     };
   }
@@ -60,7 +56,7 @@ export async function fetchTabCounts(
     return q;
   };
 
-  const [allRes, activeRes, archivesRes, successful] = await Promise.all([
+  const [allRes, activeRes, archivesRes] = await Promise.all([
     includeAll
       ? scopedHead().gte("created_at", CLIENT_LIST_CUTOFF)
       : Promise.resolve({ count: 0 }),
@@ -74,32 +70,12 @@ export async function fetchTabCounts(
       q = q.eq("is_active", false).gte("created_at", CLIENT_LIST_CUTOFF);
       return q;
     })(),
-    countSuccessfulClients(supabase, teamUserId),
   ]);
 
   console.info(`[perf] fetchTabCounts fallback ${Date.now() - startedAt}ms`);
   return {
     all: allRes.count ?? 0,
     active: activeRes.count ?? 0,
-    successful,
     archives: archivesRes.count ?? 0,
   };
-}
-
-async function countSuccessfulClients(
-  supabase: SupabaseClient,
-  teamUserId: string | null
-): Promise<number> {
-  let q = supabase
-    .from("clients")
-    .select("id", { count: "exact", head: true })
-    .eq("is_active", true)
-    .eq("stage", "case_sent_to_attorneys");
-  if (teamUserId) q = q.eq("assigned_to", teamUserId);
-  const { count, error } = await q;
-  if (error) {
-    console.warn("[countSuccessfulClients]", error.message);
-    return 0;
-  }
-  return count ?? 0;
 }

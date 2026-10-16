@@ -65,7 +65,9 @@ The pictures are of the live pages, not a drawing. Your screen may be light or d
     category: "Start here",
     title: "The path of a client",
     sortOrder: 15,
-    body: `This is the path every client should take. Do the steps in order. Three of the steps move by themselves when you upload the right file.
+    body: `The guided tour button is at the bottom right, next to the Arizona clock. Open it and choose **Daily workflow**. The CRM points at each screen and tells you what to click. This article is the same path in writing.
+
+This is the path every client should take. Do the steps in order. Three of the steps move by themselves when you upload the right file.
 
 ## 1. New Lead
 
@@ -122,9 +124,9 @@ The client moves to **Case Sent to Attorneys** by itself.
 
 Case Sent to Attorneys is the best ending. The client went from New Lead all the way through.
 
-Open **Clients**, then **Successful**, to see everyone who made it.
+Open **Pipeline**, choose **Service**, then **Successful**. That tab sits after Case Sent to Attorneys.
 
-Do not use **Cancel** or **Closed** for this. Those mean the client stopped. Successful clients stay on the Successful list.
+Do not use **Cancel** or **Closed** for this. Those mean the client stopped. Successful clients stay on that Pipeline tab.
 
 ## If they stop
 

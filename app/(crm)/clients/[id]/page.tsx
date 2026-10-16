@@ -749,6 +749,7 @@ export default async function ClientProfilePage({
                   <Link
                     key={t.id}
                     href={tabHref(clientId, t.id)}
+                    data-tour={t.id === "documents" ? "client-tab-documents" : undefined}
                     className={tabClass(view === t.id)}
                   >
                     {t.label}

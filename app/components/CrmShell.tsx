@@ -1,13 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { Menu } from "lucide-react";
 import { CrmProviders } from "@/app/components/CrmProviders";
 import { Sidebar } from "@/app/components/Sidebar";
 import { ChatWidget, type ChatWidgetUserProfile } from "@/app/components/chat/ChatWidget";
 import { ArizonaClock } from "@/app/components/ArizonaClock";
+import { DailyWorkflowButton } from "@/app/components/DailyWorkflowButton";
 import { AlertNotification } from "@/app/components/AlertNotification";
 import { CommandMenu, CommandMenuTrigger } from "@/app/components/CommandMenu";
+
+const DailyWorkflowTour = dynamic(
+  () => import("@/app/components/DailyWorkflowTour").then((mod) => mod.DailyWorkflowTour),
+  { ssr: false }
+);
 
 const STORAGE_KEY = "gp-sidebar-collapsed";
 
@@ -113,6 +120,9 @@ export function CrmShell({
           </div>
         </div>
         <CommandMenu role={role} />
+        <Suspense fallback={null}>
+          <DailyWorkflowTour />
+        </Suspense>
         {chatProfile ? (
           <ChatWidget userProfile={chatProfile} />
         ) : (
@@ -128,6 +138,7 @@ export function CrmShell({
           >
             <ArizonaClock />
             <CommandMenuTrigger />
+            <DailyWorkflowButton />
           </div>
           </div>
         )}

@@ -2,14 +2,14 @@ import { canAccessRefundQueue, canSeeAllClientsTab } from "@/lib/roles";
 import type { ClientsListTab } from "@/lib/clients/clients-list-query";
 
 /**
- * Tabs under Clients. Three are client lists; Refunds is a separate view that
- * lives here so the left sidebar does not grow.
+ * Tabs under Clients. The working lists come first. Refunds sits after the
+ * divider so the left sidebar does not grow. The win list lives on Pipeline.
  */
 export type ClientsPageTab = ClientsListTab | "refunds";
 
 /**
- * `group` drives the divider in the tab row: the client lists come first, then
- * Refunds. Order here is the order on screen.
+ * `group` drives the divider. Working lists come first, then Refunds.
+ * Order here is the order on screen.
  */
 export type ClientsTabGroup = "list" | "board";
 
@@ -20,7 +20,6 @@ const TAB_DEFS: readonly {
 }[] = [
   { id: "all", label: "All Clients", group: "list" },
   { id: "active", label: "Active", group: "list" },
-  { id: "successful", label: "Successful", group: "list" },
   { id: "archives", label: "Archives", group: "list" },
   { id: "refunds", label: "Refunds", group: "board" },
 ] as const;
@@ -57,7 +56,7 @@ export function parseClientsTab(
 }
 
 export function isClientsListTab(tab: ClientsPageTab): tab is ClientsListTab {
-  return tab === "all" || tab === "active" || tab === "successful" || tab === "archives";
+  return tab === "all" || tab === "active" || tab === "archives";
 }
 
 export function buildClientsHref(parts: {

@@ -125,6 +125,9 @@ export default async function ClientsPage({
   if (searchParams.tab === "priority") {
     redirect(buildClientsHref({ tab: defaultClientsTab(profile.role) }));
   }
+  if (searchParams.tab === "successful") {
+    redirect("/pipeline?stage=successful");
+  }
 
   try {
     const requestedTab: ClientsPageTab = parseClientsTab(searchParams.tab, profile.role);
