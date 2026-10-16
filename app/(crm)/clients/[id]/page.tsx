@@ -130,6 +130,7 @@ const CLIENT_SELECT = [
   "reviewed_at",
   "reviewed_by_name",
   "mid_id",
+  "linked_client_id",
   // Fallback MID for the refund request prefill when no card carries a merchant.
 ].join(", ");
 
@@ -603,6 +604,22 @@ export default async function ClientProfilePage({
       : secondaryDisplay
     : secondaryNick || null;
 
+  const linkedId = (c.linked_client_id as string | null) ?? null;
+  let relatedProfile: { id: string; name: string } | null = null;
+  if (linkedId) {
+    const { data: related } = await supabase
+      .from("clients")
+      .select("id, first_name, last_name")
+      .eq("id", linkedId)
+      .maybeSingle();
+    if (related) {
+      relatedProfile = {
+        id: related.id as string,
+        name: `${related.first_name ?? ""} ${related.last_name ?? ""}`.trim(),
+      };
+    }
+  }
+
   const attorneyRow = c.attorney as
     | { full_name: string | null; email: string | null }
     | null
@@ -627,6 +644,7 @@ export default async function ClientProfilePage({
     city: (c.city as string | null) ?? null,
     state: (c.state as string | null) ?? null,
     zip_code: (c.zip_code as string | null) ?? null,
+    linked_client: relatedProfile,
   };
 
   const settingsClient: ClientSettingsTabClient = {
@@ -685,6 +703,7 @@ export default async function ClientProfilePage({
         displayName={displayName}
         nickname={(c.nickname as string | null) ?? null}
         secondaryName={secondaryName}
+        relatedProfile={relatedProfile}
         clientId={clientId}
         stage={(c.stage as string | null) ?? null}
         performerId={user.id}

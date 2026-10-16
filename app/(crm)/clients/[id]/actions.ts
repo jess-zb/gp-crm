@@ -153,6 +153,7 @@ interface ClientContactPayload {
   spouse_last_name: string | null;
   spouse_name: string | null;
   spouse_nickname: string | null;
+  secondary_first_name: string | null;
   email: string | null;
   phone_mobile: string | null;
   phone: string | null;
@@ -181,6 +182,7 @@ export async function updateClient(
       spouse_last_name: input.spouse_last_name,
       spouse_name: input.spouse_name,
       spouse_nickname: input.spouse_nickname,
+      secondary_first_name: input.spouse_first_name,
       email: input.email,
       phone_mobile: input.phone_mobile,
       phone: input.phone_mobile,
@@ -202,6 +204,148 @@ export async function updateClient(
     return { ok: true };
   } catch (err) {
     console.error("[clients/[id]/actions] updateClient error:", err);
+    return { ok: false, error: "Something went wrong" };
+  }
+}
+
+export type RelatedClientHit = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  city: string | null;
+};
+
+function relatedName(row: { first_name: string | null; last_name: string | null }) {
+  const first = row.first_name?.trim() || "";
+  const last = row.last_name?.trim() || "";
+  return {
+    spouse_first_name: first || null,
+    spouse_last_name: last || null,
+    spouse_name: [first, last].filter(Boolean).join(" ") || null,
+    secondary_first_name: first || null,
+  };
+}
+
+/** Secondary search: existing profiles whose name matches. */
+export async function searchClientsForLink(
+  clientId: string,
+  query: string
+): Promise<RelatedClientHit[]> {
+  const q = query.trim().replace(/[%_]/g, " ").replace(/\s+/g, " ");
+  if (q.length < 2) return [];
+  try {
+    const { supabase } = await requireStaffClient(clientId);
+    const parts = q.split(" ");
+    let request = supabase
+      .from("clients")
+      .select("id, first_name, last_name, city")
+      .neq("id", clientId);
+    if (parts.length >= 2) {
+      request = request
+        .ilike("first_name", `%${parts[0]}%`)
+        .ilike("last_name", `%${parts.slice(1).join(" ")}%`);
+    } else {
+      request = request.or(`first_name.ilike.%${parts[0]}%,last_name.ilike.%${parts[0]}%`);
+    }
+    const { data, error } = await request.order("last_name").limit(8);
+    if (error || !data) return [];
+    return data.map((row) => ({
+      id: row.id as string,
+      first_name: (row.first_name as string | null)?.trim() || "",
+      last_name: (row.last_name as string | null)?.trim() || "",
+      city: (row.city as string | null) ?? null,
+    }));
+  } catch (err) {
+    console.error("[clients/[id]/actions] searchClientsForLink:", err);
+    return [];
+  }
+}
+
+/** Point both profiles at each other and copy the names into Secondary. */
+export async function linkRelatedClient(
+  clientId: string,
+  relatedId: string
+): Promise<ClientActionResult> {
+  if (!relatedId || relatedId === clientId) {
+    return { ok: false, error: "Choose the other profile." };
+  }
+  try {
+    const { supabase } = await requireStaffClient(clientId);
+    const { data: rows, error } = await supabase
+      .from("clients")
+      .select("id, first_name, last_name, linked_client_id")
+      .in("id", [clientId, relatedId]);
+    if (error || !rows || rows.length !== 2) {
+      return { ok: false, error: "That profile was not found." };
+    }
+    const self = rows.find((row) => row.id === clientId);
+    const other = rows.find((row) => row.id === relatedId);
+    if (!self || !other) return { ok: false, error: "That profile was not found." };
+
+    const stale = [self.linked_client_id, other.linked_client_id].filter(
+      (id): id is string => Boolean(id) && id !== clientId && id !== relatedId
+    );
+    if (stale.length > 0) {
+      const { error: clearErr } = await supabase
+        .from("clients")
+        .update({ linked_client_id: null })
+        .in("id", stale)
+        .in("linked_client_id", [clientId, relatedId]);
+      if (clearErr) return { ok: false, error: toUserFacingError(clearErr.message) };
+    }
+
+    const { error: selfErr } = await supabase
+      .from("clients")
+      .update({ linked_client_id: relatedId, ...relatedName(other) })
+      .eq("id", clientId);
+    if (selfErr) return { ok: false, error: toUserFacingError(selfErr.message) };
+
+    const { error: otherErr } = await supabase
+      .from("clients")
+      .update({ linked_client_id: clientId, ...relatedName(self) })
+      .eq("id", relatedId);
+    if (otherErr) return { ok: false, error: toUserFacingError(otherErr.message) };
+
+    revalidatePath(`/clients/${clientId}`);
+    revalidatePath(`/clients/${relatedId}`);
+    return { ok: true };
+  } catch (err) {
+    console.error("[clients/[id]/actions] linkRelatedClient:", err);
+    return { ok: false, error: "Something went wrong" };
+  }
+}
+
+/** Drop the profile link. The typed Secondary name stays. */
+export async function unlinkRelatedClient(clientId: string): Promise<ClientActionResult> {
+  try {
+    const { supabase } = await requireStaffClient(clientId);
+    const { data, error } = await supabase
+      .from("clients")
+      .select("linked_client_id")
+      .eq("id", clientId)
+      .maybeSingle();
+    if (error) return { ok: false, error: toUserFacingError(error.message) };
+    const otherId = (data?.linked_client_id as string | null) ?? null;
+
+    const { error: selfErr } = await supabase
+      .from("clients")
+      .update({ linked_client_id: null })
+      .eq("id", clientId);
+    if (selfErr) return { ok: false, error: toUserFacingError(selfErr.message) };
+
+    if (otherId) {
+      const { error: otherErr } = await supabase
+        .from("clients")
+        .update({ linked_client_id: null })
+        .eq("id", otherId)
+        .eq("linked_client_id", clientId);
+      if (otherErr) return { ok: false, error: toUserFacingError(otherErr.message) };
+      revalidatePath(`/clients/${otherId}`);
+    }
+    revalidatePath(`/clients/${clientId}`);
+    return { ok: true };
+  } catch (err) {
+    console.error("[clients/[id]/actions] unlinkRelatedClient:", err);
     return { ok: false, error: "Something went wrong" };
   }
 }

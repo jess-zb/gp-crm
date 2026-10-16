@@ -169,6 +169,7 @@ export function ClientStageHeader({
   displayName,
   nickname = null,
   secondaryName = null,
+  relatedProfile = null,
   clientId,
   stage: stageFromServer,
   performerId,
@@ -190,6 +191,8 @@ export function ClientStageHeader({
   displayName: string;
   nickname?: string | null;
   secondaryName?: string | null;
+  /** The other profile linked from Secondary. The typed name is used when this is empty. */
+  relatedProfile?: { id: string; name: string } | null;
   clientId: string;
   stage: string | null;
   performerId: string;
@@ -892,8 +895,21 @@ export function ClientStageHeader({
             <span className="text-sm font-normal text-slate-600 dark:text-slate-300"> ({nickname.trim()})</span>
           ) : null}
         </h1>
-        {secondaryName?.trim() ? (
-          <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">{secondaryName.trim()}</p>
+        {relatedProfile?.name?.trim() ? (
+          <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">
+            <span className="text-slate-500 dark:text-slate-400">Secondary </span>
+            <Link
+              href={`/clients/${relatedProfile.id}`}
+              className="font-medium text-[#A87830] hover:underline"
+            >
+              {relatedProfile.name.trim()}
+            </Link>
+          </p>
+        ) : secondaryName?.trim() ? (
+          <p className="mt-0.5 text-sm text-slate-600 dark:text-slate-300">
+            <span className="text-slate-500 dark:text-slate-400">Secondary </span>
+            {secondaryName.trim()}
+          </p>
         ) : null}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {showStageSelect && stageDropdownOpts ? (

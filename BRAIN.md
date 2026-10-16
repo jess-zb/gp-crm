@@ -20,6 +20,10 @@ Read this before changing stage gates, e-sign, documents, or client-facing behav
 
 ## Decisions
 
+### 2026-10-15 — Secondary can point at another client profile
+
+The Secondary name can still be typed when that person has no file. Staff can also search for an existing profile and link it. The link is on both files: opening either one shows the other name, and clicking it opens that profile. Removing the link leaves the typed name in place.
+
 ### 2026-10-15 — A dropped lead file does not need an email, and there is no file cap
 
 Extends the same-day drop-area note. A text file still creates a New Lead when the email line is missing. A line that is present but is not an email address is still refused. Staff can drop as many files as they have; each one is saved in order, and the time it takes follows the number of files. The partner API keeps its own per-minute limit. After the drop, the Clients list opens on the first page, newest first, so those leads are at the top. This is not written into the Knowledge Base.

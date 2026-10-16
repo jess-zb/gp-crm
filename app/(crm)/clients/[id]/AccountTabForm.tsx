@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Check, Loader2, Save } from "lucide-react";
@@ -8,7 +9,8 @@ import { useToast } from "@/app/components/Toast";
 import { AddressFields } from "@/components/AddressFields";
 import { toUserFacingError } from "@/lib/user-facing-error";
 import { getAddressWarning } from "@/lib/utils/address-validation";
-import { updateClient } from "./actions";
+import { linkRelatedClient, searchClientsForLink, unlinkRelatedClient, updateClient } from "./actions";
+import type { RelatedClientHit } from "./actions";
 
 export type AccountTabClient = {
   first_name: string | null;
@@ -29,6 +31,7 @@ export type AccountTabClient = {
   city: string | null;
   state: string | null;
   zip_code: string | null;
+  linked_client: { id: string; name: string } | null;
 };
 
 type AccountFormValues = {
@@ -171,6 +174,136 @@ const inputClass = (hasErr: boolean) =>
       ? "border-red-500 focus:border-red-500 focus:ring-red-500/30 dark:border-red-500"
       : "border-slate-200 dark:border-[#2E2E2E]"
   }`;
+
+function RelatedProfileSearch({
+  clientId,
+  linked,
+  onLinked,
+  onUnlinked,
+}: {
+  clientId: string;
+  linked: { id: string; name: string } | null;
+  onLinked: (hit: RelatedClientHit) => void;
+  onUnlinked: () => void;
+}) {
+  const toast = useToast();
+  const [query, setQuery] = useState("");
+  const [hits, setHits] = useState<RelatedClientHit[]>([]);
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [current, setCurrent] = useState(linked);
+
+  useEffect(() => {
+    setCurrent(linked);
+  }, [linked]);
+
+  useEffect(() => {
+    const q = query.trim();
+    if (q.length < 2) {
+      setHits([]);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      void searchClientsForLink(clientId, q).then((rows) => {
+        if (!cancelled) setHits(rows);
+      });
+    }, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [clientId, query]);
+
+  return (
+    <div className="block text-sm md:col-span-3">
+      <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Related profile</p>
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Search for the other client’s profile, or type their name in the fields above if they do not have one yet.
+      </p>
+      {current ? (
+        <p className="mt-2 text-sm text-slate-700 dark:text-slate-200">
+          Linked to{" "}
+          <Link href={`/clients/${current.id}`} className="font-medium text-[#A87830] hover:underline">
+            {current.name}
+          </Link>
+          <button
+            type="button"
+            className="ml-3 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+            disabled={busy}
+            onClick={() => {
+              setBusy(true);
+              void unlinkRelatedClient(clientId).then((result) => {
+                setBusy(false);
+                if (!result.ok) {
+                  toast.error(toUserFacingError(result.error));
+                  return;
+                }
+                setCurrent(null);
+                onUnlinked();
+              });
+            }}
+          >
+            Remove link
+          </button>
+        </p>
+      ) : null}
+      <div className="relative mt-2 max-w-md">
+        <input
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+          placeholder="Search by name"
+          aria-label="Search for a related profile"
+          className={inputClass(false)}
+          autoComplete="off"
+        />
+        {open && hits.length > 0 ? (
+          <ul className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg dark:border-[#2E2E2E] dark:bg-[#1C1C1C]">
+            {hits.map((hit) => {
+              const name = `${hit.first_name} ${hit.last_name}`.trim();
+              return (
+                <li key={hit.id}>
+                  <button
+                    type="button"
+                    className="flex w-full items-baseline justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-[#242424]"
+                    disabled={busy}
+                    onClick={() => {
+                      setBusy(true);
+                      void linkRelatedClient(clientId, hit.id).then((result) => {
+                        setBusy(false);
+                        if (!result.ok) {
+                          toast.error(toUserFacingError(result.error));
+                          return;
+                        }
+                        setQuery("");
+                        setHits([]);
+                        setOpen(false);
+                        setCurrent({
+                          id: hit.id,
+                          name: `${hit.first_name} ${hit.last_name}`.trim(),
+                        });
+                        onLinked(hit);
+                      });
+                    }}
+                  >
+                    <span className="font-medium text-slate-900 dark:text-slate-100">{name}</span>
+                    {hit.city ? (
+                      <span className="shrink-0 text-xs text-slate-500">{hit.city}</span>
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 export function AccountTabForm({
   clientId,
@@ -498,6 +631,24 @@ export function AccountTabForm({
             />
             <ErrorMessage fieldKey="spouse_nickname" fieldErrors={fieldErrors} />
           </div>
+          <RelatedProfileSearch
+            clientId={clientId}
+            linked={client.linked_client}
+            onLinked={(hit) => {
+              setFormData((prev) => ({
+                ...prev,
+                spouse_first_name: hit.first_name,
+                spouse_last_name: hit.last_name,
+              }));
+              setOriginalValues((prev) => ({
+                ...prev,
+                spouse_first_name: hit.first_name,
+                spouse_last_name: hit.last_name,
+              }));
+              router.refresh();
+            }}
+            onUnlinked={() => router.refresh()}
+          />
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
