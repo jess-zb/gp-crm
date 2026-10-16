@@ -267,8 +267,9 @@ export function formatAuditDescription(
   if (action === "refund_requested" || action === "refund_processed") {
     const amount = o?.amount != null ? String(o.amount) : "";
     const mid = o?.processor_mid != null ? String(o.processor_mid) : "";
+    const last4 = typeof o?.last_four === "string" ? o.last_four.trim() : "";
     const verb = action === "refund_requested" ? "requested" : "processed";
-    return `Refund ${verb}${amount ? ` — ${amount}` : ""}${mid ? ` on ${mid}` : ""}`;
+    return `Refund ${verb}${amount ? ` — ${amount}` : ""}${mid ? ` on ${mid}` : ""}${last4 ? `, card ${last4}` : ""}`;
   }
   if (action === "appointment_created") {
     const desc =
