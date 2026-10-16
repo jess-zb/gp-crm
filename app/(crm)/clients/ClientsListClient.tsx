@@ -1051,15 +1051,12 @@ export function ClientsListClient({
 
   return (
     <>
-      <LeadFileDrop tab={tab} />
-      <div
-        className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap"
-        role="search"
-      >
+      <div className="mt-4 grid grid-cols-1 items-center gap-3 md:grid-cols-3">
+      <div className="flex min-w-0 items-center gap-2" role="search">
         <label className="sr-only" htmlFor="client-search">
           Search clients
         </label>
-        <div className="relative w-full max-w-md">
+        <div className="relative min-w-0 flex-1">
           <Search
             className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500"
             aria-label="Search"
@@ -1124,11 +1121,14 @@ export function ClientsListClient({
                 })
               );
             }}
-            className="crm-btn-secondary"
+            className="crm-btn-secondary shrink-0"
           >
             Clear
           </button>
         ) : null}
+      </div>
+      <div className="hidden md:block" aria-hidden="true" />
+      <LeadFileDrop tab={tab} />
       </div>
 
       {searchActive ? (

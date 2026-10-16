@@ -66,7 +66,7 @@ export function LeadFileDrop({ tab }: { tab: string }) {
 
   return (
     <div
-      className={`mt-5 rounded-xl border border-dashed px-4 py-3 transition-colors ${
+      className={`w-full justify-self-end rounded-md border border-dashed px-3 py-2 transition-colors md:w-auto ${
         over
           ? "border-[#A87830] bg-[#A87830]/10"
           : "border-slate-300 bg-slate-50 dark:border-[#3A3A3A] dark:bg-[#1C1C1C]"
@@ -98,20 +98,16 @@ export function LeadFileDrop({ tab }: { tab: string }) {
     >
       <label
         htmlFor="lead-text-file"
-        className={`flex items-center gap-3 ${progress ? "cursor-wait" : "cursor-pointer"}`}
+        title="Drag a .txt export here, or click to choose one. It becomes a New Lead."
+        className={`flex items-center gap-2 ${progress ? "cursor-wait" : "cursor-pointer"}`}
       >
         {progress ? (
-          <Loader2 className="h-5 w-5 shrink-0 animate-spin text-[#A87830]" aria-hidden />
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-[#A87830]" aria-hidden />
         ) : (
-          <FileText className="h-5 w-5 shrink-0 text-[#A87830]" aria-hidden />
+          <FileText className="h-4 w-4 shrink-0 text-[#A87830]" aria-hidden />
         )}
-        <span className="min-w-0" aria-live="polite">
-          <span className="block text-sm font-medium text-slate-800 dark:text-slate-100">
-            {progress ?? "Drop a lead file"}
-          </span>
-          <span className="block text-xs text-slate-500 dark:text-slate-400">
-            Drag a .txt export here, or click to choose one. It becomes a New Lead.
-          </span>
+        <span className="whitespace-nowrap text-[13px] font-medium text-slate-800 dark:text-slate-100" aria-live="polite">
+          {progress ?? "Drop a lead file"}
         </span>
       </label>
       <input
